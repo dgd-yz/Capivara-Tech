@@ -1,0 +1,20 @@
+[
+	{
+		"model": "auth.user",
+		"pk": 1,
+		"fields": {
+			"password": "argon2$argon2id$v=19$m=102400,t=2,p=8$UDA0OGR1ZGxqZDNZUDlEblB5TTduRw$p+hixCXf//lCvObMkCF2jrs2N9pB6A86Vs31Wvm1KrQ",
+			"last_login": null,
+			"is_superuser": true,
+			"username": "dannluciano",
+			"first_name": "Dann",
+			"last_name": "Luciano",
+			"email": "dannluciano@gmail.com",
+			"is_staff": true,
+			"is_active": true,
+			"date_joined": "2024-05-31T23:20:22.674Z",
+			"groups": [],
+			"user_permissions": []
+		}
+	}
+]

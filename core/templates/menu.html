@@ -1,0 +1,61 @@
+{% load static %}
+
+<section id="menubar" class="container">
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" hx-get="{% url 'home' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'home' %}">O SPA</a>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a hx-get="{% url 'schedule' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'schedule' %}" class="navbar-item">Programação</a>
+        <a hx-get="{% url 'registration' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'registration' %}" class="navbar-item">Inscrições</a>
+        <a hx-get="{% url 'accommodations' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'accommodations' %}" class="navbar-item">Hospedagens</a>
+        <a hx-get="{% url 'submissions' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'submissions' %}" class="navbar-item">Submissões</a>
+        <a hx-get="{% url 'contact' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'contact' %}" class="navbar-item">Contato</a>
+      </div>
+
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="buttons">
+            <button id="theme-switcher" class="button">Light</button>
+            {% if user.is_staff %}
+              <a class="button is-primary" href="{% url 'admin:index' %}">🏬 Administração</a>
+            {% endif %}
+            {% if user.is_authenticated %}
+              <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button class="button is-danger">Log Out</button>
+              </form>
+            {% else %}
+
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</section>
+
+<section class="container">
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li>
+          <article class="message {% if message.tags %}
+              {{ message.tags }}
+            {% endif %}">
+            <div class="message-body">{{ message }}</div>
+          </article>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</section>

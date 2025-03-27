@@ -1,0 +1,52 @@
+{% extends base_template %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <section>
+    <h3 class="title">Inscrições</h3>
+
+    <article class="message is-info has-text-justified">
+      <div class="message-header">
+        <p>Observações</p>
+      </div>
+      <div class="message-body">
+        <p>As inscrições são gratuitas a partir do preenchimento do formulário abaixo.</p>
+        <p>Cada participante poderá se inscrever em uma oficina, também gratuita.</p>
+        <p>As oficinas iniciarão às 8h00 e acontecerão ao mesmo tempo, no IFPI, na segunda-feira, 28/04.</p>
+        <p>Ao fim das oficinas, embarcaremos os participantes para a Abertura do Seminário no Museu da Natureza, localizado em Coronel José Dias, 32 Km do IFPI.</p>
+      </div>
+    </article>
+
+    <form action="{% url 'registration' %}" method="post">
+      {% if form.errors %}
+        <article class="message is-danger">
+          <div class="message-header">
+            <p>Erro na Inscrição</p>
+          </div>
+          <div class="message-body content">
+            Verifique os campos abaixo: <br />
+
+            {% for field, errors in form.errors.items %}
+              {{ errors }}
+            {% endfor %}
+          </div>
+        </article>
+      {% endif %}
+      {% csrf_token %}
+
+      {{ form|crispy }}
+
+      <div class="field is-grouped">
+        <p class="control">
+          <button class="button is-large is-success">Realizar Inscrição</button>
+        </p>
+        <p class="control">
+          <button class="button is-large is-warning" type="reset">Limpar</button>
+        </p>
+        <p class="control">
+          <a href="#" role="button" class="button is-large" onclick="history.back()">Voltar</a>
+        </p>
+      </div>
+    </form>
+  </section>
+{% endblock %}

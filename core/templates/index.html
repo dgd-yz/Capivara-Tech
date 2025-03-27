@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Seminario Agroecologia</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css"
+    />
+    <style>
+      #map {
+        *,
+        ::after,
+        ::before {
+          box-sizing: unset;
+        }
+        [role="button"] {
+          padding: unset;
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <style>
+      .hero {
+        position: relative;
+        text-align: center;
+      }
+
+      .hero figcaption {
+        width: 80%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        background: rgba(255, 255, 255, 0.4);
+        padding: 1em;
+      }
+
+      .hero hgroup * {
+        color: #224d30;
+      }
+
+      #map {
+        height: 50em;
+      }
+
+      main {
+        scroll-behavior: smooth;
+        height: 100hv;
+        overflow-y: scroll;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="container-fluid">
+      <figure class="hero">
+        <img
+          src="images/logo_horizontal_seminario_agroecologia.jpg"
+          alt="Logo do Seminario Agroecologia"
+        />
+        <figcaption>
+          <hgroup>
+            <h1>V Seminário Piauiense de Agroecologia</h1>
+            <br />
+            <h3>
+              Caminhos para convivência com o semiárido e resiliência às
+              mudanças climáticas
+            </h3>
+            <p>28 A 30 DE ABRIL DE 2025 - SÃO RAIMUNDO NONATO</p>
+          </hgroup>
+        </figcaption>
+      </figure>
+    </header>
+    <main class="container">
+      <aside>
+        <nav>
+          <ul>
+            <li>
+              <strong>V Seminário Piauiense de Agroecologia</strong>
+            </li>
+          </ul>
+          <ul>
+            <li><a href="#about">Sobre</a></li>
+            <li><a href="#location">Localização</a></li>
+            <li><a href="#schedule">Programação</a></li>
+            <li><a href="#contact">Contato</a></li>
+          </ul>
+        </nav>
+      </aside>
+      <section id="about">
+        <h1>Sobre</h1>
+        <p>
+          O planeta Terra e seus territórios tem feito chamados aos indivíduos e
+          organizações para a discussão e construção de soluções sustentáveis
+          para o enfrentamento das mudanças climáticas e seus impactos naturais
+          e sociais.
+        </p>
+        <p>
+          A urgência de discussão da temática está prevista na 30ª Conferência
+          da Organização das Nações Unidas sobre Mudanças Climáticas (COP30),
+          que será realizada em Belém (PA), em novembro de 2025 que incluirá
+          entre os principais temas do evento a 1. Redução de emissões de gases
+          de efeito estufa; 2. Adaptação às mudanças climáticas; 3.
+          Financiamento climático para países em desenvolvimento; 4. Tecnologias
+          de energia renovável e soluções de baixo carbono; 5. Preservação de
+          florestas e biodiversidade e a 6. Justiça climática e os impactos
+          sociais das mudanças climáticas.
+        </p>
+      </section>
+
+      <section id="location">
+        <h1>Localização</h1>
+        <p>Instituto Federal do Piauí - Campus São Raimundo Nonato</p>
+        <div id="map"></div>
+      </section>
+
+      <section id="">
+        <h1>Submissão de Trabalhos</h1>
+        <a role="button" href="#">Envie o seu trabalho</a>
+      </section>
+
+      <section id="schedule">
+        <h1>Programação</h1>
+        <table>
+          <thead>
+            <tr>
+              <th class="schedule-time">Time</th>
+              <th class="schedule-slot">Slot</th>
+              <th class="schedule-description">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="schedule-other">
+              <td class="schedule-time">9h00</td>
+              <td class="schedule-slot">Check-in / Breakfast</td>
+              <td class="schedule-description">-</td>
+            </tr>
+            <tr>
+              <td class="schedule-time">10h00</td>
+              <td class="schedule-slot">
+                <span class="speaker-photo">
+                  <img
+                    class="photo"
+                    src="themes/yellow-swan/img/speaker.jpg"
+                    alt="Linus Torvalds"
+                  />
+                </span>
+                Digging into a Linux Kernel
+                <span class="speakers-company">Linux Foundation</span>
+              </td>
+              <td class="schedule-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo
+              </td>
+            </tr>
+            <tr>
+              <td class="schedule-time">11h00</td>
+              <td class="schedule-slot">
+                <span class="speaker-photo">
+                  <img
+                    class="photo"
+                    src="themes/yellow-swan/img/speaker.jpg"
+                    alt="Bill Gates"
+                  />
+                </span>
+                Introducing Windows 12
+                <span class="speakers-company">Microsoft</span>
+              </td>
+              <td class="schedule-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo
+              </td>
+            </tr>
+            <tr class="schedule-other">
+              <td class="schedule-time">12h00</td>
+              <td class="schedule-slot">Lunch</td>
+              <td class="schedule-description">-</td>
+            </tr>
+            <tr>
+              <td class="schedule-time">13h00</td>
+              <td class="schedule-slot">
+                <span class="speaker-photo">
+                  <img
+                    class="photo"
+                    src="themes/yellow-swan/img/speaker.jpg"
+                    alt="Chuck Norris"
+                  />
+                </span>
+                How to kill a elephant with one finger
+                <span class="speakers-company">Delta Command</span>
+              </td>
+              <td class="schedule-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo
+              </td>
+            </tr>
+            <tr>
+              <td class="schedule-time">14h00</td>
+              <td class="schedule-slot">
+                <span class="speaker-photo">
+                  <img
+                    class="photo"
+                    src="themes/yellow-swan/img/speaker.jpg"
+                    alt="Steve Jobs"
+                  />
+                </span>
+                Presenting iPad
+                <span class="speakers-company">Apple, Inc.</span>
+              </td>
+              <td class="schedule-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo
+              </td>
+            </tr>
+            <tr class="schedule-other">
+              <td class="schedule-time">15h00</td>
+              <td class="schedule-slot">Coffee-break</td>
+              <td class="schedule-description">-</td>
+            </tr>
+            <tr>
+              <td class="schedule-time">16h00</td>
+              <td class="schedule-slot">
+                <span class="speaker-photo">
+                  <img
+                    class="photo"
+                    src="themes/yellow-swan/img/speaker.jpg"
+                    alt="Mark Zuckerberg"
+                  />
+                </span>
+                Revealing Facebook Secrets
+                <span class="speakers-company">Facebook</span>
+              </td>
+              <td class="schedule-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo
+              </td>
+            </tr>
+            <tr>
+              <td class="schedule-time">17h00</td>
+              <td class="schedule-slot">
+                <span class="speaker-photo">
+                  <img
+                    class="photo"
+                    src="themes/yellow-swan/img/speaker.jpg"
+                    alt="Steve Wozniak"
+                  />
+                </span>
+                Why do I prefer Android over iPhone
+                <span class="speakers-company">Apple, Inc.</span>
+              </td>
+              <td class="schedule-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="">
+        <h1>Incrições</h1>
+        <a role="button" href="#">Realize sua Inscrição</a>
+      </section>
+
+      <section id="">
+        <h1>Organização</h1>
+      </section>
+
+      <section id="">
+        <h1>Realização</h1>
+      </section>
+
+      <section id="">
+        <h1>Apoio</h1>
+      </section>
+
+      <section id="contact">
+        <h1>Contato</h1>
+        <form>
+          <label
+            >Nome:
+            <input name="name" required />
+          </label>
+          <label
+            >E-mail:
+            <input type="email" name="email" required />
+          </label>
+          <label>Mensagem:</label>
+          <textarea name="message" required></textarea>
+          <button>Enviar</button>
+        </form>
+      </section>
+    </main>
+    <footer class="container">
+      <p>
+        Feito com muito ❤️ por
+        <a href="mailto:dannluciano@ifpi.edu.br">Dann Luciano</a>
+      </p>
+    </footer>
+    <script>
+      var map = L.map("map").setView([-9.015302, -42.689266], 13);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      var marker = L.marker([51.5, -0.09]).addTo(map);
+    </script>
+  </body>
+</html>
