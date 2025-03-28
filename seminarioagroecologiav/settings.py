@@ -263,7 +263,8 @@ MESSAGE_TAGS = {
 }
 
 if not DEBUG:
-    CSRF_TRUSTED_ORIGINS = ["2025.spa.eco.br"]
+    CSRF_COOKIE_DOMAIN = "2025.spa.eco.br"
+    CSRF_TRUSTED_ORIGINS = ["https://2025.spa.eco.br"]
 
 if DEBUG:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
