@@ -49,6 +49,10 @@
     }
 }
 
+.navbar a {
+    font-weight: bold;
+}
+
 .hero {
     position: relative;
     text-align: center;
