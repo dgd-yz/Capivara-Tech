@@ -238,13 +238,15 @@ LOGGING = {
     },
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
+)
 EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 EMAIL_TIMEOUT = config("EMAIL_TIMEOUT", default=10, cast=int)
 EMAIL_HOST = config("EMAIL_HOST", default="smtp.mailgun.org")
-EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="user")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="password")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="user@email.com")
 
 TASKS = {"default": {"BACKEND": "django_tasks.backends.database.DatabaseBackend"}}
@@ -267,8 +269,6 @@ if not DEBUG:
     CSRF_TRUSTED_ORIGINS = ["https://2025.spa.eco.br"]
 
 if DEBUG:
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
     INSTALLED_APPS += [
         "debug_toolbar",
     ]

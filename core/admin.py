@@ -28,8 +28,10 @@ class RegistrationAdmin(admin.ModelAdmin):
     def confirm_registration(self, request, queryset):
         updated = queryset.update(confirmated=True)
 
+        proto = request.scheme
+
         current_site = get_current_site(request)
-        logo_url = f"https://{current_site.domain}{static('images/logo_horizontal_seminario_agroecologia_small.jpg')}"
+        logo_path = static("images/logo_horizontal_seminario_agroecologia_small.jpg")
 
         participants = queryset.all()
         for participant in participants:
@@ -40,7 +42,9 @@ class RegistrationAdmin(admin.ModelAdmin):
                 from_email=None,
                 context={
                     "participant": model_to_dict(participant),
-                    "logo_url": logo_url,
+                    "logo_path": logo_path,
+                    "domain": current_site.domain,
+                    "proto": proto,
                 },
             )
 

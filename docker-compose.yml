@@ -15,11 +15,8 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    environment:
-      - PORT:8000
-      - DEBUG=True
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-
+    env_file:
+      - .env
     depends_on:
       - db
 
@@ -28,9 +25,19 @@ services:
     command: manage.py db_worker
     volumes:
       - .:/app
-    environment:
-      - DEBUG=True
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-
+    env_file:
+      - .env
     depends_on:
       - db
+    develop:
+      watch:
+        - path: .
+          action: sync
+          target: .
+  
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025
