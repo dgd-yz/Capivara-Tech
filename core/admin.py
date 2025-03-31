@@ -10,8 +10,17 @@ from core.models import Registration
 
 @admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ("full_name", "created_at")
-    list_filter = ("confirmated", "activity", "workshop")
+    list_display = (
+        "full_name",
+        "created_at",
+        "confirmated",
+    )
+
+    list_filter = (
+        "confirmated",
+        "activity",
+        "workshop",
+    )
 
     actions = ["confirm_registration"]
 
