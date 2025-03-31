@@ -7,7 +7,7 @@
   <form action="{% url 'contact' %}" method="post">
     {% csrf_token %}
     {{ form|crispy }}
-    <div class="field is-grouped">
+    <div class="field buttons">
       <p class="control">
         <button class="button is-large is-success">Enviar Mensagem</button>
       </p>
