@@ -100,6 +100,8 @@ class Registration(BaseModel):
         default=Workshops.NONE,
     )
 
+    confirmated = models.BooleanField("Inscrição Confirmada?", default=False)
+
     def clean(self):
         if self.workshop != Workshops.NONE:
             if Registration.objects.filter(workshop=self.workshop).count() >= 30:

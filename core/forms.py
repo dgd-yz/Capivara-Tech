@@ -9,6 +9,7 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = Registration
         fields = "__all__"
+        exclude = ("confirmated",)
         widgets = {"workshop": forms.RadioSelect}
 
 

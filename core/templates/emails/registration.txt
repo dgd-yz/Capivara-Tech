@@ -1,0 +1,7 @@
+Inscrição Confirmada
+
+Parabéns {{ participant.full_name }}! Sua inscrição no V Seminário Piauisense de Agroecologia foi confirmada com sucesso.
+
+Não deixe de acompanhar as novidades no nosso site https://2025.spa.eco.br/
+
+Gratidão! Até o nosso encontro no V SPA!
