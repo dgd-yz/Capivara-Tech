@@ -31,9 +31,9 @@ class Workshops(models.TextChoices):
     NONE = "0", "Não participarei de Oficina"
     ONE = (
         "1",
-        "1. Oficina Sementes da Fartura: Pureza, germinação, manejo e armazenagem",
+        "1. Oficina Sementes da Fartura: Pureza, germinação, manejo, armazenagem e implantação de casas/bancos comunitários de sementes",
     )
-    TWO = "2", "2. Introdução aos Sistemas Agroflorestais"
+    TWO = "2", "2. Práticas Agroecológicas (água de vidro, biofertilizantes)"
     TREE = (
         "3",
         "3. Redesenho dos agroecossistemas familiares para a transição agroecológica e o fortalecimento dos sistemas agroalimentares",
@@ -41,7 +41,7 @@ class Workshops(models.TextChoices):
     FOUR = "4", "4. Introdução à meliponicultura"
     FIVE = (
         "5",
-        "5. O uso do sistema agroflorestal na mitigação das mudanças climáticas",
+        "5. Introdução aos Sistemas Agroflorestais (SAF) e o uso do SAF na mitigação das mudanças climáticas",
     )
     SIX = (
         "6",
