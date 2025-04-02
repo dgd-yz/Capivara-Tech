@@ -51,7 +51,7 @@ class Workshops(models.TextChoices):
     EIGHT = "8", "8. Preparações sustentáveis"
     NINE = (
         "9",
-        "9. A organização do campo para a produção agroecológica e as relações de gênero",
+        "9. Agroecologica, cuidado e feminismo",
     )
     TEN = (
         "10",

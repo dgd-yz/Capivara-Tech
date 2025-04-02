@@ -1,4 +1,5 @@
 {% extends base_template %}
+{% load static %}
 
 {% block content %}
   <section class="has-text-justified">
@@ -30,6 +31,19 @@
       </p>
 
       <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15760.74560967576!2d-42.68826677747802!3d-9.04675512492223!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xf4edc60759ec3b69!2sIFPI!5e0!3m2!1sen!2sbr!4v1556475225046!5m2!1sen!2sbr" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen=""></iframe>
+    </section>
+
+    <br />
+    <br />
+
+    <section>
+      <h3 class="title">Organização</h3>
+      <p class="has-text-centered">
+        <img width="250px" src="{% static 'images/logo-ifpi-vertical.png' %}" alt="Logomarca do Instituto Federal do Piauí - IFPI" />
+        <img width="250px" src="{% static 'images/logo-nea.jpg' %}" alt="Nucleo de Estudos em Agroecologia - NEA/SRN/IFPI" />
+        <img width="250px" src="{% static 'images/logo-cporg-pi.png' %}" alt="Logomarca do CPOrg-PI" />
+        <img width="250px" src="{% static 'images/logo-apaspi.jpg' %}" alt="Logomarca da APASPI" />
+      </p>
     </section>
   </section>
 {% endblock %}
