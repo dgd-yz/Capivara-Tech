@@ -57,7 +57,7 @@ class Workshops(models.TextChoices):
         "10",
         "10. Acesso dos jovens rurais aos espaços decisórios e de diálogo agroecologia",
     )
-    ELEVEN = "11", "11. Manipulação de plantas medicinais"
+    ELEVEN = "11", "11. Manipulação de plantas bioativas"
     TWELVE = (
         "12",
         "12. Formação de preços de venda de produtos da agricultura familiar",
