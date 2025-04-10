@@ -64,6 +64,15 @@ class Workshops(models.TextChoices):
     )
 
 
+def workshop_is_full(choice):
+    id, _ = choice
+    return id == "0" or Registration.objects.filter(workshop=id).count() < 30
+
+
+def get_workshops_choices():
+    return list(filter(workshop_is_full, Workshops.choices))
+
+
 class Registration(BaseModel):
     activity = models.CharField(
         "Atividade",
