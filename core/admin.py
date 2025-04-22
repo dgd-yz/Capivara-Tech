@@ -22,6 +22,11 @@ class RegistrationAdmin(admin.ModelAdmin):
         "workshop",
     )
 
+    search_fields = (
+        "full_name",
+        "entity",
+    )
+
     actions = ["confirm_registration"]
 
     @admin.action(description="Confirmar Inscrição")
