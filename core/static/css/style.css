@@ -83,3 +83,8 @@
 select {
     width: 100%;
 }
+
+.apoio img {
+    height: 100px !important;
+    margin: 1em;
+}
