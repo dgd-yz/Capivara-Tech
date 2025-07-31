@@ -40,3 +40,7 @@ class ContactForm(forms.Form):
     message = forms.CharField(
         max_length=1024 * 10, label="Mensagem", widget=forms.Textarea
     )
+
+
+class CertificatesForm(forms.Form):
+    email = forms.EmailField(max_length=1024, label="E-mail")

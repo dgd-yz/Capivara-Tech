@@ -1,0 +1,40 @@
+{% extends base_template %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h3 class="title is-3">Certificados</h3>
+
+  <form action="{% url 'certificates' %}" method="post">
+    {% csrf_token %}
+    {{ cf|crispy }}
+    <div class="field buttons">
+      <p class="control">
+        <button class="button is-large is-success">Procurar Certificados</button>
+      </p>
+    </div>
+  </form>
+
+  {% if certificates %}
+    <div class="section">
+      <h4 class="title is-4">Certificados Encontrados</h4>
+    </div>
+
+    <div>
+      <ul class="list">
+        {% for certificate in certificates %}
+          <li class="block">
+            {% if certificate.organization == 'NONE' %}
+              <a class="button is-info" target="_blank" href="{% url 'generate_certification' certificate.uuid %}">Certificado de Participação no Evento</a>
+            {% elif certificate.organization == 'PRESENTATION' %}
+              <a class="button is-info" target="_blank" href="{% url 'generate_certification' certificate.uuid %}">Certificado de Apresentação de Trabalho</a>
+            {% elif certificate.organization == 'MONITOR' %}
+              <a class="button is-info" target="_blank" href="{% url 'generate_certification' certificate.uuid %}">Certificado de Monitoria</a>
+            {% elif certificate.organization == 'COMMITTEE' %}
+              <a class="button is-info" target="_blank" href="{% url 'generate_certification' certificate.uuid %}">Certificado de Membro de Comissão</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endblock %}

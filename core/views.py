@@ -1,13 +1,20 @@
+import logging
+import os
 from functools import wraps
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
-from django.shortcuts import redirect, render
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
+from weasyprint import HTML
 
+from core.models import Registration
 from core.tasks import send_email
 
-from .forms import ContactForm, RegistrationForm, UserCreationForm
+from .forms import CertificatesForm, ContactForm, RegistrationForm, UserCreationForm
 
 
 def with_template(view_func):
@@ -94,6 +101,46 @@ def contact(request):
     else:
         context["template"] = "core/contact.html"
         return context
+
+
+@with_template
+def certificates(request):
+    if request.POST:
+        cf = CertificatesForm(request.POST)
+        if cf.is_valid():
+            email = cf.cleaned_data["email"]
+            certificates = Registration.objects.filter(email=email)
+            return {
+                "template": "core/certificates.html",
+                "cf": cf,
+                "certificates": certificates,
+            }
+    cf = CertificatesForm()
+    return {"template": "core/certificates.html", "cf": cf}
+
+
+def generate_certification(request, uuid):
+    logger = logging.getLogger("weasyprint")
+    logger.addHandler(logging.StreamHandler())
+
+    participant = get_object_or_404(Registration, uuid=uuid)
+
+    html_string = render_to_string(
+        "core/certification.html",
+        {
+            "participant": participant,
+        },
+    )
+
+    base_url = os.path.join(settings.BASE_DIR, "assets")
+    html = HTML(string=html_string, base_url=base_url)
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = "inline; filename=certificado.pdf"
+
+    result = html.write_pdf()
+    response.write(result)
+    return response
 
 
 def signup(request):

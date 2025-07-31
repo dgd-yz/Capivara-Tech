@@ -64,6 +64,13 @@ class Workshops(models.TextChoices):
     )
 
 
+class Organization(models.TextChoices):
+    NONE = ("NONE", "Não faz parte da Organização")
+    PRESENTATION = ("PRESENTATION", "Apresentação de Trabalhos")
+    MONITOR = ("MONITOR", "Monitores")
+    COMMITTEE = ("COMMITTEE", "Membro de Comissões")
+
+
 def workshop_is_full(choice):
     id, _ = choice
     return id == "0" or Registration.objects.filter(workshop=id).count() < 30
@@ -97,7 +104,7 @@ class Registration(BaseModel):
     email = models.EmailField(
         "E-mail",
         max_length=254,
-        unique=True,
+        unique=False,
         help_text="Exemplo: mariajose@email.com",
     )
 
@@ -110,6 +117,14 @@ class Registration(BaseModel):
     )
 
     confirmated = models.BooleanField("Inscrição Confirmada?", default=False)
+
+    organization = models.CharField(
+        "Organização",
+        max_length=150,
+        choices=Organization,
+        help_text="Escolha uma das categorias de organização disponíveis",
+        default=Organization.NONE,
+    )
 
     def clean(self):
         if self.workshop != Workshops.NONE:

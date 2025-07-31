@@ -5,7 +5,8 @@ ENV PYTHONUNBUFFERED=1
 ENV PORT 8000
 
 RUN apk update && \
-    apk add git gcc musl-dev libffi-dev
+    apk add git gcc musl-dev libffi-dev pango fontconfig ttf-dejavu cairo
+# apk add so:libgobject-2.0.so.0 so:libpango-1.0.so.0 so:libharfbuzz.so.0 so:libharfbuzz-subset.so.0 so:libfontconfig.so.1 so:libpangoft2-1.0.so.0
 
 WORKDIR /app 
 
