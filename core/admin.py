@@ -20,6 +20,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         "confirmated",
         "activity",
         "workshop",
+        "organization",
     )
 
     search_fields = (
