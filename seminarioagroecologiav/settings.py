@@ -197,6 +197,7 @@ LOGGING = {
         "django.server": {
             "()": "django.utils.log.ServerFormatter",
             "format": "[{server_time}] {message}",
+            "style": "{",
         }
     },
     "handlers": {
