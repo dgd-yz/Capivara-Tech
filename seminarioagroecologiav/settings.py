@@ -40,10 +40,14 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     "core",
+    "certification",
+    "solo",
+    "django_ckeditor_5",
     "django_tasks.backends.database",
     "django_htmx",
     "crispy_forms",
     "crispy_bulma",
+    "qr_code",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -301,3 +305,20 @@ if DEBUG:
         "debug_toolbar.panels.redirects.RedirectsPanel",
         "debug_toolbar.panels.profiling.ProfilingPanel",
     ]
+
+
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "toolbar": {
+            "items": [
+                "heading",
+                "fontSize",
+                "|",
+                "bold",
+                "italic",
+                "Alignment",
+                "sourceEditing",
+            ],
+        },
+    },
+}

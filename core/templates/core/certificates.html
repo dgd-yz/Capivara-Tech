@@ -15,23 +15,17 @@
   </form>
 
   {% if certificates %}
-    <div class="section">
-      <h4 class="title is-4">Certificados Encontrados</h4>
-    </div>
+    <br />
+
+    <h4 class="title is-3">Certificados Encontrados</h4>
+
+    <br />
 
     <div>
       <ul class="list">
         {% for certificate in certificates %}
           <li class="block">
-            {% if certificate.organization == 'NONE' %}
-              <a class="button is-info" target="_blank" href="{% url 'generate_certification' certificate.uuid %}">Certificado de Participação no Evento</a>
-            {% elif certificate.organization == 'PRESENTATION' %}
-              <a class="button is-info" target="_blank" href="{% url 'generate_certification' certificate.uuid %}">Certificado de Apresentação de Trabalho</a>
-            {% elif certificate.organization == 'MONITOR' %}
-              <a class="button is-info" target="_blank" href="{% url 'generate_certification' certificate.uuid %}">Certificado de Monitoria</a>
-            {% elif certificate.organization == 'COMMITTEE' %}
-              <a class="button is-info" target="_blank" href="{% url 'generate_certification' certificate.uuid %}">Certificado de Membro de Comissão</a>
-            {% endif %}
+            <a class="button is-info is-fullwidth is-large" target="_blank" href="{% url 'certificate_detail' certificate.uuid %}">Certificado {{ certificate.activity|truncatechars:20 }}</a>
           </li>
         {% endfor %}
       </ul>

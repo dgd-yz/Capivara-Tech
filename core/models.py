@@ -126,6 +126,9 @@ class Registration(BaseModel):
         default=Organization.NONE,
     )
 
+    def get_workshop_name(self):
+        return Workshops(self.workshop).label[3:]
+
     def clean(self):
         if self.workshop != Workshops.NONE:
             if Registration.objects.filter(workshop=self.workshop).count() >= 30:

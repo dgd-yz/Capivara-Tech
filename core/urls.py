@@ -5,7 +5,6 @@ from .views import (
     accommodations,
     certificates,
     contact,
-    generate_certification,
     home,
     registration,
     schedule,
@@ -22,9 +21,7 @@ urlpatterns = [
     path("submissões", submissions, name="submissions"),
     path("contato", contact, name="contact"),
     path("certificados", certificates, name="certificates"),
-    path(
-        "certificado/<uuid:uuid>", generate_certification, name="generate_certification"
-    ),
+    path("", include("certification.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/create/", signup, name="signup"),
 ]

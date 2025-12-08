@@ -1,10 +1,11 @@
 {% load static %}
+{% load qr_code %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
+    <title>Certificado - {{ participant.full_name }}</title>
     <style>
       * {
         padding: 0;
@@ -20,7 +21,6 @@
       body {
         font-family: Arial, sans-serif;
         text-align: center;
-        background-image: url('/app/assets/images/logo_horizontal_seminario_agroecologia.jpg');
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
@@ -30,20 +30,29 @@
         padding: 0;
       }
       
+      p {
+        font-size: large;
+      }
+      
       img {
         width: 100%;
       }
       
       div {
-        margin: 25% auto;
+        margin: 25% 350px 25% 5em;
       }
     </style>
   </head>
-  <body>
+  <body style="background-image: url('{{ background.url }}');">
     <div>
-      <h1>{{ participant.full_name }}</h1>
-
-      {{ participant.full_name }}
+      {{ text }}
+      <p style="text-align: left; font-size: smaller; position:fixed; bottom: 2rem;">
+        {% qr_from_text uri size='T' %}
+        <br />
+        Para validar esse certificado acesse:
+        <br />
+        <a href="{{ uri }}">{{ uri }}</a>
+      </p>
     </div>
   </body>
 </html>

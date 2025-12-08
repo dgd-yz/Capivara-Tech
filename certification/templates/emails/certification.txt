@@ -1,0 +1,7 @@
+Certificados
+
+Parabéns {{ participant_name }}! Seu certificado de participação no V Seminário Piauisense de Agroecologia já esta disponível no link abaixo.
+
+{{ proto }}://{{ domain }}{% url 'certificate_detail' uuid=uuid %}
+
+Gratidão! Até o nosso próximo encontro no VI SPA!
