@@ -20,7 +20,7 @@ def certificate_detail(request, uuid):
                 "Atividade": str(certificate.activity),
                 "Carga_Horaria": str(certificate.workload),
                 "Local_de_Emissão": str(certificate.location),
-                "Data_de_Emissão": str(date(certificate.date, "d \d\e F \d\e Y")),
+                "Data_de_Emissão": str(date(certificate.date, r"d \d\e F \d\e Y")),
                 "Nome_Certificador": str(certificate.certifier_name),
                 "Cargo_Certificador": str(certificate.certifier_position),
             }
