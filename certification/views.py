@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template import Context, Template
-from django.template.defaultfilters import date
 from django.template.loader import render_to_string
+from django.utils.formats import date_format
 from weasyprint import HTML
 
 from .models import Certificate, CertificationSettings
@@ -20,7 +20,7 @@ def certificate_detail(request, uuid):
                 "Atividade": str(certificate.activity),
                 "Carga_Horaria": str(certificate.workload),
                 "Local_de_Emissão": str(certificate.location),
-                "Data_de_Emissão": str(date(certificate.date, r"d \d\e F \d\e Y")),
+                "Data_de_Emissão": date_format(certificate.date, "DATE_FORMAT"),
                 "Nome_Certificador": str(certificate.certifier_name),
                 "Cargo_Certificador": str(certificate.certifier_position),
             }
