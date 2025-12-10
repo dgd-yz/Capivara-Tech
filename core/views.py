@@ -113,6 +113,11 @@ def certificates(request):
     return {"template": "core/certificates.html", "cf": cf}
 
 
+@with_template
+def letter(request):
+    return {"template": "core/letter.html"}
+
+
 def signup(request):
     if request.htmx:
         base_template = "main.html"
