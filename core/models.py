@@ -2,6 +2,7 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from pictures.models import PictureField
 
 
 class BaseModel(models.Model):
@@ -149,3 +150,31 @@ class Registration(BaseModel):
     class Meta:
         verbose_name = "Inscrição"
         verbose_name_plural = "Inscrições"
+
+
+class Image(models.Model):
+    title = models.CharField(
+        "Título",
+        max_length=255,
+    )
+
+    picture = PictureField(
+        upload_to="pictures",
+        width_field="picture_width",
+        height_field="picture_height",
+    )
+
+    picture_width = models.PositiveIntegerField(
+        editable=False,
+    )
+
+    picture_height = models.PositiveIntegerField(
+        editable=False,
+    )
+
+    def __str__(self):
+        return f"{self.title}"
+
+    class Meta:
+        verbose_name = "Imagem"
+        verbose_name_plural = "Imagens"

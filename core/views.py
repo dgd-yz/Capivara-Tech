@@ -2,10 +2,11 @@ from functools import wraps
 
 from django.contrib import messages
 from django.contrib.auth import login
-from django.shortcuts import redirect, render
+from django.shortcuts import get_list_or_404, redirect, render
 from django.urls import reverse
 
 from certification.models import Certificate
+from core.models import Image
 from core.tasks import send_email
 
 from .forms import CertificatesForm, ContactForm, RegistrationForm, UserCreationForm
@@ -116,6 +117,15 @@ def certificates(request):
 @with_template
 def letter(request):
     return {"template": "core/letter.html"}
+
+
+@with_template
+def gallery(request):
+    images = get_list_or_404(Image)
+    return {
+        "template": "core/gallery.html",
+        "images": images,
+    }
 
 
 def signup(request):

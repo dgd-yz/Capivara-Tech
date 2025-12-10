@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     "core",
     "certification",
+    "pictures",
     "solo",
     "django_ckeditor_5",
     "django_tasks.backends.database",
@@ -327,4 +328,16 @@ CKEDITOR_5_CONFIGS = {
             ],
         },
     },
+}
+
+
+TASKS = {
+    "default": {
+        "BACKEND": "django.tasks.backends.immediate.ImmediateBackend",
+        "QUEUES": ["default", "pictures"],
+    }
+}
+
+PICTURES = {
+    "USE_PLACEHOLDERS": False,
 }

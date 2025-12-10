@@ -3,11 +3,12 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.templatetags.static import static
+from django.utils.html import mark_safe
 from django.utils.translation import ngettext
 
 from certification.domain import certificate_create
 from core.email import send_template_mail
-from core.models import Registration, Workshops
+from core.models import Image, Registration, Workshops
 
 
 @admin.register(Registration)
@@ -118,3 +119,16 @@ class RegistrationAdmin(admin.ModelAdmin):
             % participants_size,
             messages.SUCCESS,
         )
+
+
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    list_display = ("title",)
+    search_fields = ("title",)
+    readonly_fields = ("image_tag",)
+
+    def image_tag(self, obj):
+        return mark_safe(f"<img src='{obj.picture.url}' width='100%' />")
+
+    image_tag.short_description = "Pré Visualização"
+    image_tag.allow_tags = True
