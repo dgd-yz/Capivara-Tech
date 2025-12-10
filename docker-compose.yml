@@ -22,7 +22,7 @@ services:
 
   worker:
     build: .
-    command: manage.py db_worker
+    command: manage.py db_worker --queue-name *
     volumes:
       - .:/app
     env_file:
