@@ -260,7 +260,12 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="user@email.com")
 
-TASKS = {"default": {"BACKEND": "django_tasks.backends.database.DatabaseBackend"}}
+TASKS = {
+    "default": {
+        "BACKEND": "django_tasks.backends.database.DatabaseBackend",
+        "QUEUES": ["default", "pictures"],
+    }
+}
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
 
@@ -328,14 +333,6 @@ CKEDITOR_5_CONFIGS = {
             ],
         },
     },
-}
-
-
-TASKS = {
-    "default": {
-        "BACKEND": "django.tasks.backends.immediate.ImmediateBackend",
-        "QUEUES": ["default", "pictures"],
-    }
 }
 
 PICTURES = {
