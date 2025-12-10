@@ -4,6 +4,25 @@
 {% block content %}
   <h3 class="title is-3">Certificados</h3>
 
+  <section class="content">
+    <p>
+      A Comissão Organizadora do V SPA enviou os certificados por e-mail. Dúvidas ou dificuldades serão tratados somente no e-mail: <a href="mailto:nea.casrn@ifpi.edu.br">nea.casrn@ifpi.edu.br</a>.
+    </p>
+    <p>Os certificados também podem ser acessados abaixo:</p>
+
+    <p>São oito tipos de certificados:</p>
+    <ol>
+      <li>Participação Geral</li>
+      <li>Participação em Oficinas</li>
+      <li>Apresentação de Trabalhos</li>
+      <li>Monitores</li>
+      <li>Comissão Organizadora</li>
+      <li>Comissão Avaliadora</li>
+      <li>Palestrante de Mesa-redonda</li>
+      <li>Ministrante de Oficina</li>
+    </ol>
+  </section>
+
   <form action="{% url 'certificates' %}" method="post">
     {% csrf_token %}
     {{ cf|crispy }}
