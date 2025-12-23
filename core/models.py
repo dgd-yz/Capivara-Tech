@@ -132,7 +132,7 @@ class Registration(BaseModel):
 
     def clean(self):
         if self.workshop != Workshops.NONE:
-            if Registration.objects.filter(workshop=self.workshop).count() >= 30:
+            if Registration.objects.filter(workshop=self.workshop).count() >= 40:
                 raise ValidationError(
                     {
                         "workshop": ValidationError(
