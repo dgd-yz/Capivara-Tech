@@ -2,7 +2,7 @@ function setupTheme() {
 	// THEMES
 	const STORAGE_KEY = "bulma-theme";
 	const SYSTEM_THEME = "system";
-	const DEFAULT_THEME = "light";
+	const DEFAULT_THEME = "dark";
 
 	const state = {
 		chosenTheme: SYSTEM_THEME, // light|dark|system
@@ -11,6 +11,7 @@ function setupTheme() {
 	};
 
 	const updateThemeUI = () => {
+		if (!themeSwitcher) return;
 		switch (state.chosenTheme) {
 			case "light":
 				themeSwitcher.textContent = "🌑";
@@ -27,8 +28,7 @@ function setupTheme() {
 	};
 
 	const themeSwitcher = document.getElementById("theme-switcher");
-	themeSwitcher.addEventListener("click", (event) => {
-		console.log(state.chosenTheme);
+	if (themeSwitcher) themeSwitcher.addEventListener("click", (event) => {
 		switch (state.chosenTheme) {
 			case "light":
 				setTheme("dark");

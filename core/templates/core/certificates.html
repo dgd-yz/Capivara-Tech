@@ -1,27 +1,21 @@
 {% extends base_template %}
 {% load crispy_forms_tags %}
 
+{% block title %}Certificados · Capivara Tech II{% endblock %}
+
 {% block content %}
-  <h3 class="title is-3">Certificados</h3>
+  <section class="ct-prose">
+  <div class="ct-page-head">
+    <div class="ct-eyebrow">// Certificados</div>
+    <h1 class="ct-h2">Emita seu certificado</h1>
+  </div>
 
-  <section class="content">
+  <div class="content">
     <p>
-      A Comissão Organizadora do V SPA enviou os certificados por e-mail. Dúvidas ou dificuldades serão tratados somente no e-mail: <a href="mailto:nea.casrn@ifpi.edu.br">nea.casrn@ifpi.edu.br</a>.
+      A Comissão Organizadora do Capivara Tech envia os certificados por e-mail após o evento. Dúvidas ou dificuldades serão tratadas pelo e-mail: <a href="mailto:contato@capivaratech.com.br">contato@capivaratech.com.br</a>.
     </p>
-    <p>Os certificados também podem ser acessados abaixo:</p>
-
-    <p>São oito tipos de certificados:</p>
-    <ol>
-      <li>Participação Geral</li>
-      <li>Participação em Oficinas</li>
-      <li>Apresentação de Trabalhos</li>
-      <li>Monitores</li>
-      <li>Comissão Organizadora</li>
-      <li>Comissão Avaliadora</li>
-      <li>Palestrante de Mesa-redonda</li>
-      <li>Ministrante de Oficina</li>
-    </ol>
-  </section>
+    <p>Os certificados também podem ser acessados abaixo, informando o e-mail usado na inscrição:</p>
+  </div>
 
   <form action="{% url 'certificates' %}" method="post">
     {% csrf_token %}
@@ -50,4 +44,5 @@
       </ul>
     </div>
   {% endif %}
+  </section>
 {% endblock %}

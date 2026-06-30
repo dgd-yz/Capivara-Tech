@@ -1,7 +1,13 @@
 {% extends base_template %}
 
+{% block title %}Nova Conta · Capivara Tech II{% endblock %}
+
 {% block content %}
-  <h3 class="title">Nova Conta</h3>
+  <section class="ct-prose">
+  <div class="ct-page-head">
+    <div class="ct-eyebrow">// Conta</div>
+    <h1 class="ct-h2">Nova conta</h1>
+  </div>
 
   {% if form.errors %}
     <article id="error-section" class="message is-danger">
@@ -115,4 +121,5 @@
       <a href="#" role="button" class="button is-large" onclick="history.back()">Voltar</a>
     </div>
   </form>
+  </section>
 {% endblock %}

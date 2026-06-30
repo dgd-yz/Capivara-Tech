@@ -1,7 +1,13 @@
 {% extends base_template %}
 {% load pictures %}
+{% block title %}Galeria · Capivara Tech II{% endblock %}
+
 {% block content %}
-  <h3 class="title is-3">Imagens para a memória do V SPA</h3>
+  <section class="ct-prose">
+  <div class="ct-page-head">
+    <div class="ct-eyebrow">// Galeria</div>
+    <h1 class="ct-h2">Momentos do Capivara Tech</h1>
+  </div>
 
   <div class="fixed-grid has-3-cols">
     {% for image in images %}
@@ -18,4 +24,5 @@
       </div>
     {% endfor %}
   </div>
+  </section>
 {% endblock %}

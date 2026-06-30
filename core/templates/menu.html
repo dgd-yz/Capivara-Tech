@@ -1,64 +1,43 @@
 {% load static %}
+<nav class="ct-nav">
+  <a class="ct-brand" href="{% url 'home' %}">
+    <img src="{% static 'images/capivara-logo.svg' %}" alt="Capivara Tech" />
+    <span class="ct-brand__name">Capivara&nbsp;Tech<span>&nbsp;II</span></span>
+  </a>
 
-<section id="menubar" class="container">
-  <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <a class="navbar-item" hx-get="{% url 'home' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'home' %}">O SPA</a>
+  <button id="ct-burger" class="ct-burger" aria-label="Abrir menu" type="button">
+    <span></span><span></span><span></span>
+  </button>
 
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
-    </div>
+  <div id="ct-nav-links" class="ct-nav__links">
+    <a href="{% url 'about' %}">Sobre</a>
+    <a href="{% url 'schedule' %}">Programação</a>
+    <a href="{% url 'accommodations' %}">Hospedagens</a>
+    <a href="{% url 'contact' %}">Contato</a>
+    {% if user.is_staff %}
+      <a href="{% url 'admin:index' %}">Administração</a>
+    {% endif %}
+    {% if user.is_authenticated %}
+      <form action="{% url 'logout' %}" method="post" style="margin:0;">
+        {% csrf_token %}
+        <button class="ct-nav__cta" type="submit" style="border:0;cursor:pointer;">Sair</button>
+      </form>
+    {% else %}
+      <a class="ct-nav__cta" href="{% url 'registration' %}">Inscreva-se</a>
+    {% endif %}
+  </div>
+</nav>
 
-    <div id="navbarBasicExample" class="navbar-menu">
-      <div class="navbar-start">
-        <a hx-get="{% url 'schedule' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'schedule' %}" class="navbar-item">Programação</a>
-        <a hx-get="{% url 'registration' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'registration' %}" class="navbar-item">Inscrições</a>
-        <a hx-get="{% url 'accommodations' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'accommodations' %}" class="navbar-item">Hospedagens</a>
-        <a hx-get="{% url 'submissions' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'submissions' %}" class="navbar-item">Submissões</a>
-        <a hx-get="{% url 'certificates' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'certificates' %}" class="navbar-item">Certificados</a>
-        <a hx-get="{% url 'letter' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'letter' %}" class="navbar-item">Carta</a>
-        <a hx-get="{% url 'gallery' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'gallery' %}" class="navbar-item">Galeria</a>
-        <a hx-get="{% url 'contact' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'contact' %}" class="navbar-item">Contato</a>
-      </div>
-
-      <div class="navbar-end">
-        <div class="navbar-item">
-          <div class="buttons">
-            <button id="theme-switcher" class="button">Light</button>
-            {% if user.is_staff %}
-              <a class="button is-primary" href="{% url 'admin:index' %}">🏬 Administração</a>
-            {% endif %}
-            {% if user.is_authenticated %}
-              <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button class="button is-danger">Log Out</button>
-              </form>
-            {% else %}
-
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-  </nav>
-</section>
-
-<section class="container">
-  {% if messages %}
+{% if messages %}
+  <section class="ct-prose" style="padding-top:28px;padding-bottom:0;">
     <ul class="messages">
       {% for message in messages %}
         <li>
-          <article class="message {% if message.tags %}
-              {{ message.tags }}
-            {% endif %}">
+          <article class="message {% if message.tags %}{{ message.tags }}{% endif %}">
             <div class="message-body">{{ message }}</div>
           </article>
         </li>
       {% endfor %}
     </ul>
-  {% endif %}
-</section>
+  </section>
+{% endif %}

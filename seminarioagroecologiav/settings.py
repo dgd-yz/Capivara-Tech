@@ -31,9 +31,11 @@ SECRET_KEY = config(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = [
-    "*",
-]
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="*",
+    cast=lambda v: [h.strip() for h in v.split(",") if h.strip()],
+)
 
 
 # Application definition
@@ -281,8 +283,16 @@ MESSAGE_TAGS = {
 }
 
 if not DEBUG:
-    CSRF_COOKIE_DOMAIN = "2025.spa.eco.br"
-    CSRF_TRUSTED_ORIGINS = ["https://2025.spa.eco.br"]
+    # Set these on the server, e.g. on Dokku:
+    #   dokku config:set capivara-tech \
+    #     CSRF_TRUSTED_ORIGINS=https://capivaratech.com.br,https://www.capivaratech.com.br \
+    #     ALLOWED_HOSTS=capivaratech.com.br,www.capivaratech.com.br
+    CSRF_TRUSTED_ORIGINS = config(
+        "CSRF_TRUSTED_ORIGINS",
+        default="",
+        cast=lambda v: [o.strip() for o in v.split(",") if o.strip()],
+    )
+    CSRF_COOKIE_DOMAIN = config("CSRF_COOKIE_DOMAIN", default=None)
 
 if DEBUG:
     INSTALLED_APPS += [

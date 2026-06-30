@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
+{% block title %}Entrar · Capivara Tech II{% endblock %}
 {% block content %}
-  <h1 class="title">Entrar</h1>
+  <section class="ct-prose">
+  <div class="ct-page-head">
+    <div class="ct-eyebrow">// Acesso</div>
+    <h1 class="ct-h2">Entrar</h1>
+  </div>
 
   {% if form.errors %}
     <article id="error-section" class="message is-danger">
@@ -56,4 +61,5 @@
       <a href="#" role="button" class="button is-large" onclick="history.back()">Voltar</a>
     </div>
   </form>
+  </section>
 {% endblock %}

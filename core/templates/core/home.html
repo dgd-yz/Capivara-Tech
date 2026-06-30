@@ -1,86 +1,160 @@
 {% extends base_template %}
 {% load static %}
 
+{% block title %}Capivara Tech II — O maior evento de tecnologia do Sul do Piauí{% endblock %}
+
 {% block content %}
-  <section class="has-text-justified">
-    <hgroup class="">
-      <h1 class="title is-1">V Seminário Piauiense de Agroecologia</h1>
-      <h3 class="subtitle is-3">Caminhos para convivência com o semiárido e resiliência às mudanças climáticas</h3>
-      <p>28 A 30 DE ABRIL DE 2025 - SÃO RAIMUNDO NONATO</p>
-      <br />
-    </hgroup>
-  </section>
-  <section class="has-text-justified">
-    <h3 class="title is-3">Saudações agroecológicas!</h3>
-    <p>Após sete anos da última edição, o Seminário Piauiense de Agroecologia retorna com o chamado do planeta Terra e seus territórios para indivíduos e organizações dialogarem e compartilharem soluções sustentáveis para o enfrentamento das mudanças climáticas e seus impactos naturais e sociais.</p>
-    <br />
-    <p>O V Seminário Piauiense de Agroecologia - SPA, será realizado entre os dias 28 e 30 de Abril de 2025, no Instituto Federal de Educação, Ciência e Tecnologia do Piauí Campus São Raimundo Nonato e pretende reunir agricultore/as, técnico/as, pesquisadore/as, artesã/os, artistas, estudantes, consumidore/as e demais interessados em semear discussões sobre as práticas da agroecologia e o enfrentamento das condições climáticas emergentes principalmente na região do semiárido e no cenário piauiense; tais como desertificação, improdutividade da terra e ressecamento dos corpos de água; soberania popular e exploração mineral; impactos das energias renováveis; combate aos agrotóxicos; ações conservação de agroflorestas, experiências sobre produção e comercialização sustentável de alimento e políticas públicas para promoção da agroecologia.</p>
-    <br />
-    <p>Será a primeira edição do Seminário em São Raimundo Nonato, pertencente ao Território Serra da Capivara, sudoeste do Piauí, região do semiárido e da caatinga. Motivo que justifica a data escolhida para o início do evento: 28 de abril, Dia Nacional da Caatinga.</p>
-    <br />
-  </section>
+<!-- ============================ HERO ============================ -->
+<header class="ct-hero" id="top">
+  <div class="ct-eyebrow"><span class="dot"></span> 2ª Edição · São Raimundo Nonato — PI</div>
+      <h1 class="ct-h1">O maior evento de<br><span class="ct-accent">tecnologia</span> do Sul do Piauí</h1>
+      <p class="ct-hero__lead">Três dias de imersão em inovação, empreendedorismo e transformação digital — palestras, minicursos e muito networking no coração da Serra da Capivara.</p>
 
-  <section>
-    <section class="location" id="location">
-      <h3 class="title">Localização</h3>
+      <div class="ct-hero__facts">
+        <div class="ct-fact"><span class="k">Data</span><span class="v">01–03 Outubro 2026</span></div>
+        <div class="ct-fact"><span class="k">Local</span><span class="v">IFPI Campus São Raimundo Nonato</span></div>
+      </div>
 
-      <p itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress">
-        <span itemprop="streetAddress">BR 020, IFPI, Campus São Raimundo Nonato.</span>
-        <span itemprop="addressLocality">São Raimundo Nonato</span>,
-        <span itemprop="addressRegion">Piauí</span>
-      </p>
+  <div class="ct-hero__cta">
+    <a href="{% url 'registration' %}" class="ct-btn ct-btn--solid">Garanta sua vaga →</a>
+    <a href="#programacao" class="ct-btn ct-btn--ghost">Ver programação</a>
+  </div>
+</header>
 
-      <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15760.74560967576!2d-42.68826677747802!3d-9.04675512492223!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xf4edc60759ec3b69!2sIFPI!5e0!3m2!1sen!2sbr!4v1556475225046!5m2!1sen!2sbr" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen=""></iframe>
-    </section>
+<!-- ============================ STATS ============================ -->
+<section class="ct-stats">
+  <div class="ct-stats__grid">
+    <div class="ct-stat" data-reveal><div class="num" data-count="3">3</div><div class="lab">dias de imersão</div></div>
+    <div class="ct-stat" data-reveal><div class="num" data-count="+20">+20</div><div class="lab">palestras &amp; keynotes</div></div>
+    <div class="ct-stat" data-reveal><div class="num" data-count="8">8</div><div class="lab">minicursos práticos</div></div>
+    <div class="ct-stat" data-reveal><div class="num" data-count="+500">+500</div><div class="lab">participantes esperados</div></div>
+  </div>
+</section>
 
-    <br />
-    <br />
+<!-- ============================ SOBRE ============================ -->
+<section class="ct-section" id="sobre">
+  <div class="ct-two" data-reveal>
+    <div>
+      <div class="ct-eyebrow">// Sobre o evento</div>
+      <h2 class="ct-h2">Onde a tecnologia encontra o sertão</h2>
+    </div>
+    <div>
+      <p class="ct-lead">O Capivara Tech II é um evento de tecnologia promovido pelo <strong style="color:var(--ct-text);">IFPI Campus São Raimundo Nonato</strong>, que reúne estudantes, profissionais, empresas e comunidade para discutir inovação, empreendedorismo e transformação digital.</p>
+      <p class="ct-lead" style="color:var(--ct-muted2);margin-top:18px;">Por meio de palestras, oficinas e atividades de integração, o evento fortalece a formação de novos talentos, estimula o networking e contribui para o desenvolvimento tecnológico da região.</p>
 
-    <section>
-      <h3 class="title">Organização</h3>
-      <p class="has-text-centered">
-        <img width="250px" src="{% static 'images/logo-ifpi-vertical.png' %}" alt="Logomarca do Instituto Federal do Piauí - IFPI" />
-        <img width="250px" src="{% static 'images/logo-nea.jpg' %}" alt="Nucleo de Estudos em Agroecologia - NEA/SRN/IFPI" />
-        <img width="250px" src="{% static 'images/logo-cporg-pi.png' %}" alt="Logomarca do CPOrg-PI" />
-        <img width="250px" src="{% static 'images/logo-apaspi.jpg' %}" alt="Logomarca da APASPI" />
-      </p>
-    </section>
+      <div class="ct-pillars">
+        <div class="ct-pillar"><div class="t">Palestras</div><div class="b">Keynotes e talks com nomes de referência do mercado e da academia.</div></div>
+        <div class="ct-pillar"><div class="t">Minicursos</div><div class="b">Mão na massa: oficinas práticas para aplicar o que você aprende.</div></div>
+        <div class="ct-pillar"><div class="t">Networking</div><div class="b">Conexões qualificadas entre estudantes, empresas e profissionais.</div></div>
+        <div class="ct-pillar"><div class="t">Cultura</div><div class="b">Imersão na região da Serra da Capivara e na cena tech do Piauí.</div></div>
+      </div>
+    </div>
+  </div>
 
-    <section>
-      <h3 class="title">Apoio</h3>
-      <p class="has-text-centered apoio">
-        <a href="https://caritas.org.br/"><img src="{% static 'images/logo-caritas.png' %}" alt="Logomarca da CARITAS do Brasil" /></a>
+  <div class="ct-photos" data-reveal>
+    <figure><img src="{% static 'images/evento01.png' %}" alt="Participantes do Capivara Tech" loading="lazy" /></figure>
+    <figure><img src="{% static 'images/evento02.png' %}" alt="Participantes do Capivara Tech" loading="lazy" /></figure>
+    <figure><img src="{% static 'images/evento03.png' %}" alt="Participantes do Capivara Tech" loading="lazy" /></figure>
+  </div>
+</section>
 
-        <a href="https://www.misereor.org/pt"><img src="{% static 'images/logo-misereor.jpeg' %}" alt="Logomarca da CARITAS do Brasil" /></a>
+<!-- ============================ PROGRAMAÇÃO ============================ -->
+<section class="ct-section--alt" id="programacao">
+  <div class="ct-inner">
+    <div style="display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:24px;">
+      <div>
+        <div class="ct-eyebrow">// Programação</div>
+        <h2 class="ct-h2">Três dias, uma trilha completa</h2>
+      </div>
+      <p style="max-width:34ch;font-size:15px;line-height:1.6;color:var(--ct-faint);">Grade preliminar sujeita a ajustes. Horário de Brasília.</p>
+    </div>
 
-        <a href="https://www.cfmv.gov.br/"><img src="{% static 'images/logo-cfmv.png' %}" alt="Logomarca do Conselho Federal de Medicina Veterinária" /></a>
+    <div class="ct-tabs" data-reveal>
+      <button class="ct-tab is-active" data-day="1"><span class="d">Dia 1</span><span class="s">01 Out · Qui</span></button>
+      <button class="ct-tab" data-day="2"><span class="d">Dia 2</span><span class="s">02 Out · Sex</span></button>
+      <button class="ct-tab" data-day="3"><span class="d">Dia 3</span><span class="s">03 Out · Sáb</span></button>
+    </div>
 
-        <a href="https://www.fetagpi.org.br/"><img src="{% static 'images/logo-fetag.svg' %}" alt="Logomarca da FETAG-PI" /></a>
+    <div class="ct-sched" data-reveal>
+      <!-- Day 1 -->
+      <div class="ct-day is-active" data-day="1">
+        <div class="ct-row"><div class="time">08:00</div><div><div class="title">Credenciamento &amp; café de boas-vindas</div><div class="who">Hall de entrada — IFPI SRN</div></div><div class="ct-tag pausa">Abertura</div></div>
+        <div class="ct-row"><div class="time">09:00</div><div><div class="title">Cerimônia de abertura</div><div class="who">Direção do Campus &amp; organização</div></div><div class="ct-tag pausa">Abertura</div></div>
+        <div class="ct-row"><div class="time">10:00</div><div><div class="title">Keynote: O futuro da IA no interior do Brasil</div><div class="who">Dra. Helena Marques · Pesquisadora em IA</div></div><div class="ct-tag keynote">Keynote</div></div>
+        <div class="ct-row"><div class="time">14:00</div><div><div class="title">Minicurso: Introdução ao Desenvolvimento Web</div><div class="who">Lucas Ferreira · Eng. de Software</div></div><div class="ct-tag minicurso">Minicurso</div></div>
+        <div class="ct-row"><div class="time">16:30</div><div><div class="title">Palestra: Carreira em tecnologia começando do zero</div><div class="who">Bianca Rocha · Tech Recruiter</div></div><div class="ct-tag palestra">Palestra</div></div>
+        <div class="ct-row"><div class="time">18:00</div><div><div class="title">Networking &amp; coffee break</div><div class="who">Praça de convivência</div></div><div class="ct-tag pausa">Pausa</div></div>
+      </div>
+      <!-- Day 2 -->
+      <div class="ct-day" data-day="2">
+        <div class="ct-row"><div class="time">09:00</div><div><div class="title">Keynote: Open Source como motor de inovação</div><div class="who">Rafael Antunes · Maintainer &amp; DevRel</div></div><div class="ct-tag keynote">Keynote</div></div>
+        <div class="ct-row"><div class="time">10:30</div><div><div class="title">Painel: Empreendedorismo tech no Nordeste</div><div class="who">Fundadores de startups da região</div></div><div class="ct-tag painel">Painel</div></div>
+        <div class="ct-row"><div class="time">14:00</div><div><div class="title">Minicurso: Dados e Python na prática</div><div class="who">Camila Souza · Cientista de Dados</div></div><div class="ct-tag minicurso">Minicurso</div></div>
+        <div class="ct-row"><div class="time">16:00</div><div><div class="title">Palestra: UX e acessibilidade que importam</div><div class="who">Diego Lima · Product Designer</div></div><div class="ct-tag palestra">Palestra</div></div>
+        <div class="ct-row"><div class="time">17:30</div><div><div class="title">Mostra de projetos estudantis</div><div class="who">Laboratório de Informática</div></div><div class="ct-tag palestra">Palestra</div></div>
+        <div class="ct-row"><div class="time">19:00</div><div><div class="title">Confraternização cultural</div><div class="who">Música &amp; cultura local</div></div><div class="ct-tag pausa">Pausa</div></div>
+      </div>
+      <!-- Day 3 -->
+      <div class="ct-day" data-day="3">
+        <div class="ct-row"><div class="time">09:00</div><div><div class="title">Minicurso: Nuvem e DevOps para iniciantes</div><div class="who">Pedro Nascimento · Engenheiro de Plataforma</div></div><div class="ct-tag minicurso">Minicurso</div></div>
+        <div class="ct-row"><div class="time">11:00</div><div><div class="title">Palestra: Segurança da informação no dia a dia</div><div class="who">Marina Costa · Analista de Segurança</div></div><div class="ct-tag palestra">Palestra</div></div>
+        <div class="ct-row"><div class="time">14:00</div><div><div class="title">Hackathon relâmpago</div><div class="who">Equipes formadas no evento</div></div><div class="ct-tag painel">Painel</div></div>
+        <div class="ct-row"><div class="time">16:30</div><div><div class="title">Keynote de encerramento: Construindo o amanhã</div><div class="who">Eng. Tiago Mendes · CTO</div></div><div class="ct-tag keynote">Keynote</div></div>
+        <div class="ct-row"><div class="time">17:45</div><div><div class="title">Premiação &amp; cerimônia de encerramento</div><div class="who">Organização Capivara Tech</div></div><div class="ct-tag pausa">Abertura</div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <a href="https://fumdham.org.br/"><img src="{% static 'images/logo-fumdham.png' %}" alt="Logomarca da FUMDHAM" /></a>
+<!-- ============================ PALESTRANTES ============================ -->
+<section class="ct-section" id="palestrantes">
+  <div class="ct-eyebrow">// Palestrantes</div>
+  <h2 class="ct-h2" style="max-width:18ch;">Quem vai compartilhar conhecimento</h2>
+  <p style="margin-top:16px;max-width:52ch;font-size:16px;line-height:1.6;color:var(--ct-faint);">Nomes confirmados são divulgados aos poucos. Acompanhe nossas redes para o anúncio completo.</p>
 
-        <a href="https://www.doeluss.org/"><img src="{% static 'images/logo-luss.png' %}" alt="Logomarca do LUSSS" /></a>
+  <div class="ct-grid-4" data-reveal>
+    <div class="ct-speaker"><div class="ct-speaker__avatar"><span>HM</span></div><div class="ct-speaker__body"><div class="n">Dra. Helena Marques</div><div class="r">Pesquisadora em IA</div><div class="q">“O futuro da IA no interior do Brasil”</div></div></div>
+    <div class="ct-speaker"><div class="ct-speaker__avatar"><span>RA</span></div><div class="ct-speaker__body"><div class="n">Rafael Antunes</div><div class="r">Maintainer &amp; DevRel</div><div class="q">“Open Source como motor de inovação”</div></div></div>
+    <div class="ct-speaker"><div class="ct-speaker__avatar"><span>CS</span></div><div class="ct-speaker__body"><div class="n">Camila Souza</div><div class="r">Cientista de Dados</div><div class="q">“Dados e Python na prática”</div></div></div>
+    <div class="ct-speaker"><div class="ct-speaker__avatar"><span>TM</span></div><div class="ct-speaker__body"><div class="n">Tiago Mendes</div><div class="r">CTO</div><div class="q">“Construindo o amanhã”</div></div></div>
+    <div class="ct-speaker"><div class="ct-speaker__avatar"><span>DL</span></div><div class="ct-speaker__body"><div class="n">Diego Lima</div><div class="r">Product Designer</div><div class="q">“UX e acessibilidade que importam”</div></div></div>
+    <div class="ct-speaker"><div class="ct-speaker__avatar"><span>MC</span></div><div class="ct-speaker__body"><div class="n">Marina Costa</div><div class="r">Analista de Segurança</div><div class="q">“Segurança da informação no dia a dia”</div></div></div>
+    <div class="ct-speaker"><div class="ct-speaker__avatar"><span>BR</span></div><div class="ct-speaker__body"><div class="n">Bianca Rocha</div><div class="r">Tech Recruiter</div><div class="q">“Carreira em tecnologia do zero”</div></div></div>
+    <div class="ct-speaker"><div class="ct-speaker__avatar"><span>PN</span></div><div class="ct-speaker__body"><div class="n">Pedro Nascimento</div><div class="r">Eng. de Plataforma</div><div class="q">“Nuvem e DevOps para iniciantes”</div></div></div>
+  </div>
+</section>
 
-        <a href="https://www.gov.br/mds/pt-br"><img src="{% static 'images/logo-mds-h.png' %}" alt="Logomarca do Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome - MDS" /></a>
+<!-- ============================ MINICURSOS ============================ -->
+<section class="ct-section--alt" id="minicursos">
+  <div class="ct-inner">
+    <div style="display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:24px;">
+      <div>
+        <div class="ct-eyebrow">// Minicursos &amp; Oficinas</div>
+        <h2 class="ct-h2">Aprenda na prática</h2>
+      </div>
+      <p style="max-width:34ch;font-size:15px;line-height:1.6;color:var(--ct-faint);">Vagas limitadas por turma. Traga seu notebook — todas as oficinas são mão na massa.</p>
+    </div>
 
-        <a href="https://www.instagram.com/museudanaturezapi/"><img src="{% static 'images/logo-muna.png' %}" alt="Logomarca do Museu da Natureza" /></a>
+    <div class="ct-grid-3" data-reveal>
+      <div class="ct-course"><div class="ct-course__top"><span class="ct-pill">Iniciante</span><span class="ct-course__dur">4h</span></div><h3 class="ct-h3">Introdução ao Desenvolvimento Web</h3><p>HTML, CSS e JavaScript do zero para criar sua primeira página interativa.</p><div class="ct-course__foot"><span class="av">LF</span><span class="nm">Lucas Ferreira</span></div></div>
+      <div class="ct-course"><div class="ct-course__top"><span class="ct-pill">Intermediário</span><span class="ct-course__dur">4h</span></div><h3 class="ct-h3">Dados e Python na Prática</h3><p>Manipule, analise e visualize dados reais com pandas e matplotlib.</p><div class="ct-course__foot"><span class="av">CS</span><span class="nm">Camila Souza</span></div></div>
+      <div class="ct-course"><div class="ct-course__top"><span class="ct-pill">Iniciante</span><span class="ct-course__dur">3h</span></div><h3 class="ct-h3">Nuvem e DevOps para Iniciantes</h3><p>Entenda containers, deploy e automação com exemplos práticos na nuvem.</p><div class="ct-course__foot"><span class="av">PN</span><span class="nm">Pedro Nascimento</span></div></div>
+      <div class="ct-course"><div class="ct-course__top"><span class="ct-pill">Iniciante</span><span class="ct-course__dur">3h</span></div><h3 class="ct-h3">Design de Interfaces &amp; Figma</h3><p>Princípios de UI e prototipagem rápida para quem nunca usou ferramentas de design.</p><div class="ct-course__foot"><span class="av">DL</span><span class="nm">Diego Lima</span></div></div>
+      <div class="ct-course"><div class="ct-course__top"><span class="ct-pill">Intermediário</span><span class="ct-course__dur">4h</span></div><h3 class="ct-h3">Segurança da Informação na Prática</h3><p>Boas práticas, senhas, phishing e como proteger seus projetos e dados.</p><div class="ct-course__foot"><span class="av">MC</span><span class="nm">Marina Costa</span></div></div>
+      <div class="ct-course"><div class="ct-course__top"><span class="ct-pill">Avançado</span><span class="ct-course__dur">4h</span></div><h3 class="ct-h3">Construindo APIs com Node.js</h3><p>Crie uma API REST completa, do roteamento à conexão com banco de dados.</p><div class="ct-course__foot"><span class="av">RA</span><span class="nm">Rafael Antunes</span></div></div>
+    </div>
+  </div>
+</section>
 
-        <a href="https://www.coroneljosedias.pi.gov.br/"><img src="{% static 'images/logo-pcjd.png' %}" alt="Logomarca da Prefeitura Municipal de Coronel José Dias" /></a>
-
-        <a href="https://saoraimundononato.pi.gov.br/"><img style="background-color: #0147ba;" src="{% static 'images/logo-psrn.png' %}" alt="Logomarca da Prefeitura Municipal de São Raimundo Nonato" /></a>
-
-        <a href="https://portal.pi.gov.br/saf/"><img src="{% static 'images/logo-saf.jpg' %}" alt="Logomarca da Secretaria de Estado da Agricultura Familiar - SAF" /></a>
-
-        <a href="https://senarpiaui.org.br/"><img src="{% static 'images/logo-senar.png' %}" alt="Logomarca da SENAR" /></a>
-
-        <a href="https://uespi.br/"><img src="{% static 'images/logo-uespi.png' %}" alt="Logomarca da Universidade Estadual do Piauí - UESPI" /></a>
-
-        <a href="https://ufpi.br/"><img src="{% static 'images/logo-ufpi-n.png' %}" alt="Logomarca da Universidade Federal do Piauí - UFPI" /></a>
-
-        <a href="https://portais.univasf.edu.br/"><img src="{% static 'images/logo-univasf.png' %}" alt="Logomarca da Universidade Federal do Vale do São Fransisco - UFPI" /></a>
-
-        {% comment %}https://cnabrasil.org.br/senar{% endcomment %}
-      </p>
-    </section>
-  </section>
+<!-- ============================ CTA ============================ -->
+<section class="ct-section" id="inscricao">
+  <div class="ct-cta" data-reveal>
+    <div class="ct-cta__in">
+      <div class="ct-eyebrow">Inscrições abertas</div>
+      <h2>Faça parte da segunda edição</h2>
+      <p>01 a 03 de outubro de 2026, no IFPI Campus São Raimundo Nonato. Vagas limitadas — garanta a sua.</p>
+      <a href="{% url 'registration' %}" class="ct-btn ct-btn--dark" style="margin-top:30px;">Quero me inscrever →</a>
+    </div>
+  </div>
+</section>
 {% endblock %}

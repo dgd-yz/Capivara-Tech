@@ -1,78 +1,52 @@
 {% load static %}
-{% load django_htmx %}
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#15110d" />
+    <meta name="description" content="Capivara Tech II — o maior evento de tecnologia do Sul do Piauí. 01 a 03 de outubro de 2026, IFPI Campus São Raimundo Nonato." />
 
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %} ">
+    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'vendor/bulma/css/bulma.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    <title>
-      {% block title %}
-      {% endblock %}
-    </title>
-    {% block css %}
-    {% endblock %}
+    <link rel="stylesheet" href="{% static 'css/capivara.css' %}" />
+
+    <title>{% block title %}Capivara Tech II — Tecnologia, Criatividade e Inovação{% endblock %}</title>
+    {% block css %}{% endblock %}
   </head>
-  <body hx-ext="morph" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <header>
-      <figure class="hero">
-        <img
-          src="{% static 'images/logo_horizontal_seminario_agroecologia.jpg' %}"
-          alt="Logo do Seminario Agroecologia"
-        />
-      </figure>
-    </header>
-    <section class="is-hidden" style="display: flex; align-items: center; justify-content: center;">
+  <body>
+    <!-- background layers (persist above content) -->
+    <div id="ct-progress"></div>
+    <canvas id="ct-bg"></canvas>
+    <div id="ct-bg-overlay"></div>
+    <div id="ct-glow"></div>
+
+    <div class="ct-app">
+      {% include "menu.html" %}
+
+      <main id="main">
+        {% block content %}{% endblock %}
+      </main>
+
+      {% include "footer.html" %}
+    </div>
+
+    <section class="is-hidden" style="display:flex;align-items:center;justify-content:center;">
       <span id="loader" class="htmx-indicator loader"></span>
     </section>
-    <main id="main">
-        
-      {% include "menu.html" %}
-        <section class="section">
-          <div class="container is-primary">
-              {% block content %}
-              {% endblock %}
-          </div>
-        </section>
 
-        <section class="section">
-          <aside class="menu is-hidden-desktop">
-            <p class="menu-label">Opções</p>
-            <ul class="menu-list">
-              <li>
-                <a hx-get="{% url 'schedule' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'schedule' %}" class="is-link">Programação</a>
-              </li>
-              <li>
-                <a hx-get="{% url 'registration' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'registration' %}" class="is-link">Inscrições</a>
-              </li>
-              <li>
-                <a hx-get="{% url 'accommodations' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'accommodations' %}" class="is-link">Hospedagens</a>
-              </li>
-              <li>
-                <a hx-get="{% url 'submissions' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'submissions' %}" class="is-link">Submissões</a>
-              </li>
-              <li>
-                <a hx-get="{% url 'contact' %}" hx-target="main" hx-indicator="#loader" hx-push-url="true" hx-swap="morph" href="{% url 'contact' %}" class="is-link">Contato</a>
-              </li>  
-            </ul>
-          </aside>
-        </section>
-    </main>
-
-    <script src="{% static 'vendor/htmx/htmx.min.js' %}"></script>
-    <script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js"></script>
-
-    {% django_htmx_script %}
     <script src="{% static 'js/bulma.js' %}"></script>
-    {% block js %}
-    {% endblock %}
+    <script src="{% static 'js/capivara.js' %}"></script>
+    {% block js %}{% endblock %}
   </body>
 </html>

@@ -1,5 +1,39 @@
 {% extends base_template %}
+{% load static %}
+
+{% block title %}Sobre · Capivara Tech II{% endblock %}
 
 {% block content %}
-  <h3 class="title is-3">O Seminário Piauiense de Agroecologia</h1>
+<section class="ct-section">
+  <div class="ct-page-head" data-reveal>
+    <div class="ct-eyebrow">// Sobre o evento</div>
+    <h1 class="ct-h2">O Capivara Tech II</h1>
+  </div>
+
+  <div class="ct-two" data-reveal>
+    <div>
+      <p class="ct-lead">O <strong style="color:var(--ct-text);">Capivara Tech</strong> é um evento de tecnologia promovido pelo IFPI Campus São Raimundo Nonato, que reúne estudantes, profissionais, empresas e comunidade para discutir inovação, empreendedorismo e transformação digital.</p>
+      <p class="ct-lead" style="color:var(--ct-muted2);margin-top:18px;">Em sua segunda edição, o evento acontece de <strong style="color:var(--ct-text);">01 a 03 de outubro de 2026</strong>, no coração da Serra da Capivara — região reconhecida mundialmente por sua riqueza histórica e natural — provando que a tecnologia também floresce no sertão.</p>
+      <p class="ct-lead" style="color:var(--ct-muted2);margin-top:18px;">Por meio de palestras, oficinas e atividades de integração, fortalecemos a formação de novos talentos, estimulamos o networking e contribuímos para o desenvolvimento tecnológico de todo o Sul do Piauí.</p>
+    </div>
+    <div>
+      <div class="ct-pillars" style="margin-top:0;">
+        <div class="ct-pillar"><div class="t">Palestras</div><div class="b">Keynotes e talks com nomes de referência do mercado e da academia.</div></div>
+        <div class="ct-pillar"><div class="t">Minicursos</div><div class="b">Mão na massa: oficinas práticas para aplicar o que você aprende.</div></div>
+        <div class="ct-pillar"><div class="t">Networking</div><div class="b">Conexões qualificadas entre estudantes, empresas e profissionais.</div></div>
+        <div class="ct-pillar"><div class="t">Cultura</div><div class="b">Imersão na região da Serra da Capivara e na cena tech do Piauí.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ct-photos" data-reveal>
+    <figure><img src="{% static 'images/evento01.png' %}" alt="Participantes do Capivara Tech" loading="lazy" /></figure>
+    <figure><img src="{% static 'images/evento02.png' %}" alt="Participantes do Capivara Tech" loading="lazy" /></figure>
+    <figure><img src="{% static 'images/evento03.png' %}" alt="Participantes do Capivara Tech" loading="lazy" /></figure>
+  </div>
+
+  <div style="margin-top:48px;" data-reveal>
+    <a href="{% url 'registration' %}" class="ct-btn ct-btn--solid">Garanta sua vaga →</a>
+  </div>
+</section>
 {% endblock %}

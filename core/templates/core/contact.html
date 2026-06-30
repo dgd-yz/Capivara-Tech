@@ -1,8 +1,14 @@
 {% extends base_template %}
 {% load crispy_forms_tags %}
 
+{% block title %}Contato · Capivara Tech II{% endblock %}
+
 {% block content %}
-  <h3 class="title">Contato</h3>
+  <section class="ct-prose">
+  <div class="ct-page-head">
+    <div class="ct-eyebrow">// Fale com a gente</div>
+    <h1 class="ct-h2">Contato</h1>
+  </div>
 
   <form action="{% url 'contact' %}" method="post">
     {% csrf_token %}
@@ -19,4 +25,5 @@
       </p>
     </div>
   </form>
+  </section>
 {% endblock %}

@@ -1,0 +1,40 @@
+{% load static %}
+<footer class="ct-footer">
+  <div class="ct-footer__in">
+    <div class="ct-footer__grid">
+      <div class="ct-footer__brand">
+        <a href="{% url 'home' %}" style="display:inline-flex;align-items:center;gap:12px;">
+          <img src="{% static 'images/capivara-logo.svg' %}" alt="Capivara Tech" />
+          <span class="ct-brand__name">Capivara Tech<span style="color:var(--ct-accent);"> II</span></span>
+        </a>
+        <p>O maior evento sobre tecnologia do Sul do Piauí. Promovido pelo IFPI Campus São Raimundo Nonato.</p>
+      </div>
+
+      <div>
+        <h4>Evento</h4>
+        <div class="ct-footer__links">
+          <a href="{% url 'about' %}">Sobre</a>
+          <a href="{% url 'schedule' %}">Programação</a>
+          <a href="{% url 'registration' %}">Inscrições</a>
+          <a href="{% url 'accommodations' %}">Hospedagens</a>
+          <a href="{% url 'certificates' %}">Certificados</a>
+          <a href="{% url 'gallery' %}">Galeria</a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Redes Sociais</h4>
+        <div class="ct-footer__links">
+          <a href="https://instagram.com/capivaratech" target="_blank" rel="noopener"><span class="ic">◎</span> Instagram · @capivaratech</a>
+          <a href="https://youtube.com" target="_blank" rel="noopener"><span class="ic">▶</span> YouTube · Capivara Tech</a>
+          <a href="{% url 'contact' %}"><span class="ic">✉</span> contato@capivaratech.com.br</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="ct-footer__bar">
+      <span>© 2026 Capivara Tech · IFPI Campus São Raimundo Nonato — PI</span>
+      <span class="mono">01–03.10.2026</span>
+    </div>
+  </div>
+</footer>

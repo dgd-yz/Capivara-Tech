@@ -19,7 +19,7 @@ class BaseModel(models.Model):
 class Activities(models.TextChoices):
     ORIGIN = (
         "ORIGIN",
-        "Povos dos campos, das águas, das florestas: agricultores(as), produtores(as), pescadores(as), indígenas, quilombolas",
+        "Comunidade / entusiasta de tecnologia",
     )
     ESTUDENT = "ESTUDENT", "Estudantes de nível médio e técnico"
     DEGREE = "DEGREE", "Estudantes de curso superior"
@@ -29,40 +29,13 @@ class Activities(models.TextChoices):
 
 
 class Workshops(models.TextChoices):
-    NONE = "0", "Não participarei de Oficina"
-    ONE = (
-        "1",
-        "1. Oficina Sementes da Fartura: Pureza, germinação, manejo, armazenagem e implantação de casas/bancos comunitários de sementes",
-    )
-    TWO = "2", "2. Práticas Agroecológicas (água de vidro, biofertilizantes)"
-    TREE = (
-        "3",
-        "3. Redesenho dos agroecossistemas familiares para a transição agroecológica e o fortalecimento dos sistemas agroalimentares",
-    )
-    FOUR = "4", "4. Introdução à meliponicultura"
-    FIVE = (
-        "5",
-        "5. Introdução aos Sistemas Agroflorestais (SAF) e o uso do SAF na mitigação das mudanças climáticas",
-    )
-    SIX = (
-        "6",
-        "6. Bases gerais da pecuária orgânica e alimentação de aves, bovinos, suínos, caprinos e ovinos no sistema orgânico",
-    )
-    SEVEN = "7", "7. Fontes alternativas para alimentação de aves caipiras"
-    EIGHT = "8", "8. Preparações sustentáveis"
-    NINE = (
-        "9",
-        "9. Agroecologica, cuidado e feminismo",
-    )
-    TEN = (
-        "10",
-        "10. Acesso dos jovens rurais aos espaços decisórios e de diálogo agroecologia",
-    )
-    ELEVEN = "11", "11. Manipulação de plantas bioativas"
-    TWELVE = (
-        "12",
-        "12. Formação de preços de venda de produtos da agricultura familiar",
-    )
+    NONE = "0", "Não participarei de minicurso"
+    ONE = "1", "1. Introdução ao Desenvolvimento Web"
+    TWO = "2", "2. Dados e Python na Prática"
+    THREE = "3", "3. Nuvem e DevOps para Iniciantes"
+    FOUR = "4", "4. Design de Interfaces & Figma"
+    FIVE = "5", "5. Segurança da Informação na Prática"
+    SIX = "6", "6. Construindo APIs com Node.js"
 
 
 class Organization(models.TextChoices):
@@ -110,10 +83,10 @@ class Registration(BaseModel):
     )
 
     workshop = models.CharField(
-        "Oficina",
+        "Minicurso",
         max_length=150,
         choices=Workshops,
-        help_text="Escolha uma das oficinas disponíveis",
+        help_text="Escolha um dos minicursos disponíveis",
         default=Workshops.NONE,
     )
 
