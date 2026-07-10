@@ -12,10 +12,12 @@ WORKDIR /app
 
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt --no-cache-dir
-COPY . . 
+COPY . .
 
-RUN python3 manage.py collectstatic --no-input
+RUN python3 manage.py collectstatic --no-input && \
+    chmod +x docker/entrypoint.sh docker/deploy.sh
 
-EXPOSE ${PORT}  
-ENTRYPOINT ["python3"]
-CMD ["-m", "gunicorn", "-c", "gunicorn.conf.py"]
+EXPOSE ${PORT}
+# entrypoint aplica migrations + collectstatic (papel web) e então roda o CMD
+ENTRYPOINT ["/app/docker/entrypoint.sh"]
+CMD ["python3", "-m", "gunicorn", "-c", "gunicorn.conf.py"]

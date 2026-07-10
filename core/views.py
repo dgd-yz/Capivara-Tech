@@ -2,6 +2,7 @@ from functools import wraps
 
 from django.contrib import messages
 from django.contrib.auth import login
+from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, redirect, render
 from django.urls import reverse
 
@@ -22,6 +23,11 @@ def with_template(view_func):
         return context
 
     return wrapper
+
+
+def health(request):
+    """Endpoint simples para o healthcheck do container/deploy."""
+    return HttpResponse("ok", content_type="text/plain")
 
 
 @with_template

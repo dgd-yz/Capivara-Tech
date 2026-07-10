@@ -6,6 +6,7 @@ from .views import (
     certificates,
     contact,
     gallery,
+    health,
     home,
     letter,
     registration,
@@ -16,6 +17,7 @@ from .views import (
 
 urlpatterns = [
     path("", home, name="home"),
+    path("health/", health, name="health"),
     path("sobre", about, name="about"),
     path("programação", schedule, name="schedule"),
     path("inscrição", registration, name="registration"),
