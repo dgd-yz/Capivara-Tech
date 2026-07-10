@@ -25,6 +25,8 @@ services:
     # Porta 8002 para não colidir com o Baby Tracker (8001) na mesma VPS.
     ports:
       - "127.0.0.1:8002:8000"
+    volumes:
+      - capivara_uploads:/app/uploads
     healthcheck:
       test: ["CMD", "python3", "docker/healthcheck.py"]
       interval: 15s
@@ -45,6 +47,9 @@ services:
       web:
         condition: service_started
     command: ["python3", "manage.py", "db_worker", "--queue-name", "default,pictures"]
+    volumes:
+      - capivara_uploads:/app/uploads
 
 volumes:
   capivara_pgdata:
+  capivara_uploads:

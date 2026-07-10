@@ -17,11 +17,18 @@ Including another URLconf
 
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views.static import serve as media_serve
 
 urlpatterns = [
     path("", include("core.urls")),
     path("admin/", admin.site.urls),
+    # Serve os uploads locais (galeria/imagens) em qualquer ambiente.
+    re_path(
+        r"^uploads/(?P<path>.*)$",
+        media_serve,
+        {"document_root": settings.MEDIA_ROOT},
+    ),
 ]
 
 if settings.DEBUG:

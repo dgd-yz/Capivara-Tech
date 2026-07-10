@@ -87,8 +87,10 @@ Todo `git push` na `main`:
 
 - **Migrations sempre aditivas** — o deploy faz backup antes, mas evite migrations destrutivas.
 - **Worker**: o container `worker` roda `db_worker` (fila de e-mails de contato/inscrição).
-  Sem SMTP configurado no `.env`, os e-mails ficam na fila mas não saem.
-- **Galeria/uploads** usam S3 (`django-storages`). Sem as vars `AWS_*` no `.env`, o site
-  funciona normal; só o upload de imagens no admin/galeria falha.
+- **E-mail**: por padrão usa o backend `console` (não envia, só loga) — nada de serviço externo.
+  Para enviar de verdade, preencha as vars `EMAIL_*` no `.env` (ex.: Gmail com Senha de app,
+  ou Brevo grátis) — veja o `.env.prod.sample`.
+- **Galeria/uploads**: salvos **localmente** na pasta `uploads/`, persistida no volume
+  Docker `capivara_uploads`. O Django serve `/uploads/`. Não precisa de S3.
 - **Rollback**: `git checkout <sha_anterior>` em `~/capivara-tech` e
   `docker compose -f docker-compose.prod.yml up -d --build`. Backups do banco ficam em `backups/`.
