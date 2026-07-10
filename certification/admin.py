@@ -43,14 +43,14 @@ class CertificateAdmin(admin.ModelAdmin):
     def send_certificate_email(self, request, queryset):
         proto = request.scheme
         current_site = get_current_site(request)
-        logo_path = static("images/logo_horizontal_seminario_agroecologia_small.jpg")
+        logo_path = static("images/capivara-logo.svg")
 
         certificates_size = len(queryset)
         certificates = queryset.all()
         for certificate in certificates:
             send_template_mail.enqueue(
                 "certification",
-                subject="V SPA - Certificados Disponíveis",
+                subject="Capivara Tech II - Certificados Disponíveis",
                 to=str(certificate.participant_email),
                 from_email=None,
                 context={
