@@ -67,4 +67,11 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
-          script: DEPLOY_SHA=${{ github.sha }} bash ~/capivara-tech/docker/deploy.sh
+          # Atualiza o repo na VPS ANTES de rodar o script, para sempre
+          # executar a versão mais recente do docker/deploy.sh.
+          script: |
+            set -e
+            cd ~/capivara-tech
+            git fetch --all --prune
+            git checkout -f ${{ github.sha }}
+            DEPLOY_SHA=${{ github.sha }} bash docker/deploy.sh
