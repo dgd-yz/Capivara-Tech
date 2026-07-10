@@ -11,12 +11,6 @@ COMPOSE="docker compose -f docker-compose.prod.yml"
 
 cd "$APP_DIR"
 
-# carrega POSTGRES_* do .env para o pg_dump
-set -a
-# shellcheck disable=SC1091
-[ -f "$APP_DIR/.env" ] && . "$APP_DIR/.env"
-set +a
-
 diagnose_failure() {
   echo "::::::::::::: DEPLOY FALHOU :::::::::::::"
   $COMPOSE ps || true
@@ -35,7 +29,8 @@ echo "==> Backup do Postgres (mantém 14 dias)..."
 mkdir -p backups
 if $COMPOSE ps db 2>/dev/null | grep -q db; then
   TS="$(date +%Y%m%d-%H%M%S)"
-  if $COMPOSE exec -T db pg_dump -U "${POSTGRES_USER:-capivara}" "${POSTGRES_DB:-capivara}" | gzip > "backups/db-${TS}.sql.gz"; then
+  # expande POSTGRES_* DENTRO do container db (não lê o .env no host)
+  if $COMPOSE exec -T db sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' | gzip > "backups/db-${TS}.sql.gz"; then
     echo "backup salvo em backups/db-${TS}.sql.gz"
   else
     echo "aviso: backup não realizado (primeiro deploy?)"
