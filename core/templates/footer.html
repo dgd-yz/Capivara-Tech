@@ -14,6 +14,7 @@
         <h4>Evento</h4>
         <div class="ct-footer__links">
           <a href="{% url 'about' %}">Sobre</a>
+          <a href="{% url 'realization' %}">Realização</a>
           <a href="{% url 'schedule' %}">Programação</a>
           <a href="{% url 'registration' %}">Inscrições</a>
           <a href="{% url 'accommodations' %}">Hospedagens</a>
@@ -29,6 +30,18 @@
           <a href="https://youtube.com" target="_blank" rel="noopener"><span class="ic">▶</span> YouTube · Capivara Tech</a>
           <a href="{% url 'contact' %}"><span class="ic">✉</span> contato@capivaratech.com.br</a>
         </div>
+      </div>
+    </div>
+
+    <div style="margin-top:40px;padding-top:40px;border-top:1px solid var(--ct-border);">
+      <h4>Organização</h4>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+        <a href="{% url 'realization' %}" style="background:#fff;border-radius:10px;padding:8px 14px;display:inline-flex;align-items:center;">
+          <img src="{% static 'images/logo-ifpi-vertical.png' %}" alt="IFPI Campus São Raimundo Nonato" style="height:40px;width:auto;display:block;" />
+        </a>
+        <a href="{% url 'realization' %}" style="background:#fff;border-radius:10px;padding:8px 14px;display:inline-flex;align-items:center;">
+          <img src="{% static 'images/logo-oxentenet.png' %}" alt="OxenteNet" style="height:40px;width:auto;display:block;" />
+        </a>
       </div>
     </div>
 

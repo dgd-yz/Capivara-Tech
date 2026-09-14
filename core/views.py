@@ -41,6 +41,11 @@ def about(request):
 
 
 @with_template
+def realization(request):
+    return {"template": "core/realization.html"}
+
+
+@with_template
 def schedule(request):
     return {"template": "core/schedule.html"}
 
