@@ -241,14 +241,19 @@ a { color: inherit; text-decoration: none; }
 
 /* ============================ stats ===================================== */
 .ct-stats { border-top: 1px solid var(--ct-border); border-bottom: 1px solid var(--ct-border); }
-.ct-stats__grid { max-width: var(--ct-maxw); margin: 0 auto; padding: 0 var(--ct-pad); display: grid; grid-template-columns: repeat(4, 1fr); }
+.ct-stats__grid { max-width: var(--ct-maxw); margin: 0 auto; padding: 0 var(--ct-pad); display: grid; grid-template-columns: repeat(5, 1fr); }
 .ct-stat { padding: 38px 8px; border-left: 1px solid var(--ct-border); }
 .ct-stat:first-child { border-left: 0; }
 .ct-stat .num { font-family: var(--ct-head); font-weight: 800; font-size: 40px; color: var(--ct-accent); line-height: 1; }
 .ct-stat .lab { margin-top: 8px; font-size: 14px; color: var(--ct-muted2); }
+@media (max-width: 900px) {
+  .ct-stats__grid { grid-template-columns: repeat(3, 1fr); }
+  .ct-stat:nth-child(3n+1) { border-left: 0; }
+}
 @media (max-width: 720px) {
   .ct-stats__grid { grid-template-columns: repeat(2, 1fr); }
   .ct-stat:nth-child(odd) { border-left: 0; }
+  .ct-stat:nth-child(3n+1) { border-left: 1px solid var(--ct-border); }
 }
 
 /* ============================ sobre ===================================== */

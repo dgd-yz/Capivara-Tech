@@ -30,12 +30,9 @@ class Activities(models.TextChoices):
 
 class Workshops(models.TextChoices):
     NONE = "0", "Não participarei de minicurso"
-    ONE = "1", "1. Introdução ao Desenvolvimento Web"
-    TWO = "2", "2. Dados e Python na Prática"
-    THREE = "3", "3. Nuvem e DevOps para Iniciantes"
-    FOUR = "4", "4. Design de Interfaces & Figma"
-    FIVE = "5", "5. Segurança da Informação na Prática"
-    SIX = "6", "6. Construindo APIs com Node.js"
+    ONE = "1", "1. Django Girls"
+    TWO = "2", "2. Testes Automatizados"
+    THREE = "3", "3. Desenvolvimento de Games"
 
 
 class Organization(models.TextChoices):
