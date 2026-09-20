@@ -316,13 +316,14 @@ a { color: inherit; text-decoration: none; }
 .ct-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 44px; }
 .ct-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 44px; }
 @media (max-width: 980px) { .ct-grid-4 { grid-template-columns: repeat(2, 1fr); } .ct-grid-3 { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 600px) { .ct-grid-4 { grid-template-columns: 1fr 1fr; } .ct-grid-3 { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .ct-grid-4 { grid-template-columns: 1fr; } .ct-grid-3 { grid-template-columns: 1fr; } }
 
 .ct-speaker { border: 1px solid var(--ct-border); border-radius: 18px; overflow: hidden; background: var(--ct-surface); transition: transform .22s, border-color .22s; }
 .ct-speaker:hover { transform: translateY(-5px); border-color: rgba(217, 137, 63, .5); }
 .ct-speaker__avatar { aspect-ratio: 1 / 1; position: relative; overflow: hidden;
   background: #1b150f url("../images/palestrante.jpg") center top / cover no-repeat; }
 .ct-speaker__avatar span { display: none; }
+@media (max-width: 600px) { .ct-speaker__avatar { aspect-ratio: 4 / 3; background-position: center 30%; } }
 .ct-speaker__body { padding: 20px; }
 .ct-speaker__body .n { font-family: var(--ct-head); font-weight: 700; font-size: 17px; }
 .ct-speaker__body .r { margin-top: 4px; font-size: 13.5px; color: var(--ct-accent); }

@@ -108,7 +108,7 @@
       entries.forEach(function (en) {
         if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0, rootMargin: "0px 0px -10% 0px" });
     els.forEach(function (el) { io.observe(el); });
   }
 
