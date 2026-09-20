@@ -323,11 +323,70 @@ a { color: inherit; text-decoration: none; }
 .ct-speaker__avatar { aspect-ratio: 1 / 1; position: relative; overflow: hidden;
   background: #1b150f url("../images/palestrante.jpg") center top / cover no-repeat; }
 .ct-speaker__avatar span { display: none; }
-@media (max-width: 600px) { .ct-speaker__avatar { aspect-ratio: 4 / 3; background-position: center 30%; } }
 .ct-speaker__body { padding: 20px; }
 .ct-speaker__body .n { font-family: var(--ct-head); font-weight: 700; font-size: 17px; }
 .ct-speaker__body .r { margin-top: 4px; font-size: 13.5px; color: var(--ct-accent); }
 .ct-speaker__body .q { margin-top: 12px; font-size: 13.5px; line-height: 1.5; color: var(--ct-faint); }
+
+/* palestrantes: carrossel — só no celular. Controles e "ler mais" são criados pelo JS e ficam ocultos no desktop. */
+.ct-carousel__controls, .ct-more { display: none; }
+@media (max-width: 600px) {
+  #palestrantes .ct-grid-4 {
+    --ct-slide-w: min(82vw, 340px);
+    display: flex; align-items: stretch; gap: 14px; position: relative;
+    margin: 18px -22px -10px; padding: 26px 0;
+    overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  }
+  #palestrantes .ct-grid-4::-webkit-scrollbar { display: none; }
+  #palestrantes .ct-grid-4::before, #palestrantes .ct-grid-4::after {
+    content: ""; flex: 0 0 max(0px, calc((100vw - var(--ct-slide-w)) / 2 - 14px));
+  }
+  #palestrantes .ct-grid-4:focus-visible { outline: 2px solid var(--ct-accent); outline-offset: -4px; border-radius: 22px; }
+  #palestrantes .ct-speaker { flex: 0 0 var(--ct-slide-w); scroll-snap-align: center; scroll-snap-stop: always; }
+  #palestrantes .ct-speaker__avatar { aspect-ratio: 4 / 3; background-position: center 30%; }
+
+  #palestrantes .ct-grid-4.is-carousel .ct-speaker {
+    opacity: .5; transform: scale(.94);
+    transition: opacity .35s ease, transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+  }
+  #palestrantes .ct-grid-4.is-carousel .ct-speaker.is-active {
+    opacity: 1; transform: none; border-color: rgba(217, 137, 63, .45);
+    box-shadow: 0 12px 28px -14px rgba(0, 0, 0, .7);
+  }
+
+  #palestrantes .ct-speaker__body .q {
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; line-clamp: 5; overflow: hidden;
+  }
+  #palestrantes .ct-speaker.is-open .ct-speaker__body .q { display: block; overflow: visible; -webkit-line-clamp: unset; line-clamp: unset; }
+
+  .ct-more {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 6px 0;
+    background: none; border: 0; cursor: pointer; font: 600 13px var(--ct-sans); color: var(--ct-accent2);
+  }
+  .ct-more::after { content: ""; width: 7px; height: 7px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); transition: transform .25s ease; }
+  .ct-speaker.is-open .ct-more::after { transform: translateY(1px) rotate(-135deg); }
+  .ct-more[hidden] { display: none; }
+  .ct-more:focus-visible, .ct-carousel__btn:focus-visible { outline: 2px solid var(--ct-accent); outline-offset: 3px; border-radius: 8px; }
+
+  .ct-carousel__controls { display: block; margin-top: 16px; }
+  .ct-carousel__ui { display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .ct-carousel__btn {
+    width: 46px; height: 46px; display: grid; place-items: center; padding: 0; cursor: pointer;
+    color: var(--ct-text); background: rgba(29, 24, 19, .6); border: 1px solid rgba(242, 236, 227, .18); border-radius: 50%;
+    transition: background .2s, border-color .2s, opacity .2s, transform .15s;
+  }
+  .ct-carousel__btn:hover { background: rgba(217, 137, 63, .18); border-color: rgba(217, 137, 63, .5); }
+  .ct-carousel__btn:active { transform: scale(.92); }
+  .ct-carousel__btn:disabled { opacity: .3; cursor: default; pointer-events: none; }
+  .ct-carousel__status { min-width: 72px; text-align: center; font-family: var(--ct-mono); font-size: 13px; letter-spacing: .08em; color: var(--ct-muted2); }
+  .ct-carousel__status b { font-weight: 700; color: var(--ct-accent2); }
+  .ct-carousel__bar { height: 3px; max-width: 220px; margin: 16px auto 0; border-radius: 3px; background: var(--ct-border); overflow: hidden; }
+  .ct-carousel__bar > span { display: block; height: 100%; width: var(--p, 0%); border-radius: 3px; background: linear-gradient(90deg, var(--ct-accent), var(--ct-accent2)); transition: width .35s ease; }
+}
+@media (max-width: 600px) and (prefers-reduced-motion: reduce) {
+  #palestrantes .ct-grid-4.is-carousel .ct-speaker, .ct-more::after, .ct-carousel__bar > span { transition: none; }
+}
 
 .ct-course { display: flex; flex-direction: column; padding: 26px; border: 1px solid var(--ct-border); border-radius: 18px; background: var(--ct-surface2); transition: border-color .2s; }
 .ct-course:hover { border-color: rgba(217, 137, 63, .5); }

@@ -169,6 +169,130 @@
     });
   }
 
+  /* ----- speakers carousel (o CSS só aplica o layout de carrossel no celular) ----- */
+  function initSpeakerCarousel() {
+    var track = document.querySelector("#palestrantes .ct-grid-4");
+    if (!track || track.dataset.carousel) return;
+    var slides = Array.prototype.slice.call(track.querySelectorAll(".ct-speaker"));
+    if (slides.length < 2) return;
+    track.dataset.carousel = "1";
+
+    var mq = window.matchMedia("(max-width: 600px)");
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var chevron = function (d) {
+      return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>';
+    };
+    var current = -1;
+
+    track.classList.add("is-carousel");
+    track.setAttribute("role", "region");
+    track.setAttribute("aria-roledescription", "carrossel");
+    track.setAttribute("aria-label", "Palestrantes e instrutores");
+    slides.forEach(function (s, i) {
+      s.setAttribute("role", "group");
+      s.setAttribute("aria-roledescription", "slide");
+      s.setAttribute("aria-label", (i + 1) + " de " + slides.length);
+    });
+
+    var controls = document.createElement("div");
+    controls.className = "ct-carousel__controls";
+    controls.innerHTML =
+      '<div class="ct-carousel__ui">' +
+        '<button type="button" class="ct-carousel__btn" data-dir="-1" aria-label="Palestrante anterior">' + chevron("M15 5l-7 7 7 7") + "</button>" +
+        '<div class="ct-carousel__status" aria-live="polite"><b></b> / ' + slides.length + "</div>" +
+        '<button type="button" class="ct-carousel__btn" data-dir="1" aria-label="Próximo palestrante">' + chevron("M9 5l7 7-7 7") + "</button>" +
+      "</div>" +
+      '<div class="ct-carousel__bar" aria-hidden="true"><span></span></div>';
+    track.parentNode.insertBefore(controls, track.nextSibling);
+    var prev = controls.querySelector('[data-dir="-1"]');
+    var next = controls.querySelector('[data-dir="1"]');
+    var counter = controls.querySelector(".ct-carousel__status b");
+    var bar = controls.querySelector(".ct-carousel__bar");
+
+    /* "Ler mais": bios longas ficam recortadas no celular */
+    var mores = [];
+    slides.forEach(function (s) {
+      var q = s.querySelector(".q");
+      if (!q) return;
+      var btn = document.createElement("button");
+      btn.type = "button"; btn.className = "ct-more"; btn.hidden = true;
+      btn.textContent = "Ler mais"; btn.setAttribute("aria-expanded", "false");
+      q.parentNode.appendChild(btn);
+      btn.addEventListener("click", function () { setOpen(s, !s.classList.contains("is-open")); });
+      mores.push({ slide: s, q: q, btn: btn });
+    });
+    function setOpen(slide, open) {
+      slide.classList.toggle("is-open", open);
+      mores.forEach(function (m) {
+        if (m.slide !== slide) return;
+        m.btn.textContent = open ? "Ler menos" : "Ler mais";
+        m.btn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      if (!open) updateMore();
+    }
+    function updateMore() {
+      mores.forEach(function (m) {
+        if (!mq.matches) { m.slide.classList.remove("is-open"); m.btn.hidden = true; return; }
+        if (m.slide.classList.contains("is-open")) { m.btn.hidden = false; return; }
+        m.btn.hidden = !(m.q.scrollHeight > m.q.clientHeight + 1);
+      });
+    }
+
+    function nearest() {
+      var mid = track.scrollLeft + track.clientWidth / 2, best = 0, bestDist = Infinity;
+      slides.forEach(function (s, i) {
+        var d = Math.abs(s.offsetLeft + s.offsetWidth / 2 - mid);
+        if (d < bestDist) { bestDist = d; best = i; }
+      });
+      return best;
+    }
+    function setActive(i) {
+      if (i === current) return;
+      if (current > -1) setOpen(slides[current], false);
+      current = i;
+      slides.forEach(function (s, k) { s.classList.toggle("is-active", k === i); });
+      counter.textContent = i + 1;
+      bar.style.setProperty("--p", ((i + 1) / slides.length * 100) + "%");
+      prev.disabled = i === 0;
+      next.disabled = i === slides.length - 1;
+    }
+    function goTo(i) {
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      var s = slides[i];
+      var left = s.offsetLeft + s.offsetWidth / 2 - track.clientWidth / 2;
+      if (track.scrollTo) track.scrollTo({ left: left, behavior: reduced ? "auto" : "smooth" });
+      else track.scrollLeft = left;
+    }
+
+    var ticking = false;
+    track.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () { ticking = false; setActive(nearest()); });
+    }, { passive: true });
+    prev.addEventListener("click", function () { goTo(current - 1); });
+    next.addEventListener("click", function () { goTo(current + 1); });
+    track.addEventListener("keydown", function (e) {
+      if (!mq.matches) return;
+      if (e.key === "ArrowRight") { e.preventDefault(); goTo(current + 1); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); goTo(current - 1); }
+      else if (e.key === "Home") { e.preventDefault(); goTo(0); }
+      else if (e.key === "End") { e.preventDefault(); goTo(slides.length - 1); }
+    });
+
+    function sync() {
+      if (mq.matches) track.setAttribute("tabindex", "0"); else track.removeAttribute("tabindex");
+      setActive(nearest());
+      updateMore();
+    }
+    var resizeTimer;
+    window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(sync, 120); });
+    if (mq.addEventListener) mq.addEventListener("change", sync); else if (mq.addListener) mq.addListener(sync);
+    window.addEventListener("load", sync);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(sync);
+    sync();
+  }
+
   function init() {
     initBackground();
     initGlow();
@@ -177,6 +301,7 @@
     initCounters();
     initNav();
     initTabs();
+    initSpeakerCarousel();
   }
 
   if (document.readyState === "loading") {
