@@ -31,7 +31,7 @@ class Activities(models.TextChoices):
 class Workshops(models.TextChoices):
     NONE = "0", "Não participarei de minicurso"
     ONE = "1", "1. Django Girls"
-    TWO = "2", "2. Testes Automatizados"
+    TWO = "2", "2. Teste de Software"
     THREE = "3", "3. Desenvolvimento de Games"
 
 
