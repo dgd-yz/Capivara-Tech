@@ -96,7 +96,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         )
 
     @admin.action(
-        description="Gerar Certificado de Particicação nas Oficinas do Evento"
+        description="Gerar Certificado de Particicação nos Minicursos do Evento"
     )
     def create_certificate_workshop(self, request, queryset):
         qs = queryset.filter(~Q(workshop=Workshops.NONE), confirmated=True)

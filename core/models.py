@@ -106,7 +106,7 @@ class Registration(BaseModel):
                 raise ValidationError(
                     {
                         "workshop": ValidationError(
-                            "Infelizmente não há mais vagas para esta Oficina",
+                            "Infelizmente não há mais vagas para este Minicurso",
                             code="invalid",
                         )
                     }

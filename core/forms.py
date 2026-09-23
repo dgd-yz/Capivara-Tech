@@ -9,6 +9,10 @@ class RegistrationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["workshop"].choices = get_workshops_choices()
+        self.fields["workshop"].help_text = (
+            "Escolha um dos minicursos disponíveis. "
+            "Atenção: o Django Girls é exclusivo para mulheres."
+        )
 
     class Meta:
         model = Registration
