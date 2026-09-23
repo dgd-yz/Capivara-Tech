@@ -487,6 +487,15 @@ a { color: inherit; text-decoration: none; }
 /* messages list (flash) */
 .messages { list-style: none; margin: 0; padding: 0; }
 
+/* inscrição: aviso que aparece ao escolher um minicurso restrito (ex.: Django Girls) */
+.ct-notice { display: flex; align-items: flex-start; gap: 14px; margin: 4px 0 24px; padding: 16px 18px; border: 1px solid rgba(217, 137, 63, .55); border-left-width: 4px; border-radius: 14px; background: rgba(217, 137, 63, .12); color: var(--ct-text); animation: ct-notice-in .35s ease; }
+.ct-notice[hidden] { display: none; }
+.ct-notice__icon { flex: none; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: var(--ct-accent); color: #1b150f; font: 700 15px var(--ct-head); }
+.ct-notice strong { display: block; font-family: var(--ct-head); font-size: 15.5px; color: var(--ct-text); }
+.ct-notice p { margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: var(--ct-muted); }
+@keyframes ct-notice-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ct-notice { animation: none; } }
+
 /* loader colour */
 .loader { border-color: var(--ct-accent); border-bottom-color: transparent; }
 

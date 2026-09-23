@@ -293,6 +293,22 @@
     sync();
   }
 
+  /* ----- inscrição: avisa ao escolher um minicurso restrito (ex.: Django Girls) ----- */
+  function initWorkshopNotice() {
+    var notice = document.querySelector("[data-workshop-notice]");
+    var field = document.getElementById("div_id_workshop");
+    if (!notice || !field || notice.dataset.init) return;
+    notice.dataset.init = "1";
+    field.parentNode.insertBefore(notice, field.nextSibling);
+    var restricted = notice.getAttribute("data-workshop-notice");
+    function sync() {
+      var checked = field.querySelector('input[name="workshop"]:checked');
+      notice.hidden = !(checked && checked.value === restricted);
+    }
+    field.addEventListener("change", sync);
+    sync();
+  }
+
   function init() {
     initBackground();
     initGlow();
@@ -302,6 +318,7 @@
     initNav();
     initTabs();
     initSpeakerCarousel();
+    initWorkshopNotice();
   }
 
   if (document.readyState === "loading") {

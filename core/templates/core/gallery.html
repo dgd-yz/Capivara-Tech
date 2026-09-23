@@ -9,6 +9,7 @@
     <h1 class="ct-h2">Momentos do Capivara Tech</h1>
   </div>
 
+  {% if images %}
   <div class="fixed-grid has-3-cols">
     {% for image in images %}
       <button class="js-modal-trigger" data-target="photo-{{ image.id }}">{% picture image.picture img_alt=image.title img_loading='lazy' picture_class='image' m=4 l=4 %}</button>
@@ -24,5 +25,11 @@
       </div>
     {% endfor %}
   </div>
+  {% else %}
+  <div style="margin-top:32px;padding:28px;border:1px solid var(--ct-border);border-radius:18px;background:var(--ct-surface);">
+    <strong style="font-family:var(--ct-head);font-size:20px;color:var(--ct-text);">Em breve</strong>
+    <p class="ct-lead" style="margin-top:8px;">As fotos do evento estarão disponíveis aqui. Volte em breve para rever os melhores momentos do Capivara Tech.</p>
+  </div>
+  {% endif %}
   </section>
 {% endblock %}

@@ -3,7 +3,7 @@ from functools import wraps
 from django.contrib import messages
 from django.contrib.auth import login
 from django.http import HttpResponse
-from django.shortcuts import get_list_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from certification.models import Certificate
@@ -132,10 +132,9 @@ def letter(request):
 
 @with_template
 def gallery(request):
-    images = get_list_or_404(Image)
     return {
         "template": "core/gallery.html",
-        "images": images,
+        "images": list(Image.objects.all()),
     }
 
 
