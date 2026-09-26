@@ -160,7 +160,7 @@ a { color: inherit; text-decoration: none; }
     border-bottom: 1px solid var(--ct-border);
     max-height: 0; overflow: hidden; transition: max-height .3s ease;
   }
-  .ct-nav__links.is-open { max-height: 460px; }
+  .ct-nav__links.is-open { max-height: 540px; }
   .ct-nav__links a { padding: 15px 24px; border-top: 1px solid var(--ct-border); }
   .ct-nav__cta { border-radius: 0; margin: 10px 24px 16px; justify-content: center; }
 }
@@ -262,6 +262,9 @@ a { color: inherit; text-decoration: none; }
 .ct-pillar { padding: 20px; border: 1px solid var(--ct-border); border-radius: 14px; background: var(--ct-surface); }
 .ct-pillar .t { font-family: var(--ct-head); font-weight: 600; font-size: 16px; color: var(--ct-text); }
 .ct-pillar .b { margin-top: 7px; font-size: 14px; line-height: 1.5; color: var(--ct-faint); }
+.ct-pillars--row { grid-template-columns: repeat(4, 1fr); margin-top: 48px; }
+@media (max-width: 960px) { .ct-pillars--row { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .ct-pillars--row { grid-template-columns: 1fr; } }
 @media (max-width: 860px) { .ct-two { grid-template-columns: 1fr; gap: 30px; } }
 
 /* photo strip */
