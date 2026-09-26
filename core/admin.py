@@ -264,6 +264,7 @@ class WorkshopAdmin(admin.ModelAdmin):
     list_display_links = ("code", "name")
     list_editable = ("capacity", "order", "published")
     search_fields = ("code", "name", "instructors")
+    filter_horizontal = ("speakers",)
 
     def get_readonly_fields(self, request, obj=None):
         return ("code",) if obj else ()

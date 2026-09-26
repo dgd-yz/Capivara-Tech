@@ -46,7 +46,15 @@ def home(request):
     return {
         "template": "core/home.html",
         "speakers": list(Speaker.objects.filter(published=True)),
-        "workshops": list(Workshop.objects.filter(published=True)),
+        "workshops": list(
+            Workshop.objects.filter(published=True).prefetch_related(
+                Prefetch(
+                    "speakers",
+                    queryset=Speaker.objects.filter(published=True),
+                    to_attr="public_speakers",
+                )
+            )
+        ),
         "schedule_days": schedule_days(),
     }
 

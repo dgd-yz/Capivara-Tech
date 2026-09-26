@@ -1,13 +1,13 @@
 {% extends base_template %}
 {% load static %}
 
-{% block title %}Capivara Tech II — O maior evento de tecnologia do Sul do Piauí{% endblock %}
+{% block title %}Capivara Tech II — O maior evento de tecnologia do Território Serra da Capivara{% endblock %}
 
 {% block content %}
 <!-- ============================ HERO ============================ -->
 <header class="ct-hero" id="top">
   <div class="ct-eyebrow"><span class="dot"></span> 2ª Edição · São Raimundo Nonato — PI</div>
-      <h1 class="ct-h1">O maior evento de<br><span class="ct-accent">tecnologia</span> do Sul do Piauí</h1>
+      <h1 class="ct-h1">O maior evento de<br><span class="ct-accent">tecnologia</span> do Território Serra da Capivara</h1>
       <p class="ct-hero__lead">Três dias de imersão em inovação, empreendedorismo e transformação digital — palestras, minicursos e muito networking no coração da Serra da Capivara.</p>
 
       <div class="ct-hero__facts">
@@ -117,7 +117,7 @@
 
     <div class="ct-grid-3" data-reveal>
       {% for w in workshops %}
-      <div class="ct-course"><h3 class="ct-h3">{{ w.title }}</h3>{% if w.instructors %}<div class="ct-course__foot"><span class="av">{{ w.initials }}</span><span class="nm">{{ w.instructors }}</span></div>{% endif %}</div>
+      <div class="ct-course"><h3 class="ct-h3">{{ w.title }}</h3>{% if w.public_speakers or w.display_instructors %}<div class="ct-course__foot">{% if w.public_speakers %}<span class="ct-avs">{% for s in w.public_speakers %}<span class="av av--photo" title="{{ s.name }}"{% if s.photo %} style="background-image:url('{{ s.photo.url }}');"{% endif %}>{% if not s.photo %}{{ s.initials }}{% endif %}</span>{% endfor %}</span>{% else %}<span class="av">{{ w.initials }}</span>{% endif %}<span class="nm">{{ w.display_instructors }}</span></div>{% endif %}</div>
       {% endfor %}
     </div>
   </div>

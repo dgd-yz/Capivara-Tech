@@ -133,6 +133,16 @@ class Workshop(models.Model):
             "ligadas a este minicurso."
         ),
     )
+    speakers = models.ManyToManyField(
+        "Speaker",
+        verbose_name="Quem ministra (fotos no card)",
+        related_name="workshops",
+        blank=True,
+        help_text=(
+            "Escolha quem ministra para mostrar as fotos no card do site. "
+            "Cadastre a pessoa antes em Palestrantes e instrutores."
+        ),
+    )
 
     class Meta:
         ordering = ("order", "id")
@@ -154,6 +164,13 @@ class Workshop(models.Model):
     def initials(self):
         words = (self.instructors or self.name).split()
         return "".join(word[0] for word in words[:2]).upper()
+
+    @property
+    def display_instructors(self):
+        """Texto do card: o campo "Ministrante(s)" ou, se vazio, os nomes de quem ministra."""
+        if self.instructors:
+            return self.instructors
+        return ", ".join(s.name for s in getattr(self, "public_speakers", []))
 
     @property
     def registered(self):
@@ -351,6 +368,10 @@ class Speaker(models.Model):
     @property
     def label(self):
         return " · ".join(part for part in (self.session, self.role) if part)
+
+    @property
+    def initials(self):
+        return "".join(word[0] for word in self.name.split()[:2]).upper()
 
     def save(self, *args, **kwargs):
         if self.photo and not self.photo._committed:

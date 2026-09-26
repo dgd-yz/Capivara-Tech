@@ -299,6 +299,38 @@ class HomeWorkshopsTests(TestCase):
             '<span class="av">BS</span><span class="nm">Bia Souza</span>', html
         )
 
+    def test_card_shows_photos_of_linked_speakers(self):
+        w = Workshop.objects.create(code="1", name="Games", instructors="Equipe")
+        with_photo = Speaker.objects.create(name="Ana Lima", order=1)
+        with_photo.photo.name = "speakers/ana.jpg"  # já existente no disco: só o caminho importa
+        with_photo.save()
+        Speaker.objects.create(name="Bia Souza", order=2)
+        hidden = Speaker.objects.create(name="Carla Dias", order=3, published=False)
+        w.speakers.add(with_photo, Speaker.objects.get(name="Bia Souza"), hidden)
+
+        html = self.client.get("/").content.decode()
+
+        self.assertIn("url('/uploads/speakers/ana.jpg')", html)
+        self.assertIn('title="Ana Lima"', html)
+        self.assertIn(">BS</span>", html)  # sem foto: iniciais
+        self.assertNotIn("Carla Dias", html)
+        self.assertIn('<span class="nm">Equipe</span>', html)
+
+    def test_card_text_falls_back_to_speaker_names(self):
+        w = Workshop.objects.create(code="1", name="Games")
+        w.speakers.add(
+            Speaker.objects.create(name="Ana Lima", order=1),
+            Speaker.objects.create(name="Bia Souza", order=2),
+        )
+
+        html = self.client.get("/").content.decode()
+
+        self.assertIn('<span class="nm">Ana Lima, Bia Souza</span>', html)
+
+    def test_speaker_initials(self):
+        self.assertEqual(Speaker(name="Maria José Souza").initials, "MJ")
+        self.assertEqual(Speaker(name="Ana").initials, "A")
+
     def test_section_is_hidden_without_workshops(self):
         self.assertNotContains(self.client.get("/"), 'id="minicursos"')
 
