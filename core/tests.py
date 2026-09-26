@@ -206,6 +206,7 @@ class WorkshopModelTests(TestCase):
             Registration(workshop="9").get_workshop_name()
 
 
+@override_settings(STORAGES=PLAIN_STORAGES)
 class RegistrationWorkshopTests(TestCase):
     def setUp(self):
         Workshop.objects.all().delete()
@@ -274,6 +275,7 @@ class RegistrationWorkshopTests(TestCase):
         self.assertEqual(workshop_activity("99"), "")
 
 
+@override_settings(STORAGES=PLAIN_STORAGES)
 class HomeWorkshopsTests(TestCase):
     def setUp(self):
         Workshop.objects.all().delete()
@@ -301,6 +303,7 @@ class HomeWorkshopsTests(TestCase):
         self.assertNotContains(self.client.get("/"), 'id="minicursos"')
 
 
+@override_settings(STORAGES=PLAIN_STORAGES)
 class ScheduleTests(TestCase):
     def setUp(self):
         EventDay.objects.all().delete()
@@ -363,6 +366,7 @@ class ScheduleTests(TestCase):
         self.assertContains(response, "será divulgada em breve")
 
 
+@override_settings(STORAGES=PLAIN_STORAGES)
 class WorkshopScheduleAdminTests(TestCase):
     def setUp(self):
         Workshop.objects.all().delete()
