@@ -10,6 +10,45 @@ from django.utils.text import slugify
 from PIL import Image as PILImage
 from PIL import ImageOps
 from pictures.models import PictureField
+from solo.models import SingletonModel
+
+from core.email_templates import validate_email_subject, validate_email_template
+
+
+class EmailSettings(SingletonModel):
+    contact_recipient = models.EmailField(
+        "Receber mensagens de contato em", blank=True,
+        help_text="Se vazio, usa o DEFAULT_FROM_EMAIL configurado no servidor.",
+    )
+    received_subject = models.CharField(
+        "Assunto: inscrição recebida", max_length=255,
+        default="Capivara Tech — inscrição recebida",
+        validators=[validate_email_subject],
+    )
+    received_body = models.TextField(
+        "Mensagem: inscrição recebida",
+        default="Olá, ${nome}!\n\nRecebemos sua inscrição no Capivara Tech.\nMinicurso: ${minicurso}\n\nAguarde a confirmação da organização.\n\nEquipe Capivara Tech",
+        validators=[validate_email_template],
+        help_text="Texto simples. Variáveis: ${nome}, ${email}, ${minicurso}, ${protocolo}. Use $$ para escrever um cifrão.",
+    )
+    confirmed_subject = models.CharField(
+        "Assunto: inscrição confirmada", max_length=255,
+        default="Capivara Tech — inscrição confirmada",
+        validators=[validate_email_subject],
+    )
+    confirmed_body = models.TextField(
+        "Mensagem: inscrição confirmada",
+        default="Olá, ${nome}!\n\nSua inscrição no Capivara Tech foi confirmada!\nMinicurso: ${minicurso}\nProtocolo: ${protocolo}\n\nEsperamos você!\nEquipe Capivara Tech",
+        validators=[validate_email_template],
+        help_text="Texto simples. Variáveis: ${nome}, ${email}, ${minicurso}, ${protocolo}. Use $$ para escrever um cifrão.",
+    )
+
+    def __str__(self):
+        return "Configurações de email"
+
+    class Meta:
+        verbose_name = "Configurações de email"
+        verbose_name_plural = "Configurações de email"
 
 
 class BaseModel(models.Model):
@@ -182,6 +221,13 @@ class Registration(BaseModel):
         help_text="Escolha uma das categorias de organização disponíveis",
         default=Organization.NONE,
     )
+
+    def get_workshop_display(self):
+        """Mesmo papel do método que o Django gerava quando `workshop` tinha `choices`."""
+        if self.workshop == Workshops.NONE:
+            return Workshops.NONE.label
+        workshop = Workshop.objects.filter(code=self.workshop).first()
+        return workshop.choice_label if workshop else self.workshop
 
     def get_workshop_name(self):
         return Workshop.objects.get(code=self.workshop).name

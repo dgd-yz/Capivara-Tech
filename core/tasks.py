@@ -7,6 +7,9 @@ from django.template.loader import render_to_string
 from django_tasks import task
 from weasyprint import HTML
 
+from core.email_templates import render_registration_email
+from core.models import EmailSettings, Registration
+
 
 @task()
 def calculate_meaning_of_life() -> int:
@@ -22,17 +25,30 @@ def calculate_complex_task() -> None:
 
 @task()
 def send_email(
-    subject, message, sender_name, sender_email, to=settings.DEFAULT_FROM_EMAIL
+    subject, message, sender_name, sender_email, to=None
 ):
+    recipient = to or EmailSettings.get_solo().contact_recipient or settings.DEFAULT_FROM_EMAIL
     email = EmailMessage(
         subject,
-        message,
-        f"{sender_name}<{sender_email}>",
-        [to],
+        f"Nome: {sender_name}\nEmail: {sender_email}\n\n{message}",
+        settings.DEFAULT_FROM_EMAIL,
+        [recipient],
         reply_to=[sender_email],
         headers={"Message-ID": f"{uuid.uuid4()}"},
     )
     email.send(fail_silently=False)
+
+
+@task()
+def send_registration_email(registration_id, kind="received"):
+    participant = Registration.objects.get(pk=registration_id)
+    # Não anunciar uma confirmação que foi desfeita antes da execução da task.
+    if kind == "confirmed" and not participant.confirmated:
+        return
+    subject, body = render_registration_email(EmailSettings.get_solo(), participant, kind)
+    EmailMessage(
+        subject, body, settings.DEFAULT_FROM_EMAIL, [participant.email]
+    ).send(fail_silently=False)
 
 
 @task()

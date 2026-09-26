@@ -2,6 +2,7 @@ from functools import wraps
 
 from django.contrib import messages
 from django.contrib.auth import login
+from django.db import transaction
 from django.http import HttpResponse
 from django.db.models import Prefetch
 from django.shortcuts import redirect, render
@@ -9,7 +10,7 @@ from django.urls import reverse
 
 from certification.models import Certificate
 from core.models import EventDay, Image, ScheduleItem, Speaker, Workshop
-from core.tasks import send_email
+from core.tasks import send_email, send_registration_email
 
 from .forms import CertificatesForm, ContactForm, RegistrationForm, UserCreationForm
 
@@ -73,8 +74,10 @@ def registration(request):
         form = RegistrationForm(request.POST)
         context["form"] = form
         if form.is_valid():
-            # send_email.enqueue(subject, message, sender_name, sender_email)
-            form.save()
+            # A inscrição e a task são persistidas juntas no backend de banco.
+            with transaction.atomic():
+                participant = form.save()
+                send_registration_email.enqueue(participant.pk, "received")
             messages.add_message(
                 request,
                 messages.SUCCESS,

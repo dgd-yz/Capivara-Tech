@@ -176,7 +176,7 @@ def import_existing_speakers(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0008_speaker"),
+        ("core", "0009_speaker"),
     ]
 
     operations = [
