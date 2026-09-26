@@ -1,12 +1,18 @@
 from django.contrib import admin, messages
+from django.contrib.admin.views.main import IncorrectLookupParameters
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.forms.models import model_to_dict
+from django.http import HttpResponse
 from django.templatetags.static import static
+from django.urls import path
+from django.utils import timezone
 from django.utils.html import mark_safe
 from django.utils.translation import ngettext
 
 from certification.domain import certificate_create
+from core.attendance import build_attendance_pdf, workshop_activity
 from core.email import send_template_mail
 from core.models import Image, Registration, Workshops
 
@@ -36,6 +42,37 @@ class RegistrationAdmin(admin.ModelAdmin):
         "create_certificate",
         "create_certificate_workshop",
     ]
+
+    change_list_template = "admin/core/registration/change_list.html"
+
+    def get_urls(self):
+        custom_urls = [
+            path(
+                "lista-de-frequencia/",
+                self.admin_site.admin_view(self.attendance_list_view),
+                name="core_registration_attendance",
+            ),
+        ]
+        return custom_urls + super().get_urls()
+
+    def attendance_list_view(self, request):
+        """PDF de lista de frequência com as inscrições confirmadas da listagem (respeita filtros e busca)."""
+        if not self.has_view_permission(request):
+            raise PermissionDenied
+
+        try:
+            registrations = self.get_changelist_instance(request).get_queryset(request)
+        except IncorrectLookupParameters:
+            registrations = self.get_queryset(request)
+        registrations = registrations.filter(confirmated=True)
+
+        activity = workshop_activity(request.GET.get("workshop__exact", ""))
+        pdf = build_attendance_pdf(registrations, activity=activity)
+
+        filename = f"lista-de-frequencia-{timezone.localdate():%Y-%m-%d}.pdf"
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = f'inline; filename="{filename}"'
+        return response
 
     @admin.action(description="Confirmar Inscrição")
     def confirm_registration(self, request, queryset):
