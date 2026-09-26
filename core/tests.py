@@ -392,7 +392,7 @@ class WorkshopScheduleAdminTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Workshop.objects.get().capacity, 20)
 
-    def test_code_is_read_only_and_delete_is_blocked(self):
+    def test_code_is_read_only_after_creation(self):
         w = Workshop.objects.create(code="4", name="Novo")
 
         response = self.client.post(
@@ -410,9 +410,28 @@ class WorkshopScheduleAdminTests(TestCase):
         w.refresh_from_db()
         self.assertEqual((w.code, w.name), ("4", "Renomeado"))
 
+    def test_workshop_without_registrations_can_be_deleted(self):
+        w = Workshop.objects.create(code="4", name="Novo")
+
+        response = self.client.post(
+            f"/admin/core/workshop/{w.pk}/delete/", {"post": "yes"}
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Workshop.objects.filter(pk=w.pk).exists())
+
+    def test_workshop_with_registrations_cannot_be_deleted(self):
+        w = Workshop.objects.create(code="4", name="Novo")
+        Registration.objects.create(**registration_data(workshop="4"))
+
         self.assertEqual(
             self.client.get(f"/admin/core/workshop/{w.pk}/delete/").status_code, 403
         )
+        self.client.post(
+            "/admin/core/workshop/",
+            {"action": "delete_selected", "_selected_action": [w.pk], "post": "yes"},
+        )
+        self.assertTrue(Workshop.objects.filter(pk=w.pk).exists())
 
     def test_changelists_load(self):
         Workshop.objects.create(code="4", name="Novo")
@@ -536,3 +555,80 @@ class RegistrationEmailTests(TestCase):
     def test_existing_contact_tasks_keep_explicit_destination(self):
         send_email.call("Olá", "Mensagem", "Ana", "ana@example.com", "destino@example.com")
         self.assertEqual(mail.outbox[0].to, ["destino@example.com"])
+
+
+@override_settings(
+    STORAGES=PLAIN_STORAGES,
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    DEFAULT_FROM_EMAIL="Capivara Tech <evento@example.com>",
+    TASKS={"default": {"BACKEND": "django_tasks.backends.database.DatabaseBackend", "QUEUES": ["default", "pictures"]}},
+)
+class EmailAndCertificatesWithDatabaseWorkshopsTests(TestCase):
+    """Fluxos de e-mail e certificados (código de outro dev) com minicursos vindos do banco."""
+
+    def setUp(self):
+        Workshop.objects.all().delete()
+        Workshop.objects.create(code="1", name="Django Girls", order=1)
+        Workshop.objects.create(code="2", name="Teste de Software", order=2, published=False)
+        configuration = EmailSettings.get_solo()
+        configuration.received_body = "${minicurso}"
+        configuration.confirmed_body = "${minicurso}"
+        configuration.save()
+        self.model_admin = RegistrationAdmin(Registration, AdminSite())
+
+    def test_email_placeholder_shows_the_workshop_for_every_code(self):
+        expected = {
+            "0": "Não participarei de minicurso",
+            "1": "1. Django Girls",
+            "2": "2. Teste de Software",  # escondido no site, mas a inscrição continua válida
+            "9": "9",  # código sem minicurso cadastrado: não pode derrubar o envio
+        }
+        for code, label in expected.items():
+            with self.subTest(code=code):
+                mail.outbox.clear()
+                participant = Registration.objects.create(
+                    full_name="Ana", email=f"ana{code}@example.com", workshop=code, confirmated=True
+                )
+                send_registration_email.call(participant.pk, "received")
+                send_registration_email.call(participant.pk, "confirmed")
+                self.assertEqual([m.body for m in mail.outbox], [label, label])
+
+    def test_registration_through_the_site_sends_the_receipt_with_the_workshop(self):
+        response = self.client.post(reverse("registration"), {
+            "full_name": "Maria", "email": "maria@example.com",
+            "activity": "ORIGIN", "workshop": "1",
+        })
+        self.assertEqual(response.status_code, 302)
+        result = DBTaskResult.objects.get(task_path="core.tasks.send_registration_email")
+        send_registration_email.call(*result.args_kwargs["args"])
+        self.assertEqual(mail.outbox[0].body, "1. Django Girls")
+
+    def test_confirm_and_resend_actions_work_for_registrations_with_workshops(self):
+        participant = Registration.objects.create(full_name="Ana", email="ana@example.com", workshop="2")
+        with patch.object(self.model_admin, "message_user"):
+            self.model_admin.confirm_registration(None, Registration.objects.all())
+            self.model_admin.resend_registration_email(None, Registration.objects.all())
+        for row in DBTaskResult.objects.all():
+            send_registration_email.call(*row.args_kwargs["args"])
+        self.assertEqual({m.body for m in mail.outbox}, {"2. Teste de Software"})
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertTrue(Registration.objects.get(pk=participant.pk).confirmated)
+
+    def test_certificate_actions_use_the_workshop_name_from_the_database(self):
+        from certification.models import Certificate, CertificationSettings
+
+        CertificationSettings.get_solo()
+        Registration.objects.create(full_name="Geral", email="g@example.com", workshop="0", confirmated=True)
+        Registration.objects.create(full_name="Mini", email="m@example.com", workshop="2", confirmated=True)
+        Registration.objects.create(full_name="Pendente", email="p@example.com", workshop="1")
+        with patch.object(self.model_admin, "message_user"):
+            self.model_admin.create_certificate(None, Registration.objects.all())
+            self.model_admin.create_certificate_workshop(None, Registration.objects.all())
+
+        self.assertEqual(
+            sorted(Certificate.objects.values_list("participant_name", "activity", "workload")),
+            [
+                ("Geral", "V Seminário Piauiense de Agroecologia", 24),
+                ("Mini", "Teste de Software", 8),
+            ],
+        )

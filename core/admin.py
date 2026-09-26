@@ -269,8 +269,11 @@ class WorkshopAdmin(admin.ModelAdmin):
         return ("code",) if obj else ()
 
     def has_delete_permission(self, request, obj=None):
-        # inscrições guardam só o código: apagar deixaria inscritos sem minicurso
-        return False
+        # inscrições guardam só o código: com inscritos, apagar deixaria essas
+        # pessoas sem minicurso (para tirar do ar, desmarque "Exibir no site")
+        if obj is not None and obj.registered:
+            return False
+        return super().has_delete_permission(request, obj)
 
     @admin.display(description="Inscritos")
     def registered_count(self, obj):
