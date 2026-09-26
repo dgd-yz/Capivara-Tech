@@ -1,7 +1,7 @@
 {% extends base_template %}
 {% load static %}
 
-{% block title %}Realização · Capivara Tech II{% endblock %}
+{% block title %}Realização · {{ event.name }}{% endblock %}
 
 {% block content %}
 <section class="ct-section">
@@ -11,13 +11,13 @@
   </div>
 
   <div data-reveal>
-    <p class="ct-lead">O <strong style="color:var(--ct-text);">Capivara Tech</strong> é organizado pelo <strong style="color:var(--ct-text);">IFPI Campus São Raimundo Nonato</strong>, através de seus estudantes e equipe de organização, em parceria com a <strong style="color:var(--ct-text);">OxenteNet</strong>, patrocinadora master da segunda edição.</p>
+    <p class="ct-lead">O <strong style="color:var(--ct-text);">Capivara Tech</strong> é organizado pelo <strong style="color:var(--ct-text);">{{ event.venue }}</strong>, através de seus estudantes e equipe de organização, em parceria com a <strong style="color:var(--ct-text);">OxenteNet</strong>, patrocinadora master da segunda edição.</p>
     <p class="ct-lead" style="color:var(--ct-muted2);margin-top:18px;">Essa realização conjunta viabiliza um evento gratuito, de portas abertas para estudantes, profissionais, empresas e comunidade discutirem inovação, empreendedorismo e transformação digital no Sul do Piauí.</p>
   </div>
 
   <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin-top:48px;" data-reveal>
     <div style="background:#fff;border-radius:20px;padding:36px 48px;display:inline-flex;align-items:center;justify-content:center;max-width:260px;">
-      <img src="{% static 'images/logo-ifpi-vertical.png' %}" alt="IFPI Campus São Raimundo Nonato" style="width:100%;height:auto;display:block;" />
+      <img src="{% static 'images/logo-ifpi-vertical.png' %}" alt="{{ event.venue }}" style="width:100%;height:auto;display:block;" />
     </div>
     <div style="background:#fff;border-radius:20px;padding:36px 48px;display:inline-flex;align-items:center;justify-content:center;max-width:260px;">
       <img src="{% static 'images/logo-oxentenet.png' %}" alt="OxenteNet" style="width:100%;height:auto;display:block;" />

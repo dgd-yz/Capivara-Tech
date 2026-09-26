@@ -1,19 +1,19 @@
 {% extends base_template %}
 {% load static %}
 
-{% block title %}Sobre · Capivara Tech II{% endblock %}
+{% block title %}Sobre · {{ event.name }}{% endblock %}
 
 {% block content %}
 <section class="ct-section">
   <div class="ct-page-head" data-reveal>
     <div class="ct-eyebrow">// Sobre o evento</div>
-    <h1 class="ct-h2">O Capivara Tech II</h1>
+    <h1 class="ct-h2">O {{ event.name }}</h1>
   </div>
 
   <div class="ct-two" data-reveal>
     <div>
-      <p class="ct-lead">O <strong style="color:var(--ct-text);">Capivara Tech</strong> é um evento de tecnologia promovido pelo IFPI Campus São Raimundo Nonato, que reúne estudantes, profissionais, empresas e comunidade para discutir inovação, empreendedorismo e transformação digital.</p>
-      <p class="ct-lead" style="color:var(--ct-muted2);margin-top:18px;">Em sua segunda edição, o evento acontece de <strong style="color:var(--ct-text);">21 a 23 de outubro de 2026</strong>, no coração da Serra da Capivara — região reconhecida mundialmente por sua riqueza histórica e natural — provando que a tecnologia também floresce no sertão.</p>
+      <p class="ct-lead">O <strong style="color:var(--ct-text);">Capivara Tech</strong> é um evento de tecnologia promovido pelo {{ event.venue }}, que reúne estudantes, profissionais, empresas e comunidade para discutir inovação, empreendedorismo e transformação digital.</p>
+      <p class="ct-lead" style="color:var(--ct-muted2);margin-top:18px;">Nesta edição, o evento acontece de <strong style="color:var(--ct-text);">{{ event.date_label }}</strong>, no coração da Serra da Capivara — região reconhecida mundialmente por sua riqueza histórica e natural — provando que a tecnologia também floresce no sertão.</p>
       <p class="ct-lead" style="color:var(--ct-muted2);margin-top:18px;">Por meio de palestras, minicursos e atividades de integração, fortalecemos a formação de novos talentos, estimulamos o networking e contribuímos para o desenvolvimento tecnológico de todo o Sul do Piauí.</p>
     </div>
     <div>

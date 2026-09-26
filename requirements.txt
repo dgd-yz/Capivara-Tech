@@ -19,3 +19,4 @@ django-ckeditor-5
 django-solo
 django-storages[s3]==1.14.6
 django-pictures==1.7.0
+django-extra-settings==0.14.1

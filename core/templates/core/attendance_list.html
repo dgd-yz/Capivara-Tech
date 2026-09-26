@@ -2,12 +2,12 @@
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
-    <title>Lista de Frequência · Capivara Tech II</title>
+    <title>Lista de Frequência · {{ event.name }}</title>
     <style>
       @page {
         size: A4 portrait;
         margin: 13mm 14mm 18mm;
-        @bottom-left { content: "Capivara Tech II · Lista de Frequência"; font-size: 7.5pt; color: #666; }
+        @bottom-left { content: "{{ event.name }} · Lista de Frequência"; font-size: 7.5pt; color: #666; }
         @bottom-right { content: "Página " counter(page) " de " counter(pages); font-size: 7.5pt; color: #666; }
       }
       * { box-sizing: border-box; }
@@ -47,9 +47,9 @@
     <div class="top">
       {% if logo_ifpi %}<img src="{{ logo_ifpi }}" alt="" />{% endif %}
       <div class="titles">
-        <div class="inst">Instituto Federal do Piauí · Campus São Raimundo Nonato</div>
+        <div class="inst">{{ event.venue }}</div>
         <h1>Lista de Frequência</h1>
-        <div class="event">Capivara Tech II</div>
+        <div class="event">{{ event.name }}</div>
       </div>
       {% if logo_capivara %}<img src="{{ logo_capivara }}" alt="" />{% endif %}
     </div>
@@ -57,7 +57,7 @@
     <table class="info">
       <tr>
         <td class="k">Evento:</td>
-        <td>Capivara Tech II — 21 a 23 de outubro de 2026</td>
+        <td>{{ event.name }} — {{ event.date_label }}</td>
         <td class="k">Data:</td>
         <td><span class="blank"></span></td>
       </tr>

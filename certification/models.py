@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.core.validators import MaxValueValidator
 from django.urls import reverse
 from django.utils.timezone import now
 from django_ckeditor_5.fields import CKEditor5Field
@@ -23,13 +24,13 @@ CerticateTemplate = """
 """
 
 CertificateHelpText = f"""<h3>Variáveis Disponíveis:</h3><br />
-<b>{{Nome_Participante}}</b> Nome Completo do Participante.<br />
-<b>{{Atividade}}</b> Nome da Atividade.<br />
-<b>{{Carga_Horaria}}</b> Carga Horária da Atividade.<br />
-<b>{{Local_de_Emissão}}</b> Localização do Evento.<br />
-<b>{{Data_de_Emissão}}</b> Data de Emissão do Certificado.<br />
-<b>{{Nome_Certificador}}</b> Nome Completo do Certificador.<br />
-<b>{{Cargo_Certificador}}</b> Cargo/Função do Certificador.<br />
+<b>{{{{Nome_Participante}}}}</b> Nome Completo do Participante.<br />
+<b>{{{{Atividade}}}}</b> Nome da Atividade.<br />
+<b>{{{{Carga_Horaria}}}}</b> Carga Horária da Atividade.<br />
+<b>{{{{Local_de_Emissão}}}}</b> Localização do Evento.<br />
+<b>{{{{Data_de_Emissão}}}}</b> Data de Emissão do Certificado.<br />
+<b>{{{{Nome_Certificador}}}}</b> Nome Completo do Certificador.<br />
+<b>{{{{Cargo_Certificador}}}}</b> Cargo/Função do Certificador.<br />
 <hr />
 <b>Exemplo:</b><br />
 {CerticateTemplate}
@@ -64,7 +65,14 @@ class CertificationSettings(SingletonModel):
         "Imagem de Fundo",
         upload_to="settings",
         default="",
+        blank=True,
+        help_text="Fundo A4 horizontal (proporção 297 × 210). Opcional.",
     )
+
+    margin_top = models.PositiveSmallIntegerField("Margem superior do texto (mm)", default=50, validators=[MaxValueValidator(100)])
+    margin_bottom = models.PositiveSmallIntegerField("Margem inferior do texto (mm)", default=45, validators=[MaxValueValidator(100)])
+    margin_left = models.PositiveSmallIntegerField("Margem esquerda do texto (mm)", default=25, validators=[MaxValueValidator(100)])
+    margin_right = models.PositiveSmallIntegerField("Margem direita do texto (mm)", default=25, validators=[MaxValueValidator(100)])
 
     default_text = CKEditor5Field(
         "Texto do Certificado",
@@ -80,6 +88,10 @@ class CertificationSettings(SingletonModel):
 
 
 class Certificate(models.Model):
+    background_image = models.ImageField(
+        "Imagem de fundo", upload_to="certificates", blank=True,
+        help_text="Copiada das configurações ao gerar. Se vazia, usa o fundo atual das configurações.",
+    )
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,

@@ -1,18 +1,18 @@
 {% extends base_template %}
 {% load static %}
 
-{% block title %}Capivara Tech II — O maior evento de tecnologia do Território Serra da Capivara{% endblock %}
+{% block title %}{{ event.name }} — O maior evento de tecnologia do Território Serra da Capivara{% endblock %}
 
 {% block content %}
 <!-- ============================ HERO ============================ -->
 <header class="ct-hero" id="top">
-  <div class="ct-eyebrow"><span class="dot"></span> 2ª Edição · São Raimundo Nonato — PI</div>
+  <div class="ct-eyebrow"><span class="dot"></span> {{ event.edition }} · {{ event.city }}</div>
       <h1 class="ct-h1">O maior evento de<br><span class="ct-accent">tecnologia</span> do Território Serra da Capivara</h1>
-      <p class="ct-hero__lead">Três dias de imersão em inovação, empreendedorismo e transformação digital — palestras, minicursos e muito networking no coração da Serra da Capivara.</p>
+      <p class="ct-hero__lead">{{ event.hero_description }}</p>
 
       <div class="ct-hero__facts">
-        <div class="ct-fact"><span class="k">Data</span><span class="v">21–23 Outubro 2026</span></div>
-        <div class="ct-fact"><span class="k">Local</span><span class="v">IFPI Campus São Raimundo Nonato</span></div>
+        <div class="ct-fact"><span class="k">Data</span><span class="v">{{ event.date_label }}</span></div>
+        <div class="ct-fact"><span class="k">Local</span><span class="v">{{ event.venue }}</span></div>
       </div>
 
   <div class="ct-hero__cta">
@@ -24,11 +24,11 @@
 <!-- ============================ STATS ============================ -->
 <section class="ct-stats">
   <div class="ct-stats__grid">
-    <div class="ct-stat" data-reveal><div class="num" data-count="3">3</div><div class="lab">dias de imersão</div></div>
+    <div class="ct-stat" data-reveal><div class="num" data-count="{{ event.duration_days }}">{{ event.duration_days }}</div><div class="lab">dias de imersão</div></div>
     <div class="ct-stat" data-reveal><div class="num" data-count="{{ speakers|length }}">{{ speakers|length }}</div><div class="lab">palestrantes &amp; instrutores</div></div>
-    <div class="ct-stat" data-reveal><div class="num" data-count="5">5</div><div class="lab">palestras &amp; keynotes</div></div>
-    <div class="ct-stat" data-reveal><div class="num" data-count="3">3</div><div class="lab">minicursos práticos</div></div>
-    <div class="ct-stat" data-reveal><div class="num" data-count="+200">+200</div><div class="lab">participantes esperados</div></div>
+    <div class="ct-stat" data-reveal><div class="num" data-count="{{ talks_count }}">{{ talks_count }}</div><div class="lab">palestras &amp; keynotes</div></div>
+    <div class="ct-stat" data-reveal><div class="num" data-count="{{ workshops|length }}">{{ workshops|length }}</div><div class="lab">minicursos práticos</div></div>
+    <div class="ct-stat" data-reveal><div class="num" data-count="{{ event.expected_participants }}">{{ event.expected_participants }}</div><div class="lab">participantes esperados</div></div>
   </div>
 </section>
 
@@ -40,7 +40,7 @@
       <h2 class="ct-h2">Onde a tecnologia encontra o sertão</h2>
     </div>
     <div>
-      <p class="ct-lead">O Capivara Tech II é um evento de tecnologia promovido pelo <strong style="color:var(--ct-text);">IFPI Campus São Raimundo Nonato</strong>, que reúne estudantes, profissionais, empresas e comunidade para discutir inovação, empreendedorismo e transformação digital.</p>
+      <p class="ct-lead">O {{ event.name }} é um evento de tecnologia promovido pelo <strong style="color:var(--ct-text);">{{ event.venue }}</strong>, que reúne estudantes, profissionais, empresas e comunidade para discutir inovação, empreendedorismo e transformação digital.</p>
       <p class="ct-lead" style="color:var(--ct-muted2);margin-top:18px;">Por meio de palestras, minicursos e atividades de integração, o evento fortalece a formação de novos talentos, estimula o networking e contribui para o desenvolvimento tecnológico da região.</p>
     </div>
   </div>
@@ -143,7 +143,7 @@
     <div class="ct-cta__in">
       <div class="ct-eyebrow">Inscrições abertas</div>
       <h2>Faça parte da segunda edição</h2>
-      <p>21 a 23 de outubro de 2026, no IFPI Campus São Raimundo Nonato. Vagas limitadas — garanta a sua.</p>
+      <p>{{ event.date_label }}, no {{ event.venue }}. Vagas limitadas — garanta a sua.</p>
       <a href="{% url 'registration' %}" class="ct-btn ct-btn--dark" style="margin-top:30px;">Quero me inscrever →</a>
     </div>
   </div>

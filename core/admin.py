@@ -14,6 +14,7 @@ from solo.admin import SingletonModelAdmin
 from certification.domain import certificate_create
 from core.attendance import build_attendance_pdf, workshop_activity
 from core.forms import RegistrationAdminForm
+from core.event_config import get_event_config
 from core.models import (
     EmailSettings,
     EventDay,
@@ -151,14 +152,15 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     @admin.action(description="Gerar Certificado de Particicação do Evento (Geral)")
     def create_certificate(self, request, queryset):
-        qs = queryset.filter(confirmated=True, workshop=Workshops.NONE)
+        event = get_event_config()
+        qs = queryset.filter(confirmated=True)
         participants_size = len(qs)
         participants = qs.all()
         for participant in participants:
             participant_name = participant.full_name
             participant_email = participant.email
-            activity = "V Seminário Piauiense de Agroecologia"
-            workload = 24
+            activity = event["name"]
+            workload = event["workload"]
             certificate_create(participant_name, participant_email, activity, workload)
 
         self.message_user(
@@ -183,7 +185,7 @@ class RegistrationAdmin(admin.ModelAdmin):
             participant_name = participant.full_name
             participant_email = participant.email
             activity = participant.get_workshop_name()
-            workload = 8
+            workload = Workshop.objects.get(code=participant.workshop).workload
             certificate_create(participant_name, participant_email, activity, workload)
 
         self.message_user(

@@ -1,5 +1,9 @@
 # SPA 2025
 
+Veja a [revisão de configurações e certificados](docs/revisao-configuracoes-e-certificados.md)
+para configurar o evento no admin, inserir imagens nos certificados e implantar
+as migrations. O documento também lista o conteúdo legado que ainda precisa de revisão.
+
 ## To run
 
 1. Copy .env.sample to .env

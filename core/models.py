@@ -89,6 +89,7 @@ class Organization(models.TextChoices):
 
 
 class Workshop(models.Model):
+    workload = models.PositiveSmallIntegerField("Carga horária do certificado (horas)", default=8)
     code = models.CharField(
         "Código",
         max_length=10,

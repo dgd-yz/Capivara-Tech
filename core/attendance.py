@@ -8,6 +8,7 @@ from django.utils import timezone
 from weasyprint import HTML
 
 from core.models import Workshop, Workshops
+from core.event_config import get_event_config
 
 
 def _sort_key(name):
@@ -39,6 +40,7 @@ def build_attendance_pdf(registrations, activity=""):
         "core/attendance_list.html",
         {
             "registrations": rows,
+            "event": get_event_config(),
             "total": len(rows),
             "activity": activity,
             "generated_at": timezone.localtime(),

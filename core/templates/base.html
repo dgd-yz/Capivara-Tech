@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#15110d" />
-    <meta name="description" content="Capivara Tech II — o maior evento de tecnologia do Território Serra da Capivara. 21 a 23 de outubro de 2026, IFPI Campus São Raimundo Nonato." />
+    <meta name="description" content="{{ event.name }} — o maior evento de tecnologia do Território Serra da Capivara. {{ event.date_label }}, {{ event.venue }}." />
 
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <link rel="stylesheet" href="{% static 'css/capivara.css' %}" />
 
-    <title>{% block title %}Capivara Tech II — Tecnologia, Criatividade e Inovação{% endblock %}</title>
+    <title>{% block title %}{{ event.name }} — Tecnologia, Criatividade e Inovação{% endblock %}</title>
     {% block css %}{% endblock %}
   </head>
   <body>

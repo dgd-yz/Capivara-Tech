@@ -433,6 +433,7 @@ class WorkshopScheduleAdminTests(TestCase):
                 "name": "Novo",
                 "instructors": "Fulano",
                 "capacity": "20",
+                "workload": "8",
                 "order": "40",
                 "published": "on",
             },
@@ -451,6 +452,7 @@ class WorkshopScheduleAdminTests(TestCase):
                 "name": "Renomeado",
                 "instructors": "",
                 "capacity": "30",
+                "workload": "8",
                 "order": "0",
                 "published": "on",
             },
@@ -707,7 +709,8 @@ class EmailAndCertificatesWithDatabaseWorkshopsTests(TestCase):
         self.assertEqual(
             sorted(Certificate.objects.values_list("participant_name", "activity", "workload")),
             [
-                ("Geral", "V Seminário Piauiense de Agroecologia", 24),
+                ("Geral", "Capivara Tech II", 24),
+                ("Mini", "Capivara Tech II", 24),
                 ("Mini", "Teste de Software", 8),
             ],
         )

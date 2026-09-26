@@ -1,6 +1,6 @@
 Certificados
 
-Parabéns {{ participant_name }}! Seu certificado de participação no Capivara Tech II já está disponível no link abaixo.
+Parabéns {{ participant_name }}! Seu certificado de participação no {{ event_name }} já está disponível no link abaixo.
 
 {{ proto }}://{{ domain }}{% url 'certificate_detail' uuid=uuid %}
 

@@ -15,6 +15,7 @@ from pathlib import Path
 import dj_database_url
 from decouple import config
 from django.contrib.messages import constants as messages
+from core.event_config import EVENT_DEFAULTS
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -42,6 +43,7 @@ ALLOWED_HOSTS = config(
 
 INSTALLED_APPS = [
     "core",
+    "extra_settings",
     "certification",
     "pictures",
     "solo",
@@ -85,6 +87,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.event_config.event_context",
             ],
         },
     },
@@ -338,10 +341,19 @@ CKEDITOR_5_CONFIGS = {
                 "italic",
                 "Alignment",
                 "sourceEditing",
+                "imageUpload",
             ],
+        },
+        "image": {
+            "toolbar": ["imageTextAlternative", "imageStyle:alignLeft", "imageStyle:alignCenter", "imageStyle:alignRight", "resizeImage"],
+            "styles": ["alignLeft", "alignCenter", "alignRight"],
         },
     },
 }
+
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
+EXTRA_SETTINGS_DEFAULTS = EVENT_DEFAULTS
+EXTRA_SETTINGS_VERBOSE_NAME = "Configurações do evento"
 
 PICTURES = {
     "USE_PLACEHOLDERS": False,

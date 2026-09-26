@@ -6,6 +6,7 @@ from django.utils.formats import date_format
 from weasyprint import HTML
 
 from .models import Certificate, CertificationSettings
+from .rendering import certificate_url_fetcher, image_data_uri
 
 
 def certificate_detail(request, uuid):
@@ -27,18 +28,21 @@ def certificate_detail(request, uuid):
         )
     )
 
-    certification_settings = CertificationSettings.objects.get()
+    certification_settings = CertificationSettings.get_solo()
 
     html_string = render_to_string(
         "certification/certification.html",
         {
-            "background": certification_settings.default_background_image,
+            "background_url": image_data_uri(certificate.background_image or certification_settings.default_background_image),
+            "layout": certification_settings,
+            "participant_name": certificate.participant_name,
             "text": text_rendered,
             "uri": request.build_absolute_uri(),
         },
     )
 
-    html = HTML(string=html_string, base_url=request.build_absolute_uri())
+    base_url = request.build_absolute_uri("/")
+    html = HTML(string=html_string, base_url=base_url, url_fetcher=certificate_url_fetcher(base_url))
 
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = "inline; filename=certificado.pdf"

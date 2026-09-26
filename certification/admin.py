@@ -10,6 +10,7 @@ from django.utils.html import mark_safe
 from solo.admin import SingletonModelAdmin
 
 from certification.email import send_template_mail
+from core.event_config import get_event_config
 
 from .models import Certificate, CertificationSettings
 
@@ -50,10 +51,11 @@ class CertificateAdmin(admin.ModelAdmin):
         for certificate in certificates:
             send_template_mail.enqueue(
                 "certification",
-                subject="Capivara Tech II - Certificados Disponíveis",
+                subject=f"{get_event_config()['name']} - Certificados Disponíveis",
                 to=str(certificate.participant_email),
                 from_email=None,
                 context={
+                    "event_name": get_event_config()["name"],
                     "participant_name": certificate.participant_name,
                     "uuid": str(certificate.uuid),
                     "logo_path": logo_path,
@@ -76,14 +78,16 @@ class CertificateAdmin(admin.ModelAdmin):
     def get_form(
         self,
         request: HttpRequest,
-        obj: Any | None = ...,
-        change: bool = ...,
+        obj: Any | None = None,
+        change: bool = False,
         **kwargs: Any,
     ) -> type[ModelForm]:
         form = super().get_form(request, obj, change, **kwargs)
-        certification_settings = CertificationSettings.objects.get()
+        if obj is not None:
+            return form
+        certification_settings = CertificationSettings.get_solo()
         bf = form.base_fields
-        bf["workload"].initial = 1
+        bf["workload"].initial = get_event_config()["workload"]
         bf["location"].initial = certification_settings.default_location
         bf["date"].initial = certification_settings.default_date
         bf["certifier_name"].initial = certification_settings.default_certifier_name
@@ -91,4 +95,5 @@ class CertificateAdmin(admin.ModelAdmin):
             "certifier_position"
         ].initial = certification_settings.default_certifier_position
         bf["text"].initial = certification_settings.default_text
+        bf["background_image"].initial = certification_settings.default_background_image
         return form

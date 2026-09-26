@@ -1,11 +1,11 @@
 {% load static %}
 {% load qr_code %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Certificado - {{ participant.full_name }}</title>
+    <title>Certificado - {{ participant_name }}</title>
     <style>
       * {
         padding: 0;
@@ -16,6 +16,7 @@
       @page {
         size: A4 landscape;
         margin: 0;
+        {% if background_url %}background: url('{{ background_url }}') center / 297mm 210mm no-repeat;{% endif %}
       }
       
       body {
@@ -30,43 +31,35 @@
         padding: 0;
       }
       
-      p {
-        & .text-tiny {
-          font-size: 0.7em;
-        }
-      
-        & .text-small {
-          font-size: 0.85em;
-        }
-      
-        & .text-big {
-          font-size: 1.4em;
-        }
-      
-        & .text-huge {
-          font-size: 1.8em;
-        }
+      .text-tiny { font-size: 0.7em; }
+      .text-small { font-size: 0.85em; }
+      .text-big { font-size: 1.4em; }
+      .text-huge { font-size: 1.8em; }
+      .certificate-text {
+        margin: {{ layout.margin_top }}mm {{ layout.margin_right }}mm {{ layout.margin_bottom }}mm {{ layout.margin_left }}mm;
+        font-size: 16pt;
+        line-height: 1.5;
       }
-      
-      img {
-        width: 100%;
-      }
-      
-      div {
-        margin: 25% 350px 25% 5em;
-      }
+      .certificate-text p { margin: 0 0 4mm; }
+      .certificate-text img { max-width: 100%; height: auto; }
+      .certificate-text figure.image { margin: 3mm auto; }
+      .certificate-text figure.image img { width: 100%; }
+      .certificate-text .image-style-align-left { float: left; margin-right: 5mm; }
+      .certificate-text .image-style-align-right { float: right; margin-left: 5mm; }
+      .validation { position: fixed; bottom: 8mm; left: 15mm; font-size: 8pt; text-align: left; }
+      .validation svg { width: 20mm; height: 20mm; }
     </style>
   </head>
-  <body style="background-image: url('{{ background.url }}');">
-    <div>
+  <body>
+    <div class="certificate-text">
       {{ text }}
-      <p style="text-align: left; font-size: smaller; position:fixed; bottom: 2rem;">
+    </div>
+      <div class="validation">
         {% qr_from_text uri size='T' %}
         <br />
         Para validar esse certificado acesse:
         <br />
         <a href="{{ uri }}">{{ uri }}</a>
-      </p>
-    </div>
+      </div>
   </body>
 </html>

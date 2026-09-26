@@ -23,6 +23,7 @@ from django.views.static import serve as media_serve
 urlpatterns = [
     path("", include("core.urls")),
     path("admin/", admin.site.urls),
+    path("ckeditor5/", include("django_ckeditor_5.urls")),
     # Serve os uploads locais (galeria/imagens) em qualquer ambiente.
     re_path(
         r"^uploads/(?P<path>.*)$",

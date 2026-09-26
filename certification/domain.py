@@ -2,7 +2,7 @@ from .models import Certificate, CertificationSettings
 
 
 def certificate_create(participant_name, participant_email, activity, workload):
-    cs = CertificationSettings.objects.get()
+    cs = CertificationSettings.get_solo()
     location = cs.default_location
     date = cs.default_date
     certifier_name = cs.default_certifier_name
@@ -26,6 +26,7 @@ def certificate_create(participant_name, participant_email, activity, workload):
             certifier_name=certifier_name,
             certifier_position=certifier_position,
             text=text,
+            background_image=cs.default_background_image.name,
         )
         return ce
     return certificates[0]

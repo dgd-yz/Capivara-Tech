@@ -2,7 +2,7 @@
 <nav class="ct-nav">
   <a class="ct-brand" href="{% url 'home' %}">
     <img src="{% static 'images/capivara-logo.svg' %}" alt="Capivara Tech" />
-    <span class="ct-brand__name">Capivara&nbsp;Tech<span>&nbsp;II</span></span>
+    <span class="ct-brand__name">{{ event.name }}</span>
   </a>
 
   <button id="ct-burger" class="ct-burger" aria-label="Abrir menu" type="button">

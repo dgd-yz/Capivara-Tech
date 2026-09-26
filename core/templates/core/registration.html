@@ -1,13 +1,13 @@
 {% extends base_template %}
 {% load crispy_forms_tags %}
 
-{% block title %}Inscrições · Capivara Tech II{% endblock %}
+{% block title %}Inscrições · {{ event.name }}{% endblock %}
 
 {% block content %}
   <section class="ct-prose">
     <div class="ct-page-head">
       <div class="ct-eyebrow">// Inscrições abertas</div>
-      <h1 class="ct-h2">Garanta sua vaga no Capivara Tech II</h1>
+      <h1 class="ct-h2">Garanta sua vaga no {{ event.name }}</h1>
     </div>
 
     <article class="message is-info has-text-justified">
@@ -17,7 +17,7 @@
       <div class="message-body">
         <p>As inscrições são gratuitas a partir do preenchimento do formulário abaixo.</p>
         <p>Cada participante poderá se inscrever em um minicurso, também gratuito. Vagas limitadas por turma.</p>
-        <p>O evento acontece de 21 a 23 de outubro de 2026, no IFPI Campus São Raimundo Nonato — PI.</p>
+        <p>O evento acontece de {{ event.date_label }}, no {{ event.venue }} — PI.</p>
         <p><strong>Atenção:</strong> o minicurso Django Girls é exclusivo para mulheres.</p>
         <p>Traga seu notebook: todos os minicursos são mão na massa.</p>
       </div>
