@@ -3,6 +3,45 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.db import models
 from pictures.models import PictureField
+from solo.models import SingletonModel
+
+from core.email_templates import validate_email_subject, validate_email_template
+
+
+class EmailSettings(SingletonModel):
+    contact_recipient = models.EmailField(
+        "Receber mensagens de contato em", blank=True,
+        help_text="Se vazio, usa o DEFAULT_FROM_EMAIL configurado no servidor.",
+    )
+    received_subject = models.CharField(
+        "Assunto: inscrição recebida", max_length=255,
+        default="Capivara Tech — inscrição recebida",
+        validators=[validate_email_subject],
+    )
+    received_body = models.TextField(
+        "Mensagem: inscrição recebida",
+        default="Olá, ${nome}!\n\nRecebemos sua inscrição no Capivara Tech.\nMinicurso: ${minicurso}\n\nAguarde a confirmação da organização.\n\nEquipe Capivara Tech",
+        validators=[validate_email_template],
+        help_text="Texto simples. Variáveis: ${nome}, ${email}, ${minicurso}, ${protocolo}. Use $$ para escrever um cifrão.",
+    )
+    confirmed_subject = models.CharField(
+        "Assunto: inscrição confirmada", max_length=255,
+        default="Capivara Tech — inscrição confirmada",
+        validators=[validate_email_subject],
+    )
+    confirmed_body = models.TextField(
+        "Mensagem: inscrição confirmada",
+        default="Olá, ${nome}!\n\nSua inscrição no Capivara Tech foi confirmada!\nMinicurso: ${minicurso}\nProtocolo: ${protocolo}\n\nEsperamos você!\nEquipe Capivara Tech",
+        validators=[validate_email_template],
+        help_text="Texto simples. Variáveis: ${nome}, ${email}, ${minicurso}, ${protocolo}. Use $$ para escrever um cifrão.",
+    )
+
+    def __str__(self):
+        return "Configurações de email"
+
+    class Meta:
+        verbose_name = "Configurações de email"
+        verbose_name_plural = "Configurações de email"
 
 
 class BaseModel(models.Model):
