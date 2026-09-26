@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from django_tasks import task
 from weasyprint import HTML
 
+from core.email import build_text_mail
 from core.email_templates import render_registration_email
 from core.models import DEFAULT_CONTACT_RECIPIENT, EmailSettings, Registration
 
@@ -27,10 +28,9 @@ def send_email(
     subject, message, sender_name, sender_email, to=None
 ):
     recipient = to or EmailSettings.get_solo().contact_recipient or DEFAULT_CONTACT_RECIPIENT
-    email = EmailMessage(
+    email = build_text_mail(
         subject,
         f"Nome: {sender_name}\nEmail: {sender_email}\n\n{message}",
-        settings.DEFAULT_FROM_EMAIL,
         [recipient],
         reply_to=[sender_email],
     )
@@ -44,8 +44,8 @@ def send_registration_email(registration_id, kind="received"):
     if kind == "confirmed" and not participant.confirmated:
         return
     subject, body = render_registration_email(EmailSettings.get_solo(), participant, kind)
-    EmailMessage(
-        subject, body, settings.DEFAULT_FROM_EMAIL, [participant.email]
+    build_text_mail(
+        subject, body, [participant.email]
     ).send(fail_silently=False)
 
 
