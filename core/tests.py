@@ -336,6 +336,23 @@ class HomeWorkshopsTests(TestCase):
 
 
 @override_settings(STORAGES=PLAIN_STORAGES)
+class SiteLayoutTests(TestCase):
+    def test_navbar_has_a_link_back_to_the_home_page(self):
+        html = self.client.get("/programação").content.decode()
+
+        self.assertIn('<a href="/">Principal</a>', html)
+
+    def test_footer_does_not_show_the_contact_email(self):
+        self.assertNotContains(self.client.get("/"), "contato@capivaratech.com.br")
+
+    def test_about_cards_sit_in_a_row_below_the_intro(self):
+        html = self.client.get("/").content.decode()
+
+        self.assertIn("ct-pillars ct-pillars--row", html)
+        self.assertEqual(html.count('class="ct-pillar"'), 4)
+
+
+@override_settings(STORAGES=PLAIN_STORAGES)
 class ScheduleTests(TestCase):
     def setUp(self):
         EventDay.objects.all().delete()
