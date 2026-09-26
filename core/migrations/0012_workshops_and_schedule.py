@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0010_import_existing_speakers'),
+        ('core', '0011_import_existing_speakers'),
     ]
 
     operations = [

@@ -14,11 +14,14 @@ from solo.models import SingletonModel
 
 from core.email_templates import validate_email_subject, validate_email_template
 
+DEFAULT_CONTACT_RECIPIENT = "contato@sistemasparainternet.com"
+
 
 class EmailSettings(SingletonModel):
     contact_recipient = models.EmailField(
         "Receber mensagens de contato em", blank=True,
-        help_text="Se vazio, usa o DEFAULT_FROM_EMAIL configurado no servidor.",
+        default=DEFAULT_CONTACT_RECIPIENT,
+        help_text="Se vazio, envia para contato@sistemasparainternet.com.",
     )
     received_subject = models.CharField(
         "Assunto: inscrição recebida", max_length=255,

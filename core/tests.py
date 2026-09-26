@@ -176,7 +176,7 @@ class WorkshopModelTests(TestCase):
 
     def test_seed_migration_has_the_original_workshops(self):
         seed = import_module(
-            "core.migrations.0012_import_existing_workshops_and_schedule"
+            "core.migrations.0013_import_existing_workshops_and_schedule"
         )
         self.assertEqual(
             [(w["code"], w["name"]) for w in seed.WORKSHOPS],
@@ -556,6 +556,13 @@ class RegistrationEmailTests(TestCase):
         send_email.call("Olá", "Mensagem", "Ana", "ana@example.com", "destino@example.com")
         self.assertEqual(mail.outbox[0].to, ["destino@example.com"])
 
+    def test_contact_with_empty_setting_uses_contact_mailbox(self):
+        self.configuration.contact_recipient = ""
+        self.configuration.save()
+        send_email.call("Olá", "Mensagem", "Ana", "ana@example.com")
+        message = mail.outbox[0]
+        self.assertEqual(message.to, ["contato@sistemasparainternet.com"])
+        self.assertRegex(str(message.message()["Message-ID"]), r"^<[^<>]+@[^<>]+>$")
 
 @override_settings(
     STORAGES=PLAIN_STORAGES,

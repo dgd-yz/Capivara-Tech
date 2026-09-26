@@ -166,7 +166,7 @@ def import_existing_content(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0011_workshops_and_schedule"),
+        ("core", "0012_workshops_and_schedule"),
     ]
 
     operations = [

@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0008_emailsettings'),
+        ('core', '0009_alter_emailsettings_contact_recipient'),
     ]
 
     operations = [
