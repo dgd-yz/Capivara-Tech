@@ -3,11 +3,12 @@ from functools import wraps
 from django.contrib import messages
 from django.contrib.auth import login
 from django.http import HttpResponse
+from django.db.models import Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from certification.models import Certificate
-from core.models import Image
+from core.models import EventDay, Image, ScheduleItem, Speaker, Workshop
 from core.tasks import send_email
 
 from .forms import CertificatesForm, ContactForm, RegistrationForm, UserCreationForm
@@ -30,9 +31,23 @@ def health(request):
     return HttpResponse("ok", content_type="text/plain")
 
 
+def schedule_days():
+    items = ScheduleItem.objects.filter(published=True)
+    return list(
+        EventDay.objects.filter(published=True).prefetch_related(
+            Prefetch("items", queryset=items, to_attr="public_items")
+        )
+    )
+
+
 @with_template
 def home(request):
-    return {"template": "core/home.html"}
+    return {
+        "template": "core/home.html",
+        "speakers": list(Speaker.objects.filter(published=True)),
+        "workshops": list(Workshop.objects.filter(published=True)),
+        "schedule_days": schedule_days(),
+    }
 
 
 @with_template
@@ -47,7 +62,7 @@ def realization(request):
 
 @with_template
 def schedule(request):
-    return {"template": "core/schedule.html"}
+    return {"template": "core/schedule.html", "schedule_days": schedule_days()}
 
 
 @with_template

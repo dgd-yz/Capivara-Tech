@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from weasyprint import HTML
 
-from core.models import Workshops
+from core.models import Workshop, Workshops
 
 
 def _sort_key(name):
@@ -28,13 +28,9 @@ def _static_data_uri(path):
 
 def workshop_activity(value):
     """Nome de exibição do minicurso a partir do valor do filtro (ex.: '2' -> 'Teste de Software')."""
-    try:
-        label = Workshops(value).label
-    except ValueError:
-        return ""
     if value == Workshops.NONE:
         return "Evento geral (sem minicurso)"
-    return label.split(". ", 1)[-1]
+    return Workshop.objects.filter(code=value).values_list("name", flat=True).first() or ""
 
 
 def build_attendance_pdf(registrations, activity=""):
