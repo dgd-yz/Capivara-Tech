@@ -1,14 +1,23 @@
 from django.contrib import admin, messages
-from django.contrib.sites.shortcuts import get_current_site
+from django.db import transaction
 from django.db.models import Q
-from django.forms.models import model_to_dict
-from django.templatetags.static import static
 from django.utils.html import mark_safe
 from django.utils.translation import ngettext
 
+from solo.admin import SingletonModelAdmin
+
 from certification.domain import certificate_create
-from core.email import send_template_mail
-from core.models import Image, Registration, Workshops
+from core.models import EmailSettings, Image, Registration, Workshops
+from core.tasks import send_registration_email
+
+
+@admin.register(EmailSettings)
+class EmailSettingsAdmin(SingletonModelAdmin):
+    fieldsets = (
+        ("Formulário de contato", {"fields": ("contact_recipient",)}),
+        ("Ao realizar a inscrição", {"fields": ("received_subject", "received_body")}),
+        ("Ao confirmar no admin", {"fields": ("confirmed_subject", "confirmed_body")}),
+    )
 
 
 @admin.register(Registration)
@@ -33,33 +42,28 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     actions = [
         "confirm_registration",
+        "resend_registration_email",
         "create_certificate",
         "create_certificate_workshop",
     ]
 
+    def save_model(self, request, obj, form, change):
+        with transaction.atomic():
+            was_confirmed = change and Registration.objects.filter(
+                pk=obj.pk, confirmated=True
+            ).exists()
+            super().save_model(request, obj, form, change)
+            if obj.confirmated and not was_confirmed:
+                send_registration_email.enqueue(obj.pk, "confirmed")
+
     @admin.action(description="Confirmar Inscrição")
     def confirm_registration(self, request, queryset):
-        updated = queryset.update(confirmated=True)
-
-        proto = request.scheme
-
-        current_site = get_current_site(request)
-        logo_path = static("images/logo_horizontal_seminario_agroecologia_small.jpg")
-
-        participants = queryset.all()
-        for participant in participants:
-            send_template_mail.enqueue(
-                "registration",
-                subject="V SPA - Inscrição Confirmada",
-                to=str(participant.email),
-                from_email=None,
-                context={
-                    "participant": model_to_dict(participant),
-                    "logo_path": logo_path,
-                    "domain": current_site.domain,
-                    "proto": proto,
-                },
-            )
+        with transaction.atomic():
+            participants = list(queryset.select_for_update().filter(confirmated=False))
+            updated = len(participants)
+            Registration.objects.filter(pk__in=[p.pk for p in participants]).update(confirmated=True)
+            for participant in participants:
+                send_registration_email.enqueue(participant.pk, "confirmed")
 
         self.message_user(
             request,
@@ -71,6 +75,16 @@ class RegistrationAdmin(admin.ModelAdmin):
             % updated,
             messages.SUCCESS,
         )
+
+    @admin.action(description="Reenviar email de inscrição (conforme status atual)")
+    def resend_registration_email(self, request, queryset):
+        with transaction.atomic():
+            count = 0
+            for participant in queryset:
+                kind = "confirmed" if participant.confirmated else "received"
+                send_registration_email.enqueue(participant.pk, kind)
+                count += 1
+        self.message_user(request, f"{count} email(s) colocado(s) na fila de envio.", messages.SUCCESS)
 
     @admin.action(description="Gerar Certificado de Particicação do Evento (Geral)")
     def create_certificate(self, request, queryset):
