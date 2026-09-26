@@ -1,5 +1,4 @@
 import tempfile
-import uuid
 
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -8,7 +7,7 @@ from django_tasks import task
 from weasyprint import HTML
 
 from core.email_templates import render_registration_email
-from core.models import EmailSettings, Registration
+from core.models import DEFAULT_CONTACT_RECIPIENT, EmailSettings, Registration
 
 
 @task()
@@ -27,14 +26,13 @@ def calculate_complex_task() -> None:
 def send_email(
     subject, message, sender_name, sender_email, to=None
 ):
-    recipient = to or EmailSettings.get_solo().contact_recipient or settings.DEFAULT_FROM_EMAIL
+    recipient = to or EmailSettings.get_solo().contact_recipient or DEFAULT_CONTACT_RECIPIENT
     email = EmailMessage(
         subject,
         f"Nome: {sender_name}\nEmail: {sender_email}\n\n{message}",
         settings.DEFAULT_FROM_EMAIL,
         [recipient],
         reply_to=[sender_email],
-        headers={"Message-ID": f"{uuid.uuid4()}"},
     )
     email.send(fail_silently=False)
 

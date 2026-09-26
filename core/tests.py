@@ -111,3 +111,11 @@ class RegistrationEmailTests(TestCase):
     def test_existing_contact_tasks_keep_explicit_destination(self):
         send_email.call("Olá", "Mensagem", "Ana", "ana@example.com", "destino@example.com")
         self.assertEqual(mail.outbox[0].to, ["destino@example.com"])
+
+    def test_contact_with_empty_setting_uses_contact_mailbox(self):
+        self.configuration.contact_recipient = ""
+        self.configuration.save()
+        send_email.call("Olá", "Mensagem", "Ana", "ana@example.com")
+        message = mail.outbox[0]
+        self.assertEqual(message.to, ["contato@sistemasparainternet.com"])
+        self.assertRegex(str(message.message()["Message-ID"]), r"^<[^<>]+@[^<>]+>$")

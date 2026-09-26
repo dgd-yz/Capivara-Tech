@@ -32,7 +32,9 @@ texto simples; escreva `$$` para incluir um cifrão literal.
   após corrigir o SMTP, inclusive para inscrições anteriores à implantação.
 - O formulário de contato usa `DEFAULT_FROM_EMAIL` como remetente e o email do
   visitante em `Reply-To`. O destinatário é configurável no mesmo módulo; vazio,
-  usa `DEFAULT_FROM_EMAIL`.
+  usa `contato@sistemasparainternet.com`, que também é o padrão de novas configurações.
+  Essa caixa de entrada ou encaminhamento precisa existir no provedor de email
+  do domínio; a configuração do site define apenas o destino das mensagens.
 
 Os envios acontecem no worker e suas falhas ficam em DBTaskResult. As mensagens
 personalizadas são lidas no momento da execução. O sucesso do formulário indica
