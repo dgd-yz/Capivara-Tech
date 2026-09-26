@@ -117,7 +117,7 @@
 
     <div class="ct-grid-3" data-reveal>
       {% for w in workshops %}
-      <div class="ct-course"><h3 class="ct-h3">{{ w.title }}</h3>{% if w.instructors %}<div class="ct-course__foot"><span class="av">{{ w.initials }}</span><span class="nm">{{ w.instructors }}</span></div>{% endif %}</div>
+      <div class="ct-course"><h3 class="ct-h3">{{ w.title }}</h3>{% if w.public_speakers or w.display_instructors %}<div class="ct-course__foot">{% if w.public_speakers %}<span class="ct-avs">{% for s in w.public_speakers %}<span class="av av--photo" title="{{ s.name }}"{% if s.photo %} style="background-image:url('{{ s.photo.url }}');"{% endif %}>{% if not s.photo %}{{ s.initials }}{% endif %}</span>{% endfor %}</span>{% else %}<span class="av">{{ w.initials }}</span>{% endif %}<span class="nm">{{ w.display_instructors }}</span></div>{% endif %}</div>
       {% endfor %}
     </div>
   </div>

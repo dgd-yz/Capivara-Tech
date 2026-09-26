@@ -468,6 +468,10 @@ html.ct-modal-open { overflow: hidden; padding-right: var(--ct-sbw, 0px); }
 .ct-course__foot { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--ct-border); display: flex; align-items: center; gap: 10px; }
 .ct-course__foot .av { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: rgba(217, 137, 63, .18); color: var(--ct-accent2); font-family: var(--ct-head); font-weight: 700; font-size: 12px; }
 .ct-course__foot .nm { font-size: 13.5px; color: var(--ct-muted); }
+.ct-avs { display: inline-flex; flex-shrink: 0; }
+.ct-course__foot .av--photo { width: 42px; height: 42px; background-size: cover; background-position: center 25%; background-color: rgba(217, 137, 63, .18); box-shadow: 0 0 0 2px var(--ct-surface2); }
+.ct-avs .av--photo { flex: none; aspect-ratio: 1 / 1; }
+.ct-avs .av--photo + .av--photo { margin-left: -12px; }
 
 /* ============================ CTA ======================================= */
 .ct-cta {
