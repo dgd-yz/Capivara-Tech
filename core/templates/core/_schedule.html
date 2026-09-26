@@ -1,0 +1,19 @@
+{% if schedule_days %}
+<div class="ct-tabs" data-reveal>
+  {% for day in schedule_days %}
+  <button class="ct-tab{% if forloop.first %} is-active{% endif %}" data-day="{{ forloop.counter }}"><span class="d">Dia {{ forloop.counter }} · {{ day.date|date:"d/m" }}</span><span class="s">{{ day.subtitle }}</span></button>
+  {% endfor %}
+</div>
+
+<div class="ct-sched" data-reveal>
+  {% for day in schedule_days %}
+  <div class="ct-day{% if forloop.first %} is-active{% endif %}" data-day="{{ forloop.counter }}">
+    {% for item in day.public_items %}
+    <div class="ct-row"><div class="time">{{ item.time_label }}</div><div><div class="title">{{ item.title }}</div>{% if item.subtitle %}<div class="who">{{ item.subtitle }}</div>{% endif %}</div><div class="ct-tag {{ item.tag_class }}">{{ item.tag_text }}</div></div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="ct-lead" style="margin-top:32px;">A programação completa será divulgada em breve.</p>
+{% endif %}

@@ -25,7 +25,7 @@
 <section class="ct-stats">
   <div class="ct-stats__grid">
     <div class="ct-stat" data-reveal><div class="num" data-count="3">3</div><div class="lab">dias de imersão</div></div>
-    <div class="ct-stat" data-reveal><div class="num" data-count="14">14</div><div class="lab">palestrantes &amp; instrutores</div></div>
+    <div class="ct-stat" data-reveal><div class="num" data-count="{{ speakers|length }}">{{ speakers|length }}</div><div class="lab">palestrantes &amp; instrutores</div></div>
     <div class="ct-stat" data-reveal><div class="num" data-count="5">5</div><div class="lab">palestras &amp; keynotes</div></div>
     <div class="ct-stat" data-reveal><div class="num" data-count="3">3</div><div class="lab">minicursos práticos</div></div>
     <div class="ct-stat" data-reveal><div class="num" data-count="+200">+200</div><div class="lab">participantes esperados</div></div>
@@ -70,44 +70,11 @@
       <p style="max-width:34ch;font-size:15px;line-height:1.6;color:var(--ct-faint);">Grade preliminar sujeita a ajustes. Horário de Brasília.</p>
     </div>
 
-    <div class="ct-tabs" data-reveal>
-      <button class="ct-tab is-active" data-day="1"><span class="d">Dia 1 · 21/10</span><span class="s">Minicursos</span></button>
-      <button class="ct-tab" data-day="2"><span class="d">Dia 2 · 22/10</span><span class="s">Palestras</span></button>
-      <button class="ct-tab" data-day="3"><span class="d">Dia 3 · 23/10</span><span class="s">Palestras & Encerramento</span></button>
-    </div>
-
-    <div class="ct-sched" data-reveal>
-      <!-- Dia 1 — Quarta, 21/10 — Minicursos (Lab 1 e Lab 2 em paralelo) -->
-      <div class="ct-day is-active" data-day="1">
-        <div class="ct-row"><div class="time">12:00–14:00</div><div><div class="title">Credenciamento</div><div class="who">Lab 1 / Lab 2</div></div><div class="ct-tag pausa">Abertura</div></div>
-        <div class="ct-row"><div class="time">14:00–17:30</div><div><div class="title">Minicurso 1 — Django Girls</div><div class="who">Lab 1</div></div><div class="ct-tag minicurso">Minicurso</div></div>
-        <div class="ct-row"><div class="time">14:00–17:30</div><div><div class="title">Minicurso 2 — Teste de Software</div><div class="who">Lab 2 · João Dias</div></div><div class="ct-tag minicurso">Minicurso</div></div>
-        <div class="ct-row"><div class="time">17:30–18:00</div><div><div class="title">Coffee-break</div><div class="who">Intervalo</div></div><div class="ct-tag pausa">Pausa</div></div>
-        <div class="ct-row"><div class="time">18:00–22:00</div><div><div class="title">Minicurso 1 (continuação) — Django Girls</div><div class="who">Lab 1</div></div><div class="ct-tag minicurso">Minicurso</div></div>
-        <div class="ct-row"><div class="time">18:00–22:00</div><div><div class="title">Minicurso 3 — Desenvolvimento de Games</div><div class="who">Lab 2 · Wanderson Paes</div></div><div class="ct-tag minicurso">Minicurso</div></div>
-      </div>
-      <!-- Dia 2 — Quinta, 22/10 — Palestras -->
-      <div class="ct-day" data-day="2">
-        <div class="ct-row"><div class="time">12:00–14:00</div><div><div class="title">Credenciamento</div><div class="who">Hall de entrada</div></div><div class="ct-tag pausa">Abertura</div></div>
-        <div class="ct-row"><div class="time">14:00–16:00</div><div><div class="title">Abertura + Palestra 1 — Introdução a AWS</div><div class="who">Auditório · Eduardo Neri Martins</div></div><div class="ct-tag keynote">Keynote</div></div>
-        <div class="ct-row"><div class="time">16:00–17:30</div><div><div class="title">Palestra 2 — Propriedade Intelectual</div><div class="who">Auditório · Aldo Victor D. Oliveira</div></div><div class="ct-tag palestra">Palestra</div></div>
-        <div class="ct-row"><div class="time">17:30–18:00</div><div><div class="title">Coffee-break</div><div class="who">Intervalo</div></div><div class="ct-tag pausa">Pausa</div></div>
-        <div class="ct-row"><div class="time">18:00–20:00</div><div><div class="title">Momento OxenteNet</div><div class="who">Patrocinador master</div></div><div class="ct-tag cultura">Parceiro</div></div>
-        <div class="ct-row"><div class="time">20:00–22:00</div><div><div class="title">Mesa-redonda — Problemas Locais</div><div class="who">Auditório · Janio</div></div><div class="ct-tag painel">Painel</div></div>
-      </div>
-      <!-- Dia 3 — Sexta, 23/10 — Palestras finais & Encerramento -->
-      <div class="ct-day" data-day="3">
-        <div class="ct-row"><div class="time">12:00–14:00</div><div><div class="title">Credenciamento</div><div class="who">Hall de entrada</div></div><div class="ct-tag pausa">Abertura</div></div>
-        <div class="ct-row"><div class="time">14:00–16:00</div><div><div class="title">Sebrae</div><div class="who">A confirmar</div></div><div class="ct-tag cultura">Parceiro</div></div>
-        <div class="ct-row"><div class="time">16:00–17:30</div><div><div class="title">Palestra 3</div><div class="who">Auditório · Bianca Freire Marques</div></div><div class="ct-tag palestra">Palestra</div></div>
-        <div class="ct-row"><div class="time">17:30–18:00</div><div><div class="title">Coffee-break</div><div class="who">Intervalo</div></div><div class="ct-tag pausa">Pausa</div></div>
-        <div class="ct-row"><div class="time">18:00–19:00</div><div><div class="title">Palestra 4 — Introdução a Visão Computacional</div><div class="who">Auditório · Justino Duarte</div></div><div class="ct-tag palestra">Palestra</div></div>
-        <div class="ct-row"><div class="time">20:00–22:00</div><div><div class="title">Palestra 5 &amp; Encerramento</div><div class="who">Auditório · Rangel</div></div><div class="ct-tag keynote">Keynote</div></div>
-      </div>
-    </div>
+    {% include "core/_schedule.html" %}
   </div>
 </section>
 
+{% if speakers %}
 <!-- ============================ PALESTRANTES ============================ -->
 <section class="ct-section" id="palestrantes">
   <div class="ct-eyebrow">// Palestrantes &amp; Instrutores</div>
@@ -115,23 +82,28 @@
   <p style="margin-top:16px;max-width:52ch;font-size:16px;line-height:1.6;color:var(--ct-faint);">Nomes confirmados são divulgados aos poucos. Acompanhe nossas redes para o anúncio completo.</p>
 
   <div class="ct-grid-4" data-reveal>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-brenda.jpg" %}');"><span>BM</span></div><div class="ct-speaker__body"><div class="n">Brenda Mota</div><div class="r">Minicurso 1 · Django Girls</div><div class="q">Professora de História, 31 anos, em momento de transição de carreira para a área da tecnologia. Cursando ADS no IFPI e se enveredando pela área de Cibersegurança. Acredita que a tecnologia é um lugar que não se limita apenas a códigos, mas também um espaço onde a criatividade e arte podem crescer. Faz parte do grupo Pyladies Parnaíba, onde os primeiros passos para a tecnologia começaram, rodeada de mulheres incríveis e empenhada a chamar mais mulheres para a área.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-giovanna.jpg" %}');"><span>GO</span></div><div class="ct-speaker__body"><div class="n">Giovanna Oliveira</div><div class="r">Minicurso 1 · Django Girls</div><div class="q">Graduanda em Análise e Desenvolvimento de Sistemas e em Gestão Pública, desenvolvedora Back-end e monitora do NAPNE no IFPI Parnaíba. Tem experiência com JavaScript e Python, com foco de interesse em proteção de dados e análise de negócios em TI. Integra a PyLadies Parnaíba e participa de iniciativas voltadas ao fortalecimento da presença feminina na tecnologia, incentivando o aprendizado, a colaboração e a inclusão na comunidade.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-irma.jpg" %}');"><span>IA</span></div><div class="ct-speaker__body"><div class="n">Irma Assunção</div><div class="r">Minicurso 1 · Django Girls</div><div class="q">Designer gráfica em transição para o desenvolvimento back-end e amante de Java. Estudante de Análise e Desenvolvimento de Sistemas no IFPI Parnaíba e uma das coordenadoras da PyLadies Parnaíba, onde também é a responsável pela identidade visual da comunidade.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-fernanda.jpg" %}');"><span>FF</span></div><div class="ct-speaker__body"><div class="n">Fernanda Farias</div><div class="r">Minicurso 1 · Django Girls</div><div class="q">Engenheira de Dados e Analytics, graduanda em Análise e Desenvolvimento de Sistemas pelo IFPI - Campus Parnaíba, coordenadora da PyLadies Parnaíba e Embaixadora Estudantil Google. Acredita que os dados não são apenas números, mas têm a capacidade de contar histórias e criar soluções.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-joao.jpg" %}');"><span>JD</span></div><div class="ct-speaker__body"><div class="n">João Dias</div><div class="r">Minicurso 2 · Teste de Software</div><div class="q">Reingressante do IFPI – Campus São Raimundo Nonato, com experiência em Quality Assurance (QA) e testes de software. Entusiasta da área de qualidade, com interesse em aprimorar continuamente conhecimentos em testes, análise de qualidade, identificação de falhas e boas práticas de desenvolvimento de software.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-wanderson.jpg" %}');"><span>WP</span></div><div class="ct-speaker__body"><div class="n">Wanderson Paes</div><div class="r">Minicurso 3 · Desenvolvimento de Games</div><div class="q">Técnico em Tecnologia da Informação e professor de Desenvolvimento de Sistemas.<br><br>Iniciou sua formação com o curso Técnico em Informática pelo Instituto Federal do Piauí (IFPI), em São Raimundo Nonato. Posteriormente, graduou-se em Matemática pelo IFPI e em Análise e Desenvolvimento de Sistemas pela UNINTER.<br><br>Possui especialização em Segurança da Informação e mestrado em Administração Pública, com ênfase em Governo Digital.<br><br>Hoje, trabalha como técnico em Tecnologia da Informação na Universidade Federal do Vale do São Francisco (UNIVASF) e também como professor do curso Técnico em Desenvolvimento de Sistemas do Senac.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-eduardo.jpg" %}');"><span>EN</span></div><div class="ct-speaker__body"><div class="n">Eduardo Neri Martins</div><div class="r">Palestra 1 · Desenvolvedor Fullstack</div><div class="q">“Introdução a AWS”<br><br>Técnico em Desenvolvimento Web pelo Senac Piauí e estudante de Tecnologia em Sistemas para Internet no IFPI — Campus São Raimundo Nonato. Iniciou sua trajetória profissional no suporte técnico, onde também teve contato com o desenvolvimento front-end. Posteriormente, atuou com cloud e infraestrutura, ampliando sua visão sobre o desenvolvimento e a sustentação de aplicações. Atualmente, trabalha como Desenvolvedor Full Stack freelancer.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-aldo.jpg" %}');"><span>AO</span></div><div class="ct-speaker__body"><div class="n">Aldo Victor D. Oliveira</div><div class="r">Palestra 2 · Advogado</div><div class="q">“Propriedade Intelectual”<br><br>Advogado. Atua com direito previdenciário e do consumidor, é Agente da Propriedade Industrial junto ao INPI e trabalha com registro de marcas e de software. Preside a Comissão Subseccional da Jovem Advocacia. @advogaldo</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-bianca.jpg" %}');"><span>BF</span></div><div class="ct-speaker__body"><div class="n">Bianca Freire Marques</div><div class="r">Palestra 3 · Analista de Redes</div><div class="q">Egressa do IFPI – Campus São Raimundo Nonato, onde concluiu o curso Técnico em Informática. Posteriormente, graduou-se como Tecnóloga em Análise e Desenvolvimento de Sistemas pelo IFPI – Campus Floriano.<br><br>Atualmente, atua profissionalmente na área de redes de telecomunicações. Ao longo da trajetória acadêmica, também teve experiências com programação, participação em competições acadêmicas, monitoria e atividades relacionadas ao ensino de tecnologia.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-justino.jpg" %}');"><span>JD</span></div><div class="ct-speaker__body"><div class="n">Prof. Justino Duarte</div><div class="r">Palestra 4 · Professor do IFPI</div><div class="q">“Introdução a Visão Computacional”<br><br>Formado em Análise e Desenvolvimento de Sistemas (IFPI), possui Mestrado e Doutorado em Ciência da Computação (UFPI/UFMA), onde pesquisou sobre aplicação de IA em imagens médicas para o diagnóstico de doenças. No campo profissional, atuou como técnico de TI no IFMA e é professor do IFPI desde 2014.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-guilherme.jpg" %}');"><span>GF</span></div><div class="ct-speaker__body"><div class="n">Guilherme Feitoza</div><div class="r">Co-fundador da Hash Bang LTDA</div><div class="q">Engenheiro de software full stack há mais de uma década, atuando em ecossistemas web e mobile com Python (Django, FastAPI), Ruby on Rails, C#/.NET e React Native. Sua trajetória passa por instituições públicas, educação, energia, saúde e fintech, sempre entregando soluções escaláveis, seguras e de alto desempenho.<br><br>Como cofundador da Hash Bang LTDA, desenvolveu o VacinAção®, aplicativo premiado no 27º CBCENF por combater a desinformação e apoiar a imunização infantil. Na Zapay, contribuiu para sistemas críticos de documentação de veículos e condutores durante a aquisição pelo grupo Corpay / Sem Parar.<br><br>Hoje cursa mestrado em Visão Computacional na UFPI, somando pesquisa acadêmica à prática de arquitetura de software, automação DevOps e Clean Code.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-antonio.jpg" %}');"><span>AJ</span></div><div class="ct-speaker__body"><div class="n">Antônio Júnior</div><div class="r">OxenteNet</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-mikael.jpg" %}');"><span>MS</span></div><div class="ct-speaker__body"><div class="n">Mikael Costa Silva</div><div class="r">Desenvolvedor · OxenteNet</div><div class="q">Desenvolvimento e manutenção de sistemas.</div></div></div>
-    <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-patricia.jpg" %}');"><span>PS</span></div><div class="ct-speaker__body"><div class="n">Patrícia de França Silva</div><div class="r">Gestora de Processos</div><div class="q">Responsável por coordenar e executar iniciativas de mapeamento, análise, desenho, implantação e melhoria contínua dos processos.</div></div></div>
+    {% for s in speakers %}
+    <div class="ct-speaker"><div class="ct-speaker__avatar"{% if s.photo %} style="background-image:url('{{ s.photo.url }}');"{% endif %}></div><div class="ct-speaker__body"><div class="n">{{ s.name }}</div>{% if s.label %}<div class="r">{{ s.label }}</div>{% endif %}{% if s.talk or s.bio %}<div class="q">{% if s.talk %}“{{ s.talk }}”{% if s.bio %}<br><br>{% endif %}{% endif %}{{ s.bio|linebreaksbr }}</div>{% endif %}</div></div>
+    {% endfor %}
   </div>
-</section>
 
+  <dialog class="ct-modal" id="ct-speaker-modal" aria-labelledby="ct-speaker-modal-title" aria-describedby="ct-speaker-modal-bio">
+    <div class="ct-modal__panel">
+      <button type="button" class="ct-modal__close" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="ct-modal__photo"><img alt="" width="400" height="400" decoding="async"></div>
+      <div class="ct-modal__content">
+        <h3 class="ct-modal__name" id="ct-speaker-modal-title"></h3>
+        <p class="ct-modal__role"></p>
+        <div class="ct-modal__bio" id="ct-speaker-modal-bio"></div>
+      </div>
+    </div>
+  </dialog>
+</section>
+{% endif %}
+
+{% if workshops %}
 <!-- ============================ MINICURSOS ============================ -->
 <section class="ct-section--alt" id="minicursos">
   <div class="ct-inner">
@@ -144,12 +116,13 @@
     </div>
 
     <div class="ct-grid-3" data-reveal>
-      <div class="ct-course"><h3 class="ct-h3">Minicurso 1 — Django Girls</h3><div class="ct-course__foot"><span class="av">DG</span><span class="nm">Django Girls</span></div></div>
-      <div class="ct-course"><h3 class="ct-h3">Minicurso 2 — Teste de Software</h3><div class="ct-course__foot"><span class="av">JD</span><span class="nm">João Dias</span></div></div>
-      <div class="ct-course"><h3 class="ct-h3">Minicurso 3 — Desenvolvimento de Games</h3><div class="ct-course__foot"><span class="av">WP</span><span class="nm">Wanderson Paes</span></div></div>
+      {% for w in workshops %}
+      <div class="ct-course"><h3 class="ct-h3">{{ w.title }}</h3>{% if w.instructors %}<div class="ct-course__foot"><span class="av">{{ w.initials }}</span><span class="nm">{{ w.instructors }}</span></div>{% endif %}</div>
+      {% endfor %}
     </div>
   </div>
 </section>
+{% endif %}
 
 <!-- ============================ PATROCINADORES ============================ -->
 <section class="ct-section" id="patrocinadores">

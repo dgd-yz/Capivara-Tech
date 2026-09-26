@@ -12,41 +12,7 @@
     <p style="max-width:34ch;font-size:15px;line-height:1.6;color:var(--ct-faint);">Grade preliminar sujeita a ajustes. Horário de Brasília · 21–23 de outubro de 2026.</p>
   </div>
 
-  <div class="ct-tabs" data-reveal>
-    <button class="ct-tab is-active" data-day="1"><span class="d">Dia 1 · 21/10</span><span class="s">Minicursos</span></button>
-    <button class="ct-tab" data-day="2"><span class="d">Dia 2 · 22/10</span><span class="s">Palestras</span></button>
-    <button class="ct-tab" data-day="3"><span class="d">Dia 3 · 23/10</span><span class="s">Palestras & Encerramento</span></button>
-  </div>
-
-  <div class="ct-sched" data-reveal>
-    <!-- Dia 1 — Quarta, 21/10 — Minicursos (Lab 1 e Lab 2 em paralelo) -->
-    <div class="ct-day is-active" data-day="1">
-      <div class="ct-row"><div class="time">12:00–14:00</div><div><div class="title">Credenciamento</div><div class="who">Lab 1 / Lab 2</div></div><div class="ct-tag pausa">Abertura</div></div>
-      <div class="ct-row"><div class="time">14:00–17:30</div><div><div class="title">Minicurso 1 — Django Girls</div><div class="who">Lab 1</div></div><div class="ct-tag minicurso">Minicurso</div></div>
-      <div class="ct-row"><div class="time">14:00–17:30</div><div><div class="title">Minicurso 2 — Teste de Software</div><div class="who">Lab 2 · João Dias</div></div><div class="ct-tag minicurso">Minicurso</div></div>
-      <div class="ct-row"><div class="time">17:30–18:00</div><div><div class="title">Coffee-break</div><div class="who">Intervalo</div></div><div class="ct-tag pausa">Pausa</div></div>
-      <div class="ct-row"><div class="time">18:00–22:00</div><div><div class="title">Minicurso 1 (continuação) — Django Girls</div><div class="who">Lab 1</div></div><div class="ct-tag minicurso">Minicurso</div></div>
-      <div class="ct-row"><div class="time">18:00–22:00</div><div><div class="title">Minicurso 3 — Desenvolvimento de Games</div><div class="who">Lab 2 · Wanderson Paes</div></div><div class="ct-tag minicurso">Minicurso</div></div>
-    </div>
-    <!-- Dia 2 — Quinta, 22/10 — Palestras -->
-    <div class="ct-day" data-day="2">
-      <div class="ct-row"><div class="time">12:00–14:00</div><div><div class="title">Credenciamento</div><div class="who">Hall de entrada</div></div><div class="ct-tag pausa">Abertura</div></div>
-      <div class="ct-row"><div class="time">14:00–16:00</div><div><div class="title">Abertura + Palestra 1 — Introdução a AWS</div><div class="who">Auditório · Eduardo Neri Martins</div></div><div class="ct-tag keynote">Keynote</div></div>
-      <div class="ct-row"><div class="time">16:00–17:30</div><div><div class="title">Palestra 2 — Propriedade Intelectual</div><div class="who">Auditório · Aldo Victor D. Oliveira</div></div><div class="ct-tag palestra">Palestra</div></div>
-      <div class="ct-row"><div class="time">17:30–18:00</div><div><div class="title">Coffee-break</div><div class="who">Intervalo</div></div><div class="ct-tag pausa">Pausa</div></div>
-      <div class="ct-row"><div class="time">18:00–20:00</div><div><div class="title">Momento OxenteNet</div><div class="who">Patrocinador master</div></div><div class="ct-tag cultura">Parceiro</div></div>
-      <div class="ct-row"><div class="time">20:00–22:00</div><div><div class="title">Mesa-redonda — Problemas Locais</div><div class="who">Auditório · Janio</div></div><div class="ct-tag painel">Painel</div></div>
-    </div>
-    <!-- Dia 3 — Sexta, 23/10 — Palestras finais & Encerramento -->
-    <div class="ct-day" data-day="3">
-      <div class="ct-row"><div class="time">12:00–14:00</div><div><div class="title">Credenciamento</div><div class="who">Hall de entrada</div></div><div class="ct-tag pausa">Abertura</div></div>
-      <div class="ct-row"><div class="time">14:00–16:00</div><div><div class="title">Sebrae</div><div class="who">A confirmar</div></div><div class="ct-tag cultura">Parceiro</div></div>
-      <div class="ct-row"><div class="time">16:00–17:30</div><div><div class="title">Palestra 3</div><div class="who">Auditório · Bianca Freire Marques</div></div><div class="ct-tag palestra">Palestra</div></div>
-      <div class="ct-row"><div class="time">17:30–18:00</div><div><div class="title">Coffee-break</div><div class="who">Intervalo</div></div><div class="ct-tag pausa">Pausa</div></div>
-      <div class="ct-row"><div class="time">18:00–19:00</div><div><div class="title">Palestra 4 — Introdução a Visão Computacional</div><div class="who">Auditório · Justino Duarte</div></div><div class="ct-tag palestra">Palestra</div></div>
-      <div class="ct-row"><div class="time">20:00–22:00</div><div><div class="title">Palestra 5 &amp; Encerramento</div><div class="who">Auditório · Rangel</div></div><div class="ct-tag keynote">Keynote</div></div>
-    </div>
-  </div>
+  {% include "core/_schedule.html" %}
 </section>
 
 <section class="ct-section" style="padding-top:0;">

@@ -1,14 +1,44 @@
 from django.contrib import admin, messages
+from django.contrib.admin.views.main import IncorrectLookupParameters
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
-from django.utils.html import mark_safe
+from django.http import HttpResponse
+from django.urls import path
+from django.utils import timezone
+from django.utils.html import format_html, mark_safe
 from django.utils.translation import ngettext
 
 from solo.admin import SingletonModelAdmin
 
 from certification.domain import certificate_create
-from core.models import EmailSettings, Image, Registration, Workshops
+from core.attendance import build_attendance_pdf, workshop_activity
+from core.forms import RegistrationAdminForm
+from core.models import (
+    EmailSettings,
+    EventDay,
+    Image,
+    Registration,
+    ScheduleItem,
+    Speaker,
+    Workshop,
+    Workshops,
+    get_all_workshops_choices,
+)
 from core.tasks import send_registration_email
+
+
+class WorkshopFilter(admin.SimpleListFilter):
+    title = "Minicurso"
+    parameter_name = "workshop__exact"
+
+    def lookups(self, request, model_admin):
+        return get_all_workshops_choices()
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+        return queryset.filter(workshop=self.value())
 
 
 @admin.register(EmailSettings)
@@ -22,6 +52,8 @@ class EmailSettingsAdmin(SingletonModelAdmin):
 
 @admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
+    form = RegistrationAdminForm
+
     list_display = (
         "full_name",
         "created_at",
@@ -31,7 +63,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     list_filter = (
         "confirmated",
         "activity",
-        "workshop",
+        WorkshopFilter,
         "organization",
     )
 
@@ -46,6 +78,37 @@ class RegistrationAdmin(admin.ModelAdmin):
         "create_certificate",
         "create_certificate_workshop",
     ]
+
+    change_list_template = "admin/core/registration/change_list.html"
+
+    def get_urls(self):
+        custom_urls = [
+            path(
+                "lista-de-frequencia/",
+                self.admin_site.admin_view(self.attendance_list_view),
+                name="core_registration_attendance",
+            ),
+        ]
+        return custom_urls + super().get_urls()
+
+    def attendance_list_view(self, request):
+        """PDF de lista de frequência com as inscrições confirmadas da listagem (respeita filtros e busca)."""
+        if not self.has_view_permission(request):
+            raise PermissionDenied
+
+        try:
+            registrations = self.get_changelist_instance(request).get_queryset(request)
+        except IncorrectLookupParameters:
+            registrations = self.get_queryset(request)
+        registrations = registrations.filter(confirmated=True)
+
+        activity = workshop_activity(request.GET.get("workshop__exact", ""))
+        pdf = build_attendance_pdf(registrations, activity=activity)
+
+        filename = f"lista-de-frequencia-{timezone.localdate():%Y-%m-%d}.pdf"
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = f'inline; filename="{filename}"'
+        return response
 
     def save_model(self, request, obj, form, change):
         with transaction.atomic():
@@ -146,3 +209,90 @@ class ImageAdmin(admin.ModelAdmin):
 
     image_tag.short_description = "Pré Visualização"
     image_tag.allow_tags = True
+
+
+@admin.register(Speaker)
+class SpeakerAdmin(admin.ModelAdmin):
+    list_display = ("photo_thumb", "name", "session_role", "order", "published")
+    list_display_links = ("photo_thumb", "name")
+    list_editable = ("order", "published")
+    list_filter = ("published",)
+    search_fields = ("name", "role", "session", "talk")
+    readonly_fields = ("photo_preview",)
+    fieldsets = (
+        ("Identificação", {"fields": ("name", "session", "role", "talk")}),
+        ("Perfil", {"fields": ("bio", "photo", "photo_preview")}),
+        ("Exibição no site", {"fields": ("order", "published")}),
+    )
+
+    @admin.display(description="Foto")
+    def photo_thumb(self, obj):
+        if not obj.photo:
+            return "—"
+        return format_html(
+            '<img src="{}" alt="" style="width:44px;height:44px;object-fit:cover;'
+            'object-position:center top;border-radius:50%">',
+            obj.photo.url,
+        )
+
+    @admin.display(description="Sessão e cargo")
+    def session_role(self, obj):
+        return obj.label
+
+    @admin.display(description="Pré-visualização")
+    def photo_preview(self, obj):
+        if not obj.photo:
+            return "Nenhuma foto enviada."
+        return format_html(
+            '<img src="{}" alt="" style="width:180px;height:180px;object-fit:cover;'
+            'object-position:center top;border-radius:12px">',
+            obj.photo.url,
+        )
+
+
+@admin.register(Workshop)
+class WorkshopAdmin(admin.ModelAdmin):
+    list_display = (
+        "code",
+        "name",
+        "instructors",
+        "registered_count",
+        "capacity",
+        "order",
+        "published",
+    )
+    list_display_links = ("code", "name")
+    list_editable = ("capacity", "order", "published")
+    search_fields = ("code", "name", "instructors")
+
+    def get_readonly_fields(self, request, obj=None):
+        return ("code",) if obj else ()
+
+    def has_delete_permission(self, request, obj=None):
+        # inscrições guardam só o código: com inscritos, apagar deixaria essas
+        # pessoas sem minicurso (para tirar do ar, desmarque "Exibir no site")
+        if obj is not None and obj.registered:
+            return False
+        return super().has_delete_permission(request, obj)
+
+    @admin.display(description="Inscritos")
+    def registered_count(self, obj):
+        return obj.registered
+
+
+class ScheduleItemInline(admin.TabularInline):
+    model = ScheduleItem
+    extra = 1
+    fields = ("start_time", "end_time", "title", "subtitle", "tag", "order", "published")
+
+
+@admin.register(EventDay)
+class EventDayAdmin(admin.ModelAdmin):
+    list_display = ("date", "subtitle", "item_count", "published")
+    list_display_links = ("date", "subtitle")
+    list_editable = ("published",)
+    inlines = [ScheduleItemInline]
+
+    @admin.display(description="Itens")
+    def item_count(self, obj):
+        return obj.items.count()

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lista de Frequência · Capivara Tech II</title>
+    <style>
+      @page {
+        size: A4 portrait;
+        margin: 13mm 14mm 18mm;
+        @bottom-left { content: "Capivara Tech II · Lista de Frequência"; font-size: 7.5pt; color: #666; }
+        @bottom-right { content: "Página " counter(page) " de " counter(pages); font-size: 7.5pt; color: #666; }
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "DejaVu Sans", Arial, sans-serif; font-size: 10pt; color: #111; }
+
+      .top { display: flex; align-items: center; justify-content: space-between; gap: 6mm; padding-bottom: 4mm; border-bottom: 0.6mm solid #111; }
+      .top img { height: 21mm; width: auto; }
+      .top .titles { flex: 1; text-align: center; }
+      .top .inst { font-size: 8pt; letter-spacing: 0.06em; text-transform: uppercase; color: #333; }
+      .top h1 { margin: 1.5mm 0 0; font-size: 19pt; letter-spacing: 0.08em; text-transform: uppercase; }
+      .top .event { margin-top: 1.2mm; font-size: 10.5pt; font-weight: bold; }
+
+      table.info { width: 100%; margin: 4mm 0 5mm; border-collapse: collapse; }
+      table.info td { padding: 1.6mm 0; font-size: 9.5pt; vertical-align: bottom; }
+      table.info td.k { width: 22mm; font-weight: bold; }
+      .blank { display: inline-block; min-width: 38mm; border-bottom: 0.25mm solid #111; height: 4.2mm; }
+      .blank.wide { min-width: 78mm; }
+
+      table.list { width: 100%; border-collapse: collapse; }
+      table.list thead { display: table-header-group; }
+      table.list th { padding: 2.2mm 2.5mm; background: #e9e9e9; border: 0.3mm solid #222; font-size: 8.5pt; letter-spacing: 0.05em; text-transform: uppercase; }
+      table.list td { height: 10.5mm; padding: 0 2.5mm; border: 0.3mm solid #222; vertical-align: middle; font-size: 9.5pt; }
+      table.list tr { page-break-inside: avoid; }
+      table.list td.n { width: 11mm; padding: 0; text-align: center; font-size: 8.5pt; color: #333; }
+      table.list td.sig { width: 74mm; }
+      table.list tbody tr:nth-child(even) td.name { background: #fafafa; }
+      .empty { padding: 10mm 0; text-align: center; color: #555; font-style: italic; }
+
+      .closing { margin-top: 6mm; page-break-inside: avoid; font-size: 9.5pt; }
+      .closing .row { display: flex; gap: 10mm; margin-top: 12mm; }
+      .closing .sig-line { flex: 1; padding-top: 1.5mm; border-top: 0.25mm solid #111; text-align: center; font-size: 8.5pt; color: #333; }
+      .closing .sig-line.short { flex: 0 0 42mm; }
+      .generated { margin-top: 5mm; font-size: 7.5pt; color: #777; }
+    </style>
+  </head>
+  <body>
+    <div class="top">
+      {% if logo_ifpi %}<img src="{{ logo_ifpi }}" alt="" />{% endif %}
+      <div class="titles">
+        <div class="inst">Instituto Federal do Piauí · Campus São Raimundo Nonato</div>
+        <h1>Lista de Frequência</h1>
+        <div class="event">Capivara Tech II</div>
+      </div>
+      {% if logo_capivara %}<img src="{{ logo_capivara }}" alt="" />{% endif %}
+    </div>
+
+    <table class="info">
+      <tr>
+        <td class="k">Evento:</td>
+        <td>Capivara Tech II — 21 a 23 de outubro de 2026</td>
+        <td class="k">Data:</td>
+        <td><span class="blank"></span></td>
+      </tr>
+      <tr>
+        <td class="k">Atividade:</td>
+        <td>{% if activity %}<strong>{{ activity }}</strong>{% else %}<span class="blank wide"></span>{% endif %}</td>
+        <td class="k">Horário:</td>
+        <td><span class="blank"></span></td>
+      </tr>
+    </table>
+
+    <table class="list">
+      <thead>
+        <tr>
+          <th>Nº</th>
+          <th>Nome</th>
+          <th>Assinatura</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in registrations %}
+          <tr>
+            <td class="n">{{ forloop.counter }}</td>
+            <td class="name">{{ r.full_name }}</td>
+            <td class="sig"></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if not registrations %}
+      <p class="empty">Nenhum inscrito encontrado para os filtros aplicados.</p>
+    {% endif %}
+
+    <div class="closing">
+      Total de inscritos: <strong>{{ total }}</strong>
+      <div class="row">
+        <div class="sig-line">Responsável pela lista</div>
+        <div class="sig-line short">Data</div>
+      </div>
+      <div class="generated">Gerada em {{ generated_at|date:"d/m/Y" }} às {{ generated_at|date:"H:i" }}</div>
+    </div>
+  </body>
+</html>
