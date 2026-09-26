@@ -613,6 +613,29 @@ class RegistrationEmailTests(TestCase):
         self.assertEqual(message.to, ["contato@sistemasparainternet.com"])
         self.assertRegex(str(message.message()["Message-ID"]), r"^<[^<>]+@[^<>]+>$")
 
+    def test_registration_contains_plain_text_and_escaped_html(self):
+        self.configuration.received_body = "Olá ${nome}!\n\n<script>alert(1)</script> & até breve."
+        self.configuration.save()
+        send_registration_email.call(self.participant.pk)
+        message = mail.outbox[0].message()
+        self.assertEqual(message.get_content_type(), "multipart/alternative")
+        parts = message.get_payload()
+        self.assertEqual([p.get_content_type() for p in parts], ["text/plain", "text/html"])
+        plain = parts[0].get_payload(decode=True).decode("utf-8")
+        html = parts[1].get_payload(decode=True).decode("utf-8")
+        self.assertIn("Olá Ana Silva!", plain)
+        self.assertIn("Olá Ana Silva!", html)
+        self.assertIn("&lt;script&gt;", html)
+        self.assertNotIn("<script>", html)
+        self.assertNotIn("<img", html)
+
+    def test_contact_contains_both_mime_parts(self):
+        send_email.call("Contato", "Minha dúvida", "Ana", "ana@example.com")
+        parts = mail.outbox[0].message().get_payload()
+        self.assertEqual([p.get_content_type() for p in parts], ["text/plain", "text/html"])
+        for part in parts:
+            self.assertIn("Minha dúvida", part.get_payload(decode=True).decode("utf-8"))
+
 @override_settings(
     STORAGES=PLAIN_STORAGES,
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",

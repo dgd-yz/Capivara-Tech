@@ -24,6 +24,14 @@ texto das mensagens de inscrição recebida e confirmada. As variáveis disponí
 são `${nome}`, `${email}`, `${minicurso}` e `${protocolo}`. As mensagens são de
 texto simples; escreva `$$` para incluir um cifrão literal.
 
+Inscrições e contatos são enviados como `multipart/alternative`, com versões
+`text/plain` e `text/html` equivalentes. O HTML escapa o conteúdo e não inclui
+imagens. A Brevo pode adicionar pixels de rastreamento depois do envio; portanto,
+confira também o MIME da mensagem recebida após implantar e reenviar um teste.
+Anonimizar rastreamento na Brevo não equivale a desativá-lo. Se precisar remover
+os pixels adicionados pelo provedor, consulte o suporte da Brevo sobre as opções
+disponíveis na conta. Autenticação e MIME corretos não garantem saída do spam.
+
 - O formulário de inscrição enfileira automaticamente a mensagem de recebimento.
   Isso não altera a aprovação da inscrição.
 - A ação **Confirmar Inscrição**, ou marcar **Inscrição Confirmada?** ao editar
