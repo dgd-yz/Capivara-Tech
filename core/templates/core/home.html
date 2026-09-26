@@ -130,6 +130,20 @@
     <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-mikael.jpg" %}');"><span>MS</span></div><div class="ct-speaker__body"><div class="n">Mikael Costa Silva</div><div class="r">Desenvolvedor · OxenteNet</div><div class="q">Desenvolvimento e manutenção de sistemas.</div></div></div>
     <div class="ct-speaker"><div class="ct-speaker__avatar" style="background-image:url('{% static "images/palestrante-patricia.jpg" %}');"><span>PS</span></div><div class="ct-speaker__body"><div class="n">Patrícia de França Silva</div><div class="r">Gestora de Processos</div><div class="q">Responsável por coordenar e executar iniciativas de mapeamento, análise, desenho, implantação e melhoria contínua dos processos.</div></div></div>
   </div>
+
+  <dialog class="ct-modal" id="ct-speaker-modal" aria-labelledby="ct-speaker-modal-title" aria-describedby="ct-speaker-modal-bio">
+    <div class="ct-modal__panel">
+      <button type="button" class="ct-modal__close" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="ct-modal__photo"><img alt="" width="400" height="400" decoding="async"></div>
+      <div class="ct-modal__content">
+        <h3 class="ct-modal__name" id="ct-speaker-modal-title"></h3>
+        <p class="ct-modal__role"></p>
+        <div class="ct-modal__bio" id="ct-speaker-modal-bio"></div>
+      </div>
+    </div>
+  </dialog>
 </section>
 
 <!-- ============================ MINICURSOS ============================ -->

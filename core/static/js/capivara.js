@@ -169,6 +169,60 @@
     });
   }
 
+  /* ----- modal dos palestrantes (desktop): <dialog> nativo, que já traz foco preso, Esc e fundo inerte ----- */
+  function createSpeakerModal(dialog) {
+    var panel = dialog.querySelector(".ct-modal__panel");
+    var content = dialog.querySelector(".ct-modal__content");
+    var img = dialog.querySelector(".ct-modal__photo img");
+    var nameEl = dialog.querySelector(".ct-modal__name");
+    var roleEl = dialog.querySelector(".ct-modal__role");
+    var bioEl = dialog.querySelector(".ct-modal__bio");
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var root = document.documentElement;
+
+    function photoOf(slide) {
+      var av = slide.querySelector(".ct-speaker__avatar");
+      var m = av && getComputedStyle(av).backgroundImage.match(/url\(["']?([^"')]+)["']?\)/);
+      return m ? m[1] : "";
+    }
+    function open(slide) {
+      var q = slide.querySelector(".q");
+      var role = slide.querySelector(".r");
+      var name = slide.querySelector(".n").textContent;
+      img.src = photoOf(slide);
+      img.alt = "Foto de " + name;
+      nameEl.textContent = name;
+      roleEl.textContent = role ? role.textContent : "";
+      bioEl.innerHTML = q ? q.innerHTML : "";
+      content.scrollTop = 0;
+      // sem barra de rolagem o layout "pula": compensa a largura dela enquanto o modal está aberto
+      root.style.setProperty("--ct-sbw", (window.innerWidth - root.clientWidth) + "px");
+      root.classList.add("ct-modal-open");
+      dialog.classList.remove("is-closing");
+      dialog.showModal();
+    }
+    function release() {
+      root.classList.remove("ct-modal-open");
+      root.style.removeProperty("--ct-sbw");
+    }
+    function finish() { dialog.classList.remove("is-closing"); if (dialog.open) dialog.close(); release(); }
+    function close() {
+      if (!dialog.open || dialog.classList.contains("is-closing")) return;
+      if (reduced) { finish(); return; }
+      dialog.classList.add("is-closing");
+      var done = false;
+      function once() { if (done) return; done = true; finish(); }
+      panel.addEventListener("animationend", once, { once: true });
+      setTimeout(once, 350);
+    }
+
+    dialog.addEventListener("cancel", function (e) { e.preventDefault(); close(); });          // tecla Esc
+    dialog.addEventListener("click", function (e) { if (e.target === dialog) close(); });      // clique no fundo
+    dialog.querySelector(".ct-modal__close").addEventListener("click", close);
+    dialog.addEventListener("close", release);   // cobre qualquer outro caminho de fechamento
+    return { open: open, closeNow: finish };
+  }
+
   /* ----- speakers carousel (o CSS só aplica o layout de carrossel no celular) ----- */
   function initSpeakerCarousel() {
     var track = document.querySelector("#palestrantes .ct-grid-4");
@@ -209,32 +263,57 @@
     var counter = controls.querySelector(".ct-carousel__status b");
     var bar = controls.querySelector(".ct-carousel__bar");
 
-    /* "Ler mais": bios longas ficam recortadas no celular */
+    /* "Ler mais": no celular expande o próprio card; no desktop abre o modal (se o navegador tiver <dialog>) */
+    var dialog = document.getElementById("ct-speaker-modal");
+    var modal = null;
+    if (dialog && typeof dialog.showModal === "function") {
+      modal = createSpeakerModal(dialog);
+      track.classList.add("has-modal");
+    }
     var mores = [];
     slides.forEach(function (s) {
-      var q = s.querySelector(".q");
-      if (!q) return;
+      var name = s.querySelector(".n").textContent;
       var btn = document.createElement("button");
       btn.type = "button"; btn.className = "ct-more"; btn.hidden = true;
-      btn.textContent = "Ler mais"; btn.setAttribute("aria-expanded", "false");
-      q.parentNode.appendChild(btn);
-      btn.addEventListener("click", function () { setOpen(s, !s.classList.contains("is-open")); });
-      mores.push({ slide: s, q: q, btn: btn });
+      btn.textContent = "Ler mais";
+      s.querySelector(".ct-speaker__body").appendChild(btn);
+      btn.addEventListener("click", function () {
+        if (btn.disabled) return;
+        if (mq.matches) setOpen(s, !s.classList.contains("is-open"));
+        else if (modal) modal.open(s);
+      });
+      mores.push({ slide: s, q: s.querySelector(".q"), btn: btn, name: name });
     });
     function setOpen(slide, open) {
       slide.classList.toggle("is-open", open);
       mores.forEach(function (m) {
         if (m.slide !== slide) return;
         m.btn.textContent = open ? "Ler menos" : "Ler mais";
+        m.btn.setAttribute("aria-label", (open ? "Ler menos sobre " : "Ler mais sobre ") + m.name);
         m.btn.setAttribute("aria-expanded", open ? "true" : "false");
       });
       if (!open) updateMore();
     }
     function updateMore() {
+      var mobile = mq.matches;
       mores.forEach(function (m) {
-        if (!mq.matches) { m.slide.classList.remove("is-open"); m.btn.hidden = true; return; }
-        if (m.slide.classList.contains("is-open")) { m.btn.hidden = false; return; }
-        m.btn.hidden = !(m.q.scrollHeight > m.q.clientHeight + 1);
+        var truncated = !!m.q && m.q.scrollHeight > m.q.clientHeight + 1;
+        if (mobile) {
+          m.btn.removeAttribute("aria-haspopup"); m.btn.removeAttribute("title"); m.btn.disabled = false;
+          if (m.slide.classList.contains("is-open")) { m.btn.hidden = false; return; }
+          m.btn.setAttribute("aria-expanded", "false");
+          m.btn.setAttribute("aria-label", "Ler mais sobre " + m.name);
+          m.btn.hidden = !truncated;
+        } else {
+          m.slide.classList.remove("is-open");
+          m.btn.textContent = "Ler mais";
+          m.btn.removeAttribute("aria-expanded");
+          m.btn.setAttribute("aria-label", "Ler mais sobre " + m.name);
+          if (modal) m.btn.setAttribute("aria-haspopup", "dialog");
+          m.btn.hidden = !modal;                       // sem <dialog> não há como abrir: não mostra o botão
+          m.btn.disabled = !truncated;                 // perfil curto: botão apagado
+          if (truncated) m.btn.removeAttribute("title"); else m.btn.title = "Este perfil não tem mais informações";
+        }
       });
     }
 
@@ -281,7 +360,8 @@
     });
 
     function sync() {
-      if (mq.matches) track.setAttribute("tabindex", "0"); else track.removeAttribute("tabindex");
+      if (mq.matches) { track.setAttribute("tabindex", "0"); if (modal) modal.closeNow(); }
+      else track.removeAttribute("tabindex");
       setActive(nearest());
       updateMore();
     }
