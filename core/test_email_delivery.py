@@ -13,7 +13,15 @@ from core.email_tracking import current_task_id
 from extra_settings.models import Setting
 
 
-@override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+@override_settings(
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    # O CI executa os testes antes do collectstatic. O admin não deve depender
+    # de um manifest local que ainda não existe em um checkout limpo.
+    STORAGES={
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    },
+)
 class DeliveryTests(TestCase):
     def setUp(self):
         self.person = Registration.objects.create(full_name="Ana & Silva", email="ana@example.com", confirmated=True)
@@ -54,7 +62,9 @@ class DeliveryTests(TestCase):
     def test_smtp_failure_preserves_support_message_and_task_failure(self):
         result = send_email.enqueue("Preciso de ajuda", "Não consigo acessar.\nMeu protocolo é 123.", "Ana", "ana@example.com")
         with patch("django.core.mail.backends.locmem.EmailBackend.send_messages", side_effect=SMTPAuthenticationError(535, b"Authentication failed")):
-            task = self.run_task(result)
+            with self.assertLogs("django_tasks", level="ERROR") as logs:
+                task = self.run_task(result)
+        self.assertIn("SMTPAuthenticationError", "\n".join(logs.output))
         self.assertEqual(task.status, "FAILED")
         delivery = task.email_deliveries.get()
         self.assertEqual(delivery.status, "failed")
