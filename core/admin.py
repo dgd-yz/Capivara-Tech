@@ -27,6 +27,7 @@ from core.models import (
     get_all_workshops_choices,
 )
 from core.tasks import send_registration_email
+from core import task_admin  # noqa: F401 - registra o histórico e os detalhes das tasks
 
 
 class WorkshopFilter(admin.SimpleListFilter):

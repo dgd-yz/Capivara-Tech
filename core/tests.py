@@ -672,7 +672,7 @@ class EmailAndCertificatesWithDatabaseWorkshopsTests(TestCase):
                 )
                 send_registration_email.call(participant.pk, "received")
                 send_registration_email.call(participant.pk, "confirmed")
-                self.assertEqual([m.body for m in mail.outbox], [label, label])
+                self.assertTrue(all(m.body.startswith(label + "\n") for m in mail.outbox))
 
     def test_registration_through_the_site_sends_the_receipt_with_the_workshop(self):
         response = self.client.post(reverse("registration"), {
@@ -682,7 +682,7 @@ class EmailAndCertificatesWithDatabaseWorkshopsTests(TestCase):
         self.assertEqual(response.status_code, 302)
         result = DBTaskResult.objects.get(task_path="core.tasks.send_registration_email")
         send_registration_email.call(*result.args_kwargs["args"])
-        self.assertEqual(mail.outbox[0].body, "1. Django Girls")
+        self.assertTrue(mail.outbox[0].body.startswith("1. Django Girls\n"))
 
     def test_confirm_and_resend_actions_work_for_registrations_with_workshops(self):
         participant = Registration.objects.create(full_name="Ana", email="ana@example.com", workshop="2")
@@ -691,7 +691,7 @@ class EmailAndCertificatesWithDatabaseWorkshopsTests(TestCase):
             self.model_admin.resend_registration_email(None, Registration.objects.all())
         for row in DBTaskResult.objects.all():
             send_registration_email.call(*row.args_kwargs["args"])
-        self.assertEqual({m.body for m in mail.outbox}, {"2. Teste de Software"})
+        self.assertTrue(all(m.body.startswith("2. Teste de Software\n") for m in mail.outbox))
         self.assertEqual(len(mail.outbox), 2)
         self.assertTrue(Registration.objects.get(pk=participant.pk).confirmated)
 

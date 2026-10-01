@@ -1,0 +1,17 @@
+{% autoescape off %}{{ body }}
+
+DADOS DA SUA INSCRIÇÃO
+Participante: {{ participant.full_name }}
+Email: {{ participant.email }}
+Minicurso: {{ participant.get_workshop_display }}
+Protocolo: {{ participant.uuid }}
+Status: {% if confirmed %}Inscrição confirmada{% else %}Inscrição recebida; aguarde a confirmação da organização{% endif %}
+
+{{ event.name }}
+Data: {{ event.date_label }}
+Local: {{ event.venue }}
+Informações do evento: {{ event.site_url }}
+Suporte: {{ event.contact_email }}
+
+Salve este email para consultar sua inscrição.
+{% endautoescape %}

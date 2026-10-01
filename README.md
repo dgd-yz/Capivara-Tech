@@ -23,14 +23,34 @@ chmod +x setup.sh
 
 ## Emails de inscrição e contato
 
+Os emails de inscrição usam um cartão HTML com os dados do evento, mantendo
+uma versão em texto simples. O banner `core/static/images/banner-email.png`
+é incorporado por CID somente na confirmação; o recebimento informa que a
+aprovação está pendente. O botão usa `EVENT_SITE_URL`, editável em Configurações
+do evento. Assunto e mensagem continuam editáveis em Configurações de email.
+
+Em **Core → Histórico de emails**, consulte o tipo, destinatários, assunto,
+texto, remetente, Reply-To, horários e erro de cada tentativa. Os registros
+também aparecem dentro da task correspondente em **Task results**, com busca
+por email, assunto e conteúdo. Para contatos, o texto original do formulário
+fica visível na task antes mesmo da execução. O resultado da task inclui um
+resumo e o ID do histórico. O estado “Aceito pelo servidor de email” não
+comprova entrega na caixa de entrada. Falhas SMTP continuam marcando a task
+como falha; o conteúdo da tentativa é preservado. Registros históricos antigos
+não são reconstruídos retroativamente.
+
+Essa mudança requer a migration `0017_emaildelivery` antes de iniciar o worker
+atualizado. Use a sequência de implantação abaixo, aguardando o web ficar pronto.
+
 No admin, abra **Core → Configurações de email** para editar o assunto e o
 texto das mensagens de inscrição recebida e confirmada. As variáveis disponíveis
 são `${nome}`, `${email}`, `${minicurso}` e `${protocolo}`. As mensagens são de
 texto simples; escreva `$$` para incluir um cifrão literal.
 
 Inscrições e contatos são enviados como `multipart/alternative`, com versões
-`text/plain` e `text/html` equivalentes. O HTML escapa o conteúdo e não inclui
-imagens. A Brevo pode adicionar pixels de rastreamento depois do envio; portanto,
+`text/plain` e `text/html`. O HTML escapa o conteúdo personalizado; a confirmação
+inclui o banner como imagem inline em uma parte `multipart/related`.
+A Brevo pode adicionar pixels de rastreamento depois do envio; portanto,
 confira também o MIME da mensagem recebida após implantar e reenviar um teste.
 Anonimizar rastreamento na Brevo não equivale a desativá-lo. Se precisar remover
 os pixels adicionados pelo provedor, consulte o suporte da Brevo sobre as opções

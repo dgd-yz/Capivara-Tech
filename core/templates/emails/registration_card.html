@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{ event.name }} — inscrição</title></head>
+<body style="margin:0;padding:0;background:#0f0905;font-family:Arial,Helvetica,sans-serif;">
+<div style="display:none;max-height:0;overflow:hidden;">{% if confirmed %}Sua inscrição está confirmada.{% else %}Recebemos sua inscrição. Aguarde a confirmação da organização.{% endif %} Confira os dados de sua participação.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;background:#0f0905;"><tr><td align="center" style="padding:30px 12px;text-align:center;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;margin:0 auto;border-spacing:0;background:#ffffff;border-radius:18px;overflow:hidden;">
+{% if confirmed %}
+<tr><td><img src="cid:registration-banner" alt="Inscrição confirmada — Capivara Tech" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></td></tr>
+{% else %}
+<tr><td align="center" style="background:#1a0f08;padding:30px 24px;color:#f4942b;font-size:24px;font-weight:bold;">{{ event.name }}</td></tr>
+{% endif %}
+<tr><td style="padding:32px 28px 18px;text-align:left;">
+<h1 style="margin:0 0 16px;color:#1d120b;font-size:28px;line-height:1.25;text-align:center;">{% if confirmed %}Sua inscrição está confirmada!{% else %}Recebemos sua inscrição!{% endif %}</h1>
+<p style="margin:0 0 24px;color:#7a7069;font-size:15px;line-height:1.7;text-align:center;">{% if confirmed %}Estamos felizes em ter você com a gente no <strong>{{ event.name }}</strong>.{% else %}Seus dados foram registrados no <strong>{{ event.name }}</strong>. A confirmação será enviada após a análise da organização.{% endif %}</p>
+<div style="color:#514941;font-size:15px;line-height:1.8;">{{ body|linebreaks }}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-spacing:0;margin-top:24px;background:#fff8f1;border:1px solid #f8dfc5;border-radius:12px;"><tr><td style="padding:22px;">
+<p style="margin:0 0 14px;color:#b96a18;font-size:11px;font-weight:bold;letter-spacing:1px;">DADOS DA SUA INSCRIÇÃO</p>
+<p style="margin:0;color:#342820;font-size:14px;line-height:1.8;">
+<strong>Participante:</strong> {{ participant.full_name }}<br>
+<strong>Email:</strong> {{ participant.email }}<br>
+<strong>Minicurso:</strong> {{ participant.get_workshop_display }}<br>
+<strong>Data:</strong> {{ event.date_label }}<br>
+<strong>Local:</strong> {{ event.venue }}<br>
+<strong>Protocolo:</strong> <span style="font-size:11px;word-break:break-all;">{{ participant.uuid }}</span>
+</p></td></tr></table>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:28px auto 12px;"><tr><td align="center" bgcolor="#f28a20" style="border-radius:9px;background:#f28a20;text-align:center;"><a href="{{ event.site_url }}" style="display:inline-block;padding:16px 24px;color:#1d120b;text-decoration:none;font-size:14px;font-weight:bold;">ACESSAR INFORMAÇÕES DO EVENTO</a></td></tr></table>
+<p style="margin:24px 0 8px;color:#7a7069;font-size:12px;line-height:1.7;text-align:center;">Salve este email para consultar sua inscrição.<br>Precisa de ajuda? <a href="mailto:{{ event.contact_email }}" style="color:#9b5412;">{{ event.contact_email }}</a></p>
+</td></tr>
+<tr><td align="center" style="background:#1a0f08;padding:28px 24px;text-align:center;">
+<p style="margin:0 0 10px;color:#f28a20;font-size:18px;font-weight:bold;">{{ event.name }}</p>
+<p style="margin:0 0 14px;color:#b7aaa0;font-size:12px;line-height:1.6;">Tecnologia · Inovação · Conhecimento · Conexões</p>
+<p style="margin:0;color:#b7aaa0;font-size:11px;line-height:1.6;">Este email foi enviado porque você realizou uma inscrição no {{ event.name }}.</p>
+</td></tr></table>
+<p style="text-align:center;margin:18px 0 0;color:#b7aaa0;font-size:11px;">© {{ event.start_date.year }} {{ event.name }}.</p>
+</td></tr></table>
+</body></html>

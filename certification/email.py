@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django_tasks import task
+from core.email_tracking import send_tracked_email
 
 
 @task
@@ -27,4 +28,4 @@ def send_template_mail(template_name, subject="", to=[], from_email=None, contex
     )
 
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    return send_tracked_email(msg, "Certificado")

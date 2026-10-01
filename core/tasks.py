@@ -6,7 +6,8 @@ from django.template.loader import render_to_string
 from django_tasks import task
 from weasyprint import HTML
 
-from core.email import build_text_mail
+from core.email import build_text_mail, build_registration_mail
+from core.email_tracking import send_tracked_email
 from core.email_templates import render_registration_email
 from core.models import DEFAULT_CONTACT_RECIPIENT, EmailSettings, Registration
 
@@ -34,7 +35,7 @@ def send_email(
         [recipient],
         reply_to=[sender_email],
     )
-    email.send(fail_silently=False)
+    return send_tracked_email(email, "Contato / suporte")
 
 
 @task()
@@ -42,11 +43,10 @@ def send_registration_email(registration_id, kind="received"):
     participant = Registration.objects.get(pk=registration_id)
     # Não anunciar uma confirmação que foi desfeita antes da execução da task.
     if kind == "confirmed" and not participant.confirmated:
-        return
+        return {"status": "ignorado", "motivo": "Inscrição não está confirmada", "inscricao_id": registration_id}
     subject, body = render_registration_email(EmailSettings.get_solo(), participant, kind)
-    build_text_mail(
-        subject, body, [participant.email]
-    ).send(fail_silently=False)
+    message = build_registration_mail(subject, body, participant, kind)
+    return send_tracked_email(message, "Inscrição confirmada" if kind == "confirmed" else "Inscrição recebida")
 
 
 @task()

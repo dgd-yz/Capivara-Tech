@@ -17,6 +17,28 @@ from core.email_templates import validate_email_subject, validate_email_template
 DEFAULT_CONTACT_RECIPIENT = "contato@sistemasparainternet.com"
 
 
+class EmailDelivery(models.Model):
+    task = models.ForeignKey("django_tasks_database.DBTaskResult", null=True, blank=True, on_delete=models.SET_NULL, related_name="email_deliveries")
+    kind = models.CharField("Tipo de email", max_length=100)
+    subject = models.TextField("Assunto")
+    recipients = models.JSONField("Destinatários", default=list)
+    from_email = models.TextField("Remetente")
+    reply_to = models.JSONField("Responder para", default=list)
+    body = models.TextField("Conteúdo enviado (texto)")
+    status = models.CharField("Estado", max_length=20, default="sending", choices=[("sending", "Enviando"), ("sent", "Aceito pelo servidor de email"), ("failed", "Falhou")])
+    error = models.TextField("Erro", blank=True)
+    created_at = models.DateTimeField("Tentativa em", auto_now_add=True)
+    finished_at = models.DateTimeField("Finalizada em", null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Histórico de email"
+        verbose_name_plural = "Histórico de emails"
+
+    def __str__(self):
+        return f"{self.subject} → {', '.join(self.recipients)}"
+
+
 class EmailSettings(SingletonModel):
     contact_recipient = models.EmailField(
         "Receber mensagens de contato em", blank=True,
