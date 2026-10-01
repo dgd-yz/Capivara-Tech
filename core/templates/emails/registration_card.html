@@ -5,11 +5,7 @@
 <div style="display:none;max-height:0;overflow:hidden;">{% if confirmed %}Sua inscrição está confirmada.{% else %}Recebemos sua inscrição. Aguarde a confirmação da organização.{% endif %} Confira os dados de sua participação.</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;background:#0f0905;"><tr><td align="center" style="padding:30px 12px;text-align:center;">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;margin:0 auto;border-spacing:0;background:#ffffff;border-radius:18px;overflow:hidden;">
-{% if confirmed %}
 <tr><td><img src="cid:registration-banner" alt="Inscrição confirmada — Capivara Tech" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></td></tr>
-{% else %}
-<tr><td align="center" style="background:#1a0f08;padding:24px;color:#f4942b;font-size:24px;font-weight:bold;"><img src="cid:registration-banner" alt="Capivara Tech" width="160" height="160" style="display:block;width:160px;height:160px;border:0;margin:0 auto 12px;">{{ event.name }}</td></tr>
-{% endif %}
 <tr><td style="padding:32px 28px 18px;text-align:left;">
 <h1 style="margin:0 0 16px;color:#1d120b;font-size:28px;line-height:1.25;text-align:center;">{% if confirmed %}Sua inscrição está confirmada!{% else %}Recebemos sua inscrição!{% endif %}</h1>
 <p style="margin:0 0 24px;color:#7a7069;font-size:15px;line-height:1.7;text-align:center;">{% if confirmed %}Estamos felizes em ter você com a gente no <strong>{{ event.name }}</strong>.{% else %}Seus dados foram registrados no <strong>{{ event.name }}</strong>. A confirmação será enviada após a análise da organização.{% endif %}</p>

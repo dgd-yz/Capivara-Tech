@@ -59,7 +59,7 @@ class DeliveryTests(TestCase):
     )
     def test_smtp_preserves_inline_image_for_received_and_confirmed(self):
         for kind, asset in (
-            ("received", "favicon/android-chrome-512x512.png"),
+            ("received", "images/banner-email.png"),
             ("confirmed", "images/banner-email.png"),
         ):
             with self.subTest(kind=kind), patch("django.core.mail.backends.smtp.smtplib.SMTP") as smtp:
