@@ -622,14 +622,14 @@ class RegistrationEmailTests(TestCase):
         message = mail.outbox[0].message()
         self.assertEqual(message.get_content_type(), "multipart/alternative")
         parts = message.get_payload()
-        self.assertEqual([p.get_content_type() for p in parts], ["text/plain", "text/html"])
-        plain = parts[0].get_payload(decode=True).decode("utf-8")
-        html = parts[1].get_payload(decode=True).decode("utf-8")
+        self.assertEqual([p.get_content_type() for p in parts], ["text/plain", "multipart/related"])
+        plain = message.get_body(("plain",)).get_content()
+        html = message.get_body(("html",)).get_content()
         self.assertIn("Olá Ana Silva!", plain)
         self.assertIn("Olá Ana Silva!", html)
         self.assertIn("&lt;script&gt;", html)
         self.assertNotIn("<script>", html)
-        self.assertNotIn("<img", html)
+        self.assertIn('src="cid:registration-banner"', html)
 
     def test_contact_contains_both_mime_parts(self):
         send_email.call("Contato", "Minha dúvida", "Ana", "ana@example.com")

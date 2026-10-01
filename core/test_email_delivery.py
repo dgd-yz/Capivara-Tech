@@ -1,7 +1,11 @@
+from email import policy
+from email.parser import BytesParser
+from pathlib import Path
 from smtplib import SMTPAuthenticationError
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.contrib.staticfiles import finders
 from django.core import mail
 from django.test import TestCase, override_settings
 from django_tasks.backends.database.management.commands.db_worker import Worker
@@ -46,6 +50,33 @@ class DeliveryTests(TestCase):
         self.assertEqual(image["Content-ID"], "<registration-banner>")
         self.assertGreater(len(image.get_payload(decode=True)), 1000)
         self.assertEqual(result["destinatarios"], ["ana@example.com"])
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
+        EMAIL_HOST="smtp.example.com", EMAIL_PORT=25,
+        EMAIL_USE_TLS=False, EMAIL_USE_SSL=False,
+        EMAIL_HOST_USER="", EMAIL_HOST_PASSWORD="",
+    )
+    def test_smtp_preserves_inline_image_for_received_and_confirmed(self):
+        for kind, asset in (
+            ("received", "favicon/android-chrome-512x512.png"),
+            ("confirmed", "images/banner-email.png"),
+        ):
+            with self.subTest(kind=kind), patch("django.core.mail.backends.smtp.smtplib.SMTP") as smtp:
+                send_registration_email.call(self.person.pk, kind)
+                raw = smtp.return_value.sendmail.call_args.args[2]
+                message = BytesParser(policy=policy.default).parsebytes(raw)
+                html = message.get_body(("html",)).get_content()
+                related = next(p for p in message.walk() if p.get_content_type() == "multipart/related")
+                image = next(p for p in related.iter_parts() if p.get_content_type() == "image/png")
+                self.assertIn('src="cid:registration-banner"', html)
+                self.assertEqual(image["Content-ID"], "<registration-banner>")
+                self.assertEqual(image.get_content_disposition(), "inline")
+                self.assertEqual(image.get_payload(decode=True), Path(finders.find(asset)).read_bytes())
+                self.assertIsNotNone(message.get_body(("plain",)))
+                if kind == "received":
+                    self.assertIn("A confirmação será enviada", html)
+                    self.assertNotIn("Sua inscrição está confirmada!", html)
 
     def test_worker_saves_snapshot_link_and_result(self):
         task = self.run_task(send_registration_email.enqueue(self.person.pk, "confirmed"))

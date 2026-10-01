@@ -30,10 +30,10 @@ def build_registration_mail(subject, body, participant, kind):
         "event": event, "participant": participant, "body": body,
         "confirmed": kind == "confirmed",
     }), "text/html")
-    if kind == "confirmed":
-        path = finders.find("images/banner-email.png")
-        with open(path, "rb") as banner:
-            message.banner_content = banner.read()
+    image_path = "images/banner-email.png" if kind == "confirmed" else "favicon/android-chrome-512x512.png"
+    path = finders.find(image_path)
+    with open(path, "rb") as banner:
+        message.banner_content = banner.read()
     return message
 
 
