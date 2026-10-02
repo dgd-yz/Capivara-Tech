@@ -1,6 +1,7 @@
 {% extends "admin/change_list.html" %}
 
 {% block object-tools-items %}
+  <li><a href="{% url 'admin:core_registration_labels' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">Imprimir etiquetas para crachás</a></li>
   <li>
     <a href="{% url 'admin:core_registration_attendance' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
        target="_blank" rel="noopener"

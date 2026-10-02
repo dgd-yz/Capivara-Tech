@@ -4,6 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
+from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html, mark_safe
@@ -15,6 +16,7 @@ from certification.domain import certificate_create
 from core.attendance import build_attendance_pdf, workshop_activity
 from core.forms import RegistrationAdminForm
 from core.event_config import get_event_config
+from core.labels import LabelPrintForm, build_labels_pdf
 from core.models import (
     EmailSettings,
     EventDay,
@@ -85,6 +87,7 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         custom_urls = [
+            path("etiquetas/", self.admin_site.admin_view(self.labels_view), name="core_registration_labels"),
             path(
                 "lista-de-frequencia/",
                 self.admin_site.admin_view(self.attendance_list_view),
@@ -92,6 +95,28 @@ class RegistrationAdmin(admin.ModelAdmin):
             ),
         ]
         return custom_urls + super().get_urls()
+
+    def labels_view(self, request):
+        if not self.has_view_permission(request):
+            raise PermissionDenied
+        # Mantém os filtros da listagem; nunca amplia a seleção em caso de erro.
+        try:
+            registrations = self.get_changelist_instance(request).get_queryset(request).filter(confirmated=True)
+        except IncorrectLookupParameters:
+            return HttpResponse("Filtros inválidos. Volte à listagem de inscrições.", status=400)
+        total = registrations.count()
+        form = LabelPrintForm(request.POST if request.method == "POST" else None)
+        if request.method == "POST" and form.is_valid():
+            if total:
+                response = HttpResponse(build_labels_pdf(registrations, form.cleaned_data), content_type="application/pdf")
+                response["Content-Disposition"] = 'inline; filename="etiquetas-crachas.pdf"'
+                return response
+            form.add_error(None, "Nenhuma inscrição confirmada para imprimir.")
+        return TemplateResponse(request, "admin/core/registration/labels.html", {
+            **self.admin_site.each_context(request), "opts": self.model._meta,
+            "title": "Imprimir etiquetas para crachás", "form": form,
+            "total": total, "sheets": (total + 14) // 15,
+        })
 
     def attendance_list_view(self, request):
         """PDF de lista de frequência com as inscrições confirmadas da listagem (respeita filtros e busca)."""

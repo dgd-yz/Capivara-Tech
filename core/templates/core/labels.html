@@ -1,0 +1,33 @@
+{% load l10n %}<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>Etiquetas para crachás</title>
+<style>
+@page { size: A4 portrait; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "DejaVu Sans", sans-serif; color: #111; }
+.sheet { position: relative; width: 210mm; height: 297mm; break-after: page; }
+.sheet:last-child { break-after: auto; }
+.label { position: absolute; width: 66.7mm; height: 25.4mm; padding: 2mm 2.5mm; overflow: hidden; }
+.guides .label { outline: 0.2mm dashed #aaa; outline-offset: -0.2mm; }
+.content { display: table; table-layout: fixed; width: 100%; height: 21.4mm; }
+.logo-cell { display: table-cell; width: 18mm; vertical-align: middle; }
+.event img { width: 16mm; height: 17mm; object-fit: contain; }
+.event-info { display: table-cell; vertical-align: middle; overflow-wrap: anywhere; }
+.event-name { font-size: 10pt; font-weight: bold; line-height: 1.1; margin-bottom: 1mm; }
+.event-detail { font-size: 6.5pt; line-height: 1.25; }
+.participant-info { display: table-cell; vertical-align: middle; text-align: center; }
+.name { font-weight: bold; line-height: 1.15; overflow-wrap: anywhere; }
+.entity { font-size: 7pt; line-height: 1.15; margin-top: 1.2mm; overflow-wrap: anywhere; }
+.role { font-size: 6pt; letter-spacing: 0.6pt; margin-top: 1.2mm; }
+</style></head><body>
+{% for page in pages %}<section class="sheet{% if guides %} guides{% endif %}">
+{% for label in page %}<div class="label {{ label.kind }}" style="left:{{ label.x|unlocalize }}mm;top:{{ label.y|unlocalize }}mm;"><div class="content">
+{% if label.kind == 'event' %}
+{% if logo %}<div class="logo-cell"><img src="{{ logo }}" alt=""></div>{% endif %}
+<div class="event-info"><div class="event-name">{{ event.name|truncatechars:65 }}</div><div class="event-detail">{{ event.date_label }}<br>{{ event.venue|truncatechars:75 }}</div></div>
+{% else %}
+<div class="participant-info">
+<div class="name" style="font-size:{{ label.font_size|unlocalize }}pt;">{{ label.person.full_name }}</div>
+{% if label.person.entity %}<div class="entity">{{ label.person.entity|truncatechars:85 }}</div>{% endif %}
+<div class="role">PARTICIPANTE</div>
+</div>{% endif %}</div></div>{% endfor %}</section>{% endfor %}
+</body></html>
