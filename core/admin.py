@@ -24,6 +24,7 @@ from core.models import (
     Registration,
     ScheduleItem,
     Speaker,
+    Sponsor,
     Workshop,
     Workshops,
     get_all_workshops_choices,
@@ -275,6 +276,53 @@ class SpeakerAdmin(admin.ModelAdmin):
             '<img src="{}" alt="" style="width:180px;height:180px;object-fit:cover;'
             'object-position:center top;border-radius:12px">',
             obj.photo.url,
+        )
+
+
+@admin.register(Sponsor)
+class SponsorAdmin(admin.ModelAdmin):
+    list_display = (
+        "logo_thumb",
+        "name",
+        "subtitle",
+        "tier_label",
+        "amount",
+        "is_master",
+        "published",
+    )
+    list_display_links = ("logo_thumb", "name")
+    list_editable = ("amount", "published")
+    list_filter = ("is_master", "published")
+    search_fields = ("name", "subtitle")
+    readonly_fields = ("logo_preview",)
+    fieldsets = (
+        ("Identificação", {"fields": ("name", "subtitle", "logo", "logo_preview", "website")}),
+        ("Patrocínio", {"fields": ("amount", "is_master")}),
+        ("Exibição no site", {"fields": ("published",)}),
+    )
+
+    @admin.display(description="Logo")
+    def logo_thumb(self, obj):
+        if not obj.logo:
+            return "—"
+        return format_html(
+            '<img src="{}" alt="" style="height:36px;width:auto;max-width:90px;object-fit:contain;'
+            'background:#fff;border-radius:6px;padding:3px">',
+            obj.logo.url,
+        )
+
+    @admin.display(description="Faixa")
+    def tier_label(self, obj):
+        return obj.tier_label
+
+    @admin.display(description="Pré-visualização")
+    def logo_preview(self, obj):
+        if not obj.logo:
+            return "Nenhum logo enviado."
+        return format_html(
+            '<img src="{}" alt="" style="height:90px;width:auto;max-width:260px;object-fit:contain;'
+            'background:#fff;border-radius:10px;padding:10px">',
+            obj.logo.url,
         )
 
 

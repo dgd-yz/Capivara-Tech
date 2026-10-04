@@ -1,0 +1,17 @@
+{% if groups %}
+<section class="ct-section" id="patrocinadores">
+  <div class="ct-eyebrow">// Patrocínio</div>
+  <h2 class="ct-h2" style="max-width:20ch;">Quem apoia o Capivara Tech</h2>
+  <p style="margin-top:16px;max-width:52ch;font-size:16px;line-height:1.6;color:var(--ct-faint);">Obrigado a quem torna a segunda edição possível.</p>
+
+  {% if master %}
+  {% include "core/_sponsor_tier.html" with group=master %}
+  {% endif %}
+
+  {% if tiers %}
+  <div class="ct-tiers">
+    {% for group in tiers %}{% include "core/_sponsor_tier.html" %}{% endfor %}
+  </div>
+  {% endif %}
+</section>
+{% endif %}

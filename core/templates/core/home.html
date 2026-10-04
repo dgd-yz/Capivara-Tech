@@ -1,5 +1,5 @@
 {% extends base_template %}
-{% load static %}
+{% load static sponsors %}
 
 {% block title %}{{ event.name }} — O maior evento de tecnologia do Território Serra da Capivara{% endblock %}
 
@@ -125,17 +125,7 @@
 {% endif %}
 
 <!-- ============================ PATROCINADORES ============================ -->
-<section class="ct-section" id="patrocinadores">
-  <div class="ct-eyebrow">// Patrocínio</div>
-  <h2 class="ct-h2" style="max-width:20ch;">Quem apoia o Capivara Tech</h2>
-  <p style="margin-top:16px;max-width:52ch;font-size:16px;line-height:1.6;color:var(--ct-faint);">Patrocinador master da segunda edição.</p>
-
-  <div style="display:flex;justify-content:center;margin-top:40px;" data-reveal>
-    <div style="background:#fff;border-radius:20px;padding:36px 56px;display:inline-flex;align-items:center;justify-content:center;max-width:280px;">
-      <img src="{% static 'images/logo-oxentenet.png' %}" alt="OxenteNet" style="width:100%;height:auto;display:block;" />
-    </div>
-  </div>
-</section>
+{% sponsors_section %}
 
 <!-- ============================ CTA ============================ -->
 <section class="ct-section" id="inscricao">
