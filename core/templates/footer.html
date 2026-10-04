@@ -1,4 +1,4 @@
-{% load static %}
+{% load static sponsors %}
 <footer class="ct-footer">
   <div class="ct-footer__in">
     <div class="ct-footer__grid">
@@ -43,6 +43,8 @@
         </a>
       </div>
     </div>
+
+    {% sponsors_footer %}
 
     <div class="ct-footer__bar">
       <span>© {{ event.start_date.year }} {{ event.name }} · {{ event.venue }} — PI</span>

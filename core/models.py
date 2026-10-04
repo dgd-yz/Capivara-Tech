@@ -1,11 +1,12 @@
 import uuid
+from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from io import BytesIO
 
 from django.core.files.base import ContentFile
-from django.core.validators import RegexValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.utils.text import slugify
 from PIL import Image as PILImage
 from PIL import ImageOps
@@ -496,3 +497,89 @@ class ScheduleItem(models.Model):
     @property
     def tag_class(self):
         return self.TAGS[self.tag][1]
+
+
+# Faixas de patrocínio (R$). Quem paga mais aparece maior e mais acima no site.
+SPONSOR_GOLD_MIN = Decimal("500")
+SPONSOR_SILVER_MIN = Decimal("300")
+
+
+class Sponsor(models.Model):
+    TIERS = {
+        "master": "Patrocinador master",
+        "ouro": "Ouro",
+        "prata": "Prata",
+        "bronze": "Bronze",
+    }
+
+    name = models.CharField("Nome", max_length=250)
+    subtitle = models.CharField(
+        "Complemento",
+        max_length=250,
+        blank=True,
+        help_text='Aparece embaixo do nome quando não há logo. Ex.: "Coronel José Dias".',
+    )
+    logo = models.ImageField(
+        "Logo",
+        upload_to="sponsors",
+        blank=True,
+        help_text=(
+            "PNG ou JPG, de preferência com pouca margem em volta. "
+            "Sem logo, o site mostra o nome em um cartão de texto."
+        ),
+    )
+    website = models.URLField(
+        "Site ou rede social",
+        blank=True,
+        help_text="Opcional. Se preenchido, o cartão vira um link.",
+    )
+    amount = models.DecimalField(
+        "Valor do patrocínio (R$)",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text=(
+            "Uso interno: o valor NÃO aparece no site. Define o destaque: "
+            f"a partir de R$ {SPONSOR_GOLD_MIN:.0f} é Ouro, "
+            f"a partir de R$ {SPONSOR_SILVER_MIN:.0f} é Prata e abaixo disso é Bronze."
+        ),
+    )
+    is_master = models.BooleanField(
+        "Patrocinador master",
+        default=False,
+        help_text="Fica no topo, no maior destaque, independente do valor.",
+    )
+    published = models.BooleanField("Exibir no site", default=True)
+
+    class Meta:
+        ordering = ("-is_master", "-amount", "name")
+        verbose_name = "Patrocinador"
+        verbose_name_plural = "Patrocinadores"
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def tier(self):
+        if self.is_master:
+            return "master"
+        if self.amount >= SPONSOR_GOLD_MIN:
+            return "ouro"
+        if self.amount >= SPONSOR_SILVER_MIN:
+            return "prata"
+        return "bronze"
+
+    @property
+    def tier_label(self):
+        return self.TIERS[self.tier]
+
+    @classmethod
+    def grouped(cls):
+        """Patrocinadores publicados por faixa, do maior para o menor destaque (só faixas com alguém)."""
+        sponsors = list(cls.objects.filter(published=True))
+        return [
+            {"key": key, "label": label, "sponsors": [s for s in sponsors if s.tier == key]}
+            for key, label in cls.TIERS.items()
+            if any(s.tier == key for s in sponsors)
+        ]

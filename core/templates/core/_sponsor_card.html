@@ -1,0 +1,1 @@
+{% if sponsor.logo %}<img src="{{ sponsor.logo.url }}" alt="{{ sponsor.name }}" />{% else %}<span class="n">{{ sponsor.name }}</span>{% if sponsor.subtitle %}<span class="s">{{ sponsor.subtitle }}</span>{% endif %}{% endif %}

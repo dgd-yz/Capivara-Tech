@@ -24,6 +24,7 @@ from core.models import (
     Registration,
     ScheduleItem,
     Speaker,
+    Sponsor,
     Workshop,
     get_workshops_choices,
 )
@@ -714,3 +715,124 @@ class EmailAndCertificatesWithDatabaseWorkshopsTests(TestCase):
                 ("Mini", "Teste de Software", 8),
             ],
         )
+
+
+@override_settings(STORAGES=PLAIN_STORAGES)
+class SponsorTests(TestCase):
+    def setUp(self):
+        Sponsor.objects.all().delete()
+
+    def make(self, name, amount, **kw):
+        return Sponsor.objects.create(name=name, amount=amount, **kw)
+
+    def test_tier_follows_the_amount_and_master_flag(self):
+        self.assertEqual(Sponsor(amount=500).tier, "ouro")
+        self.assertEqual(Sponsor(amount=1000).tier, "ouro")
+        self.assertEqual(Sponsor(amount=499.99).tier, "prata")
+        self.assertEqual(Sponsor(amount=300).tier, "prata")
+        self.assertEqual(Sponsor(amount=299).tier, "bronze")
+        self.assertEqual(Sponsor(amount=50).tier, "bronze")
+        self.assertEqual(Sponsor(amount=0, is_master=True).tier, "master")
+        self.assertEqual(Sponsor(amount=9999, is_master=True).tier_label, "Patrocinador master")
+
+    def test_grouped_orders_tiers_and_skips_empty_ones_and_unpublished(self):
+        self.make("Bronze Um", 50)
+        self.make("Ouro Um", 500)
+        self.make("Oculto", 900, published=False)
+        self.make("Master", 0, is_master=True)
+
+        groups = Sponsor.grouped()
+
+        self.assertEqual([g["key"] for g in groups], ["master", "ouro", "bronze"])
+        self.assertEqual([s.name for g in groups for s in g["sponsors"]], ["Master", "Ouro Um", "Bronze Um"])
+
+    def test_same_tier_is_ordered_by_amount_then_name(self):
+        self.make("B", 600)
+        self.make("A", 700)
+        self.make("C", 600)
+
+        self.assertEqual([s.name for s in Sponsor.grouped()[0]["sponsors"]], ["A", "B", "C"])
+
+    def test_home_shows_tiers_from_biggest_to_smallest_and_never_the_amount(self):
+        self.make("Patrocinio Ouro", 500, subtitle="Cidade X")
+        self.make("Patrocinio Prata", 300)
+        self.make("Patrocinio Bronze", 50)
+        self.make("Patrocinio Master", 10, is_master=True)
+        self.make("Patrocinio Oculto", 800, published=False)
+
+        html = self.client.get("/").content.decode()
+
+        order = [html.index(f"ct-tier--{k}") for k in ("master", "ouro", "prata", "bronze")]
+        self.assertEqual(order, sorted(order))
+        self.assertNotIn("Oculto", html)
+        for amount in ("500", "300", "R$"):
+            self.assertNotIn(f"{amount},00", html)
+        self.assertIn('<span class="n">Patrocinio Ouro</span><span class="s">Cidade X</span>', html)
+
+    def test_logo_sponsor_shows_the_image_and_website_makes_it_a_link(self):
+        sponsor = self.make("Com Logo", 300, website="https://example.com")
+        sponsor.logo.name = "sponsors/com-logo.png"
+        sponsor.save()
+
+        html = self.client.get("/").content.decode()
+
+        self.assertIn('href="https://example.com" target="_blank" rel="noopener"', html)
+        self.assertIn('<img src="/uploads/sponsors/com-logo.png" alt="Com Logo"', html)
+
+    def test_section_is_hidden_without_sponsors(self):
+        self.assertNotContains(self.client.get("/"), 'id="patrocinadores"')
+        self.assertNotContains(self.client.get("/"), "Patrocinadores</h4>")
+
+    def test_footer_lists_sponsors_by_rank_without_repeating_the_master(self):
+        self.make("Prata Um", 300)
+        self.make("Ouro Um", 500)
+        self.make("Master Um", 0, is_master=True)
+
+        html = self.client.get("/programação").content.decode()
+        footer = html[html.index("Patrocinadores</h4>"):]
+
+        self.assertLess(footer.index("Ouro Um"), footer.index("Prata Um"))
+        self.assertNotIn("Master Um", footer)
+
+    def test_seed_migration_has_the_original_sponsors(self):
+        seed = import_module("core.migrations.0019_import_existing_sponsors")
+
+        self.assertEqual(
+            [(name, amount, master) for name, _, _, amount, master in seed.SPONSORS],
+            [
+                ("OxenteNet", "0", True),
+                ("Vereador Bidó", "500", False),
+                ("Mark Contabilidade e Consultoria", "300", False),
+                ("Ótica Ventura", "50", False),
+            ],
+        )
+
+
+@override_settings(STORAGES=PLAIN_STORAGES)
+class SponsorAdminTests(TestCase):
+    def setUp(self):
+        Sponsor.objects.all().delete()
+        self.admin = get_user_model().objects.create_superuser("admin-sponsors", password="x")
+        self.client.force_login(self.admin)
+
+    def test_admin_can_add_a_sponsor_and_changelist_shows_tier_and_amount(self):
+        response = self.client.post(
+            "/admin/core/sponsor/add/",
+            {"name": "Nova Marca", "subtitle": "", "website": "", "amount": "500.00", "published": "on"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Sponsor.objects.get().tier, "ouro")
+
+        page = self.client.get("/admin/core/sponsor/")
+
+        self.assertContains(page, "Nova Marca")
+        self.assertContains(page, "Ouro")
+
+    def test_negative_amount_is_rejected(self):
+        response = self.client.post(
+            "/admin/core/sponsor/add/",
+            {"name": "Negativo", "amount": "-5", "published": "on"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Sponsor.objects.exists())
