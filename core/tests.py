@@ -1,6 +1,7 @@
 import datetime
 import shutil
 import tempfile
+from decimal import Decimal
 from importlib import import_module
 from io import BytesIO
 from unittest.mock import patch
@@ -806,6 +807,13 @@ class SponsorTests(TestCase):
                 ("Ótica Ventura", "50", False),
             ],
         )
+
+    def test_ohmycode_is_added_as_a_gold_sponsor_by_the_second_seed(self):
+        seed = import_module("core.migrations.0020_add_ohmycode_sponsor")
+        [(name, _, logo, amount, master)] = seed.SPONSORS
+
+        self.assertEqual((name, logo, master), ("ohmycode", "logo-ohmycode.png", False))
+        self.assertEqual(Sponsor(name=name, amount=Decimal(amount)).tier, "ouro")
 
 
 @override_settings(STORAGES=PLAIN_STORAGES)
