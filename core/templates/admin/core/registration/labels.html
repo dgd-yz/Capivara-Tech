@@ -1,14 +1,21 @@
 {% extends "admin/base_site.html" %}
 {% block content %}
-<p><strong>{{ total }} participante(s) confirmado(s)</strong> nos filtros atuais. {{ sheets }} folha(s) A4.</p>
+<p><strong>{{ total }} participante(s) confirmado(s)</strong> nos filtros atuais. {{ sheets }} folha(s) Carta (215,9 × 279,4 mm).</p>
 <p>Etiquetas de 66,7 × 25,4 mm: 3 colunas e 10 linhas. Cada participante ocupa duas etiquetas na mesma coluna:
 evento na linha de cima e nome/instituição na linha de baixo. São 15 participantes por folha, em ordem alfabética.</p>
 <p>As posições não utilizadas na última folha ficam em branco. Os dados do evento vêm das configurações do evento.</p>
-<p>O padrão considera etiquetas sem espaço entre elas, centralizadas na folha. Confira as margens na embalagem e ajuste abaixo.</p>
+<p>Gabarito Carta: margem superior de 11,5 mm, esquerda e direita de 4,5 mm,
+espaço entre colunas de 3,4 mm e sem espaço entre linhas. Margem inferior sem compensação: 13,9 mm.
+Os campos abaixo permitem pequenos ajustes para a sua impressora.</p>
 <form method="post">{% csrf_token %}
 {{ form.as_p }}
-{% if total %}<input type="submit" value="Gerar PDF de etiquetas">{% else %}<p>Nenhuma inscrição confirmada nos filtros atuais.</p>{% endif %}
+{% if total %}
+<div class="submit-row"><input type="submit" class="default" value="Gerar PDF de etiquetas" formtarget="_blank"></div>
+{% else %}<p>Nenhuma inscrição confirmada nos filtros atuais.</p>{% endif %}
 </form>
-<p><strong>Impressão:</strong> selecione papel A4, tamanho real / escala 100%, uma página por folha.
+<p>A correção vertical sobe ou desce toda a grade, sem alterar as colunas ou o tamanho das etiquetas.
+O valor inicial é 0 mm, sem compensação.
+Faça uma impressão de teste em escala 100% e ajuste somente esse campo se necessário.</p>
+<p><strong>Impressão:</strong> selecione papel Carta (Letter), tamanho real / escala 100%, uma página por folha.
 Desative “ajustar à página”. Faça primeiro um teste em papel comum e sobreponha à folha de etiquetas contra a luz.</p>
 {% endblock %}

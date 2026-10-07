@@ -90,16 +90,16 @@ continuam os mesmos. Os comandos não recriam o banco nem removem volumes.
 
 No admin, abra **Inscrições → Imprimir etiquetas para crachás**. A impressão
 respeita a busca e os filtros atuais, incluindo somente inscrições confirmadas.
-O PDF usa A4 com 3 colunas e 10 linhas de etiquetas de **66,7 × 25,4 mm**.
+O PDF usa Carta (215,9 × 279,4 mm) com 3 colunas e 10 linhas de etiquetas de **66,7 × 25,4 mm**.
 Cada participante ocupa um par vertical: logo/nome/data/local do evento em cima;
 nome e instituição do participante embaixo. São **15 participantes por folha**,
 em ordem alfabética. As posições restantes na última folha ficam em branco.
 
 A tela permite ajustar margens superior/esquerda e espaços entre linhas/colunas.
-O padrão é uma grade sem espaços, centralizada (21,5 mm no topo e 4,95 mm à
-esquerda). Compare com as medidas da embalagem: a quantidade de etiquetas e as
+O padrão usa 11,5 mm no topo, 4,5 mm à esquerda e à direita, 3,4 mm entre
+colunas e nenhum intervalo entre linhas. Compare com as medidas da embalagem: a quantidade de etiquetas e as
 dimensões isoladas não determinam as margens da folha. Use os contornos opcionais
-para testar em papel comum. Imprima em **A4, escala 100% / tamanho real**, sem
+para testar em papel comum. Imprima em **Carta (Letter), escala 100% / tamanho real**, sem
 “ajustar à página”. Não há novas migrations ou dependências para este módulo.
 
 ### Brevo: erro 535
