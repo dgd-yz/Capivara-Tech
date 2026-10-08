@@ -829,6 +829,14 @@ class SponsorTests(TestCase):
 
         self.assertContains(self.client.get("/"), 'alt="Tek D&amp;D"')
 
+    def test_ohmycode_sponsor_renders_with_custom_background(self):
+        sponsor = self.make("ohmycode", 500)
+        sponsor.logo.name = "sponsors/logo-ohmycode.png"
+        sponsor.save()
+
+        html = self.client.get("/").content.decode()
+        self.assertIn('<div class="ct-sp" style="background-color: #101011;"><img src="/uploads/sponsors/logo-ohmycode.png" alt="ohmycode" /></div>', html)
+
 
 @override_settings(STORAGES=PLAIN_STORAGES)
 class SponsorAdminTests(TestCase):

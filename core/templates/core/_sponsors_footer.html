@@ -3,7 +3,7 @@
   <h4>Patrocinadores</h4>
   <div class="ct-footer-sponsors">
     {% for group in groups %}{% for sponsor in group.sponsors %}
-    <a href="{% if sponsor.website %}{{ sponsor.website }}{% else %}{% url 'home' %}#patrocinadores{% endif %}"{% if sponsor.website %} target="_blank" rel="noopener"{% endif %} class="ct-sponsor-chip ct-sponsor-chip--{{ group.key }}">{% include "core/_sponsor_card.html" %}</a>
+    <a href="{% if sponsor.website %}{{ sponsor.website }}{% else %}{% url 'home' %}#patrocinadores{% endif %}"{% if sponsor.website %} target="_blank" rel="noopener"{% endif %} class="ct-sponsor-chip ct-sponsor-chip--{{ group.key }}"{% if sponsor.name|lower == "ohmycode" %} style="background-color: #101011;"{% endif %}>{% include "core/_sponsor_card.html" %}</a>
     {% endfor %}{% endfor %}
   </div>
 </div>

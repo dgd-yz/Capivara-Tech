@@ -2,7 +2,7 @@
   <div class="ct-tier__label">{% if group.key == "master" %}{{ group.label }}{% else %}// {{ group.label }}{% endif %}</div>
   <div class="ct-tier__row">
     {% for sponsor in group.sponsors %}
-    {% if sponsor.website %}<a class="ct-sp{% if not sponsor.logo %} ct-sp--text{% endif %}" href="{{ sponsor.website }}" target="_blank" rel="noopener">{% include "core/_sponsor_card.html" %}</a>{% else %}<div class="ct-sp{% if not sponsor.logo %} ct-sp--text{% endif %}">{% include "core/_sponsor_card.html" %}</div>{% endif %}
+    {% if sponsor.website %}<a class="ct-sp{% if not sponsor.logo %} ct-sp--text{% endif %}" href="{{ sponsor.website }}" target="_blank" rel="noopener"{% if sponsor.name|lower == "ohmycode" %} style="background-color: #101011;"{% endif %}>{% include "core/_sponsor_card.html" %}</a>{% else %}<div class="ct-sp{% if not sponsor.logo %} ct-sp--text{% endif %}"{% if sponsor.name|lower == "ohmycode" %} style="background-color: #101011;"{% endif %}>{% include "core/_sponsor_card.html" %}</div>{% endif %}
     {% endfor %}
   </div>
 </div>
