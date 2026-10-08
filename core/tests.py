@@ -815,6 +815,20 @@ class SponsorTests(TestCase):
         self.assertEqual((name, logo, master), ("ohmycode", "logo-ohmycode.png", False))
         self.assertEqual(Sponsor(name=name, amount=Decimal(amount)).tier, "ouro")
 
+    def test_tek_dd_is_added_as_a_bronze_sponsor_by_the_third_seed(self):
+        seed = import_module("core.migrations.0021_add_tek_dd_sponsor")
+        [(name, _, logo, amount, master)] = seed.SPONSORS
+
+        self.assertEqual((name, logo, master), ("Tek D&D Papelaria & Presentes", "logo-tek-dd.png", False))
+        self.assertEqual(Sponsor(name=name, amount=Decimal(amount)).tier, "bronze")
+
+    def test_ampersand_in_a_sponsor_name_is_escaped_in_the_page(self):
+        sponsor = Sponsor.objects.create(name="Tek D&D", amount=50)
+        sponsor.logo.name = "sponsors/tek.png"
+        sponsor.save()
+
+        self.assertContains(self.client.get("/"), 'alt="Tek D&amp;D"')
+
 
 @override_settings(STORAGES=PLAIN_STORAGES)
 class SponsorAdminTests(TestCase):
