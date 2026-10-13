@@ -347,6 +347,15 @@ class SiteLayoutTests(TestCase):
     def test_footer_does_not_show_the_contact_email(self):
         self.assertNotContains(self.client.get("/"), "contato@capivaratech.com.br")
 
+    def test_workshop_notice_says_computers_are_provided(self):
+        Workshop.objects.create(code="1", name="Teste")
+
+        for url in ("/", "/inscrição"):
+            html = self.client.get(url).content.decode()
+            self.assertIn("computadores disponíveis para todos", html, url)
+            self.assertIn("fique à vontade", html, url)
+            self.assertNotIn("Traga seu notebook", html, url)
+
     def test_about_cards_sit_in_a_row_below_the_intro(self):
         html = self.client.get("/").content.decode()
 
