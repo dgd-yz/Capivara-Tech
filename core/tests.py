@@ -348,7 +348,7 @@ class SiteLayoutTests(TestCase):
         self.assertNotContains(self.client.get("/"), "contato@capivaratech.com.br")
 
     def test_workshop_notice_says_computers_are_provided(self):
-        Workshop.objects.create(code="1", name="Teste")
+        Workshop.objects.get_or_create(code="1", defaults={"name": "Teste"})  # a seed já cadastra o 1
 
         for url in ("/", "/inscrição"):
             html = self.client.get(url).content.decode()
