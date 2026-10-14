@@ -736,25 +736,28 @@ class SponsorTests(TestCase):
         return Sponsor.objects.create(name=name, amount=amount, **kw)
 
     def test_tier_follows_the_amount_and_master_flag(self):
-        self.assertEqual(Sponsor(amount=500).tier, "ouro")
-        self.assertEqual(Sponsor(amount=1000).tier, "ouro")
-        self.assertEqual(Sponsor(amount=499.99).tier, "prata")
-        self.assertEqual(Sponsor(amount=300).tier, "prata")
-        self.assertEqual(Sponsor(amount=299).tier, "bronze")
+        # cotas da proposta: Diamante R$ 500, Ouro R$ 300, Prata R$ 100, Bronze R$ 50
+        self.assertEqual(Sponsor(amount=500).tier, "diamante")
+        self.assertEqual(Sponsor(amount=1000).tier, "diamante")
+        self.assertEqual(Sponsor(amount=499.99).tier, "ouro")
+        self.assertEqual(Sponsor(amount=300).tier, "ouro")
+        self.assertEqual(Sponsor(amount=299).tier, "prata")
+        self.assertEqual(Sponsor(amount=100).tier, "prata")
+        self.assertEqual(Sponsor(amount=99).tier, "bronze")
         self.assertEqual(Sponsor(amount=50).tier, "bronze")
         self.assertEqual(Sponsor(amount=0, is_master=True).tier, "master")
         self.assertEqual(Sponsor(amount=9999, is_master=True).tier_label, "Patrocinador master")
 
     def test_grouped_orders_tiers_and_skips_empty_ones_and_unpublished(self):
         self.make("Bronze Um", 50)
-        self.make("Ouro Um", 500)
+        self.make("Diamante Um", 500)
         self.make("Oculto", 900, published=False)
         self.make("Master", 0, is_master=True)
 
         groups = Sponsor.grouped()
 
-        self.assertEqual([g["key"] for g in groups], ["master", "ouro", "bronze"])
-        self.assertEqual([s.name for g in groups for s in g["sponsors"]], ["Master", "Ouro Um", "Bronze Um"])
+        self.assertEqual([g["key"] for g in groups], ["master", "diamante", "bronze"])
+        self.assertEqual([s.name for g in groups for s in g["sponsors"]], ["Master", "Diamante Um", "Bronze Um"])
 
     def test_same_tier_is_ordered_by_amount_then_name(self):
         self.make("B", 600)
@@ -764,20 +767,21 @@ class SponsorTests(TestCase):
         self.assertEqual([s.name for s in Sponsor.grouped()[0]["sponsors"]], ["A", "B", "C"])
 
     def test_home_shows_tiers_from_biggest_to_smallest_and_never_the_amount(self):
-        self.make("Patrocinio Ouro", 500, subtitle="Cidade X")
-        self.make("Patrocinio Prata", 300)
+        self.make("Patrocinio Diamante", 500, subtitle="Cidade X")
+        self.make("Patrocinio Ouro", 300)
+        self.make("Patrocinio Prata", 100)
         self.make("Patrocinio Bronze", 50)
         self.make("Patrocinio Master", 10, is_master=True)
         self.make("Patrocinio Oculto", 800, published=False)
 
         html = self.client.get("/").content.decode()
 
-        order = [html.index(f"ct-tier--{k}") for k in ("master", "ouro", "prata", "bronze")]
+        order = [html.index(f"ct-tier--{k}") for k in ("master", "diamante", "ouro", "prata", "bronze")]
         self.assertEqual(order, sorted(order))
         self.assertNotIn("Oculto", html)
         for amount in ("500", "300", "R$"):
             self.assertNotIn(f"{amount},00", html)
-        self.assertIn('<span class="n">Patrocinio Ouro</span><span class="s">Cidade X</span>', html)
+        self.assertIn('<span class="n">Patrocinio Diamante</span><span class="s">Cidade X</span>', html)
 
     def test_logo_sponsor_shows_the_image_and_website_makes_it_a_link(self):
         sponsor = self.make("Com Logo", 300, website="https://example.com")
@@ -794,14 +798,14 @@ class SponsorTests(TestCase):
         self.assertNotContains(self.client.get("/"), "Patrocinadores</h4>")
 
     def test_footer_lists_sponsors_by_rank_without_repeating_the_master(self):
-        self.make("Prata Um", 300)
-        self.make("Ouro Um", 500)
+        self.make("Prata Um", 100)
+        self.make("Diamante Um", 500)
         self.make("Master Um", 0, is_master=True)
 
         html = self.client.get("/programação").content.decode()
         footer = html[html.index("Patrocinadores</h4>"):]
 
-        self.assertLess(footer.index("Ouro Um"), footer.index("Prata Um"))
+        self.assertLess(footer.index("Diamante Um"), footer.index("Prata Um"))
         self.assertNotIn("Master Um", footer)
 
     def test_seed_migration_has_the_original_sponsors(self):
@@ -817,12 +821,12 @@ class SponsorTests(TestCase):
             ],
         )
 
-    def test_ohmycode_is_added_as_a_gold_sponsor_by_the_second_seed(self):
+    def test_ohmycode_is_added_by_the_second_seed_as_a_diamond_sponsor(self):
         seed = import_module("core.migrations.0020_add_ohmycode_sponsor")
         [(name, _, logo, amount, master)] = seed.SPONSORS
 
         self.assertEqual((name, logo, master), ("ohmycode", "logo-ohmycode.png", False))
-        self.assertEqual(Sponsor(name=name, amount=Decimal(amount)).tier, "ouro")
+        self.assertEqual(Sponsor(name=name, amount=Decimal(amount)).tier, "diamante")
 
     def test_tek_dd_is_added_as_a_bronze_sponsor_by_the_third_seed(self):
         seed = import_module("core.migrations.0021_add_tek_dd_sponsor")
@@ -846,6 +850,13 @@ class SponsorTests(TestCase):
         html = self.client.get("/").content.decode()
         self.assertIn('<div class="ct-sp" style="background-color: #101011;"><img src="/uploads/sponsors/logo-ohmycode.png" alt="ohmycode" /></div>', html)
 
+    def test_pikeno_is_gold_and_recanto_predileto_is_silver_by_the_fourth_seed(self):
+        seed = import_module("core.migrations.0022_add_pikeno_and_recanto_sponsors")
+        tiers = {name: Sponsor(name=name, amount=Decimal(amount)).tier for name, _, _, amount, _ in seed.SPONSORS}
+
+        self.assertEqual(tiers, {"Pikeno Supermercados": "ouro", "Recanto Predileto": "prata"})
+        self.assertEqual([logo for _, _, logo, _, _ in seed.SPONSORS], ["logo-pikeno.png", "logo-recanto-predileto.png"])
+
 
 @override_settings(STORAGES=PLAIN_STORAGES)
 class SponsorAdminTests(TestCase):
@@ -860,12 +871,12 @@ class SponsorAdminTests(TestCase):
             {"name": "Nova Marca", "subtitle": "", "website": "", "amount": "500.00", "published": "on"},
         )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Sponsor.objects.get().tier, "ouro")
+        self.assertEqual(Sponsor.objects.get().tier, "diamante")
 
         page = self.client.get("/admin/core/sponsor/")
 
         self.assertContains(page, "Nova Marca")
-        self.assertContains(page, "Ouro")
+        self.assertContains(page, "Diamante")
 
     def test_negative_amount_is_rejected(self):
         response = self.client.post(
