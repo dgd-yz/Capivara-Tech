@@ -499,14 +499,16 @@ class ScheduleItem(models.Model):
         return self.TAGS[self.tag][1]
 
 
-# Faixas de patrocínio (R$). Quem paga mais aparece maior e mais acima no site.
-SPONSOR_GOLD_MIN = Decimal("500")
-SPONSOR_SILVER_MIN = Decimal("300")
+# Cotas da proposta de patrocínio (R$). Quem paga mais aparece maior e mais acima no site.
+SPONSOR_DIAMOND_MIN = Decimal("500")
+SPONSOR_GOLD_MIN = Decimal("300")
+SPONSOR_SILVER_MIN = Decimal("100")
 
 
 class Sponsor(models.Model):
     TIERS = {
         "master": "Patrocinador master",
+        "diamante": "Diamante",
         "ouro": "Ouro",
         "prata": "Prata",
         "bronze": "Bronze",
@@ -541,6 +543,7 @@ class Sponsor(models.Model):
         validators=[MinValueValidator(0)],
         help_text=(
             "Uso interno: o valor NÃO aparece no site. Define o destaque: "
+            f"a partir de R$ {SPONSOR_DIAMOND_MIN:.0f} é Diamante, "
             f"a partir de R$ {SPONSOR_GOLD_MIN:.0f} é Ouro, "
             f"a partir de R$ {SPONSOR_SILVER_MIN:.0f} é Prata e abaixo disso é Bronze."
         ),
@@ -564,6 +567,8 @@ class Sponsor(models.Model):
     def tier(self):
         if self.is_master:
             return "master"
+        if self.amount >= SPONSOR_DIAMOND_MIN:
+            return "diamante"
         if self.amount >= SPONSOR_GOLD_MIN:
             return "ouro"
         if self.amount >= SPONSOR_SILVER_MIN:
