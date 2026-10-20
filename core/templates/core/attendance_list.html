@@ -81,7 +81,7 @@
         {% for r in registrations %}
           <tr>
             <td class="n">{{ forloop.counter }}</td>
-            <td class="name">{{ r.full_name }}</td>
+            <td class="name">{{ r.full_name|title }}</td>
             <td class="sig"></td>
           </tr>
         {% endfor %}
