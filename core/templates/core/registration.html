@@ -5,6 +5,14 @@
 
 {% block content %}
   <section class="ct-prose">
+    {% if event.registrations_closed %}
+    <div class="ct-page-head">
+      <div class="ct-eyebrow">// {{ event.name }}</div>
+      <h1 class="ct-h2">Inscrições encerradas</h1>
+    </div>
+    {% include "core/_registration_closed.html" %}
+    <a href="{% url 'schedule' %}" class="ct-btn ct-btn--solid">Ver programação →</a>
+    {% else %}
     <div class="ct-page-head">
       <div class="ct-eyebrow">// Inscrições abertas</div>
       <h1 class="ct-h2">Garanta sua vaga no {{ event.name }}</h1>
@@ -62,5 +70,6 @@
         </p>
       </div>
     </form>
+    {% endif %}
   </section>
 {% endblock %}

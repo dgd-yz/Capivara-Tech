@@ -15,8 +15,13 @@
         <div class="ct-fact"><span class="k">Local</span><span class="v">{{ event.venue }}</span></div>
       </div>
 
+  {% if event.registrations_closed %}
+    {% include "core/_registration_closed.html" %}
+  {% endif %}
   <div class="ct-hero__cta">
+    {% if not event.registrations_closed %}
     <a href="{% url 'registration' %}" class="ct-btn ct-btn--solid">Garanta sua vaga →</a>
+    {% endif %}
     <a href="#programacao" class="ct-btn ct-btn--ghost">Ver programação</a>
   </div>
 </header>
@@ -131,10 +136,17 @@
 <section class="ct-section" id="inscricao">
   <div class="ct-cta" data-reveal>
     <div class="ct-cta__in">
+      {% if event.registrations_closed %}
+      <div class="ct-eyebrow">Inscrições encerradas</div>
+      <h2>Obrigado pelo interesse!</h2>
+      <p>O período de inscrições foi encerrado. Os cadastros já realizados permanecem registrados.</p>
+      <a href="{% url 'schedule' %}" class="ct-btn ct-btn--dark" style="margin-top:30px;">Ver programação →</a>
+      {% else %}
       <div class="ct-eyebrow">Inscrições abertas</div>
       <h2>Faça parte da segunda edição</h2>
       <p>{{ event.date_label }}, no {{ event.venue }}. Vagas limitadas — garanta a sua.</p>
       <a href="{% url 'registration' %}" class="ct-btn ct-btn--dark" style="margin-top:30px;">Quero me inscrever →</a>
+      {% endif %}
     </div>
   </div>
 </section>

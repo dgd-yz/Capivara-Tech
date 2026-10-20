@@ -12,6 +12,8 @@ from certification.models import Certificate
 from core.models import EventDay, Image, ScheduleItem, Speaker, Workshop
 from core.tasks import send_email, send_registration_email
 
+from core.event_config import get_event_config
+
 from .forms import CertificatesForm, ContactForm, RegistrationForm, UserCreationForm
 
 
@@ -77,6 +79,8 @@ def schedule(request):
 
 @with_template
 def registration(request):
+    if get_event_config()["registrations_closed"]:
+        return {"template": "core/registration.html"}
     form = RegistrationForm()
     context = {"template": "core/registration.html", "form": form}
     if request.POST:

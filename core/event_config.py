@@ -5,6 +5,7 @@ from django.utils.formats import date_format
 
 
 EVENT_DEFAULTS = [
+    {"name": "EVENT_REGISTRATIONS_CLOSED", "type": "bool", "value": False, "description": "Marque para encerrar novas inscrições. Exibe o aviso no site e bloqueia o formulário; inscrições existentes são preservadas."},
     {"name": "EVENT_SITE_URL", "type": "url", "value": "https://sistemasparainternet.com/", "description": "URL pública usada no botão dos emails de inscrição."},
     {"name": "EVENT_NAME", "type": "string", "value": "Capivara Tech II", "description": "Nome exibido no site e nos novos certificados."},
     {"name": "EVENT_EDITION", "type": "string", "value": "2ª Edição"},
