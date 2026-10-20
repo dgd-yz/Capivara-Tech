@@ -52,3 +52,31 @@ class EventConfigTests(TestCase):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.context["talks_count"], 1)
         self.assertEqual(len(response.context["workshops"]), 1)
+
+    def test_closed_registrations_hide_form_and_calls_to_action(self):
+        self.set_value("EVENT_REGISTRATIONS_CLOSED", True)
+        for route in ["home", "registration"]:
+            response = self.client.get(reverse(route))
+            self.assertContains(response, "Inscrições encerradas")
+            self.assertNotContains(response, "Garanta sua vaga")
+            self.assertNotContains(response, "Quero me inscrever")
+            self.assertNotContains(response, "Realizar Inscrição")
+        response = self.client.get(reverse("registration"), HTTP_HX_REQUEST="true")
+        self.assertContains(response, "Inscrições encerradas")
+        self.assertNotContains(response, 'name="email"')
+
+    def test_closure_blocks_stale_form_without_saving_or_queueing(self):
+        from unittest.mock import patch
+        from core.models import Registration
+
+        existing = Registration.objects.create(full_name="Participante existente", email="existing@example.com")
+        self.set_value("EVENT_REGISTRATIONS_CLOSED", True)
+        with patch("core.views.send_registration_email") as task:
+            response = self.client.post(reverse("registration"), {
+                "full_name": "Novo participante", "email": "new@example.com", "workshop": "0",
+            })
+        self.assertContains(response, "Inscrições encerradas")
+        self.assertEqual(list(Registration.objects.values_list("pk", flat=True)), [existing.pk])
+        task.enqueue.assert_not_called()
+        self.set_value("EVENT_REGISTRATIONS_CLOSED", False)
+        self.assertContains(self.client.get(reverse("registration")), "Realizar Inscrição")

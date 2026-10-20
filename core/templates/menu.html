@@ -25,7 +25,7 @@
         <button class="ct-nav__cta" type="submit" style="border:0;cursor:pointer;">Sair</button>
       </form>
     {% else %}
-      <a class="ct-nav__cta" href="{% url 'registration' %}">Inscreva-se</a>
+      <a class="ct-nav__cta" href="{% url 'registration' %}">{% if event.registrations_closed %}Inscrições encerradas{% else %}Inscreva-se{% endif %}</a>
     {% endif %}
   </div>
 </nav>

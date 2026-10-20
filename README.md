@@ -123,3 +123,13 @@ Esse teste não comprova entrega nem autorização do remetente. Após corrigir 
 credenciais, faça um contato de teste e use a ação de reenvio para inscrições.
 Tasks que já falharam não são reenviadas por esses comandos de implantação.
  
+
+### Encerrar ou reabrir inscrições
+
+No admin, abra **Configurações do evento** e edite `EVENT_REGISTRATIONS_CLOSED`.
+Marque o valor booleano para encerrar; desmarque para reabrir. Salve a configuração.
+A alteração vale sem reiniciar: o site mostra “Inscrições encerradas” na página
+inicial, no menu e na página de inscrição, e bloqueia novos cadastros mesmo
+quando alguém envia um formulário aberto antes do encerramento. Cadastros
+existentes e ações administrativas são preservados. O padrão é aberto.
+Não há migration nova; implante o código antes de alterar a configuração.

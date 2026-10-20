@@ -647,3 +647,7 @@ a.ct-sp:hover { transform: translateY(-3px); }
 
 /* iframes / maps look tidy on dark */
 .ct-prose iframe { border-radius: 14px; border: 1px solid var(--ct-border); }
+
+.ct-registration-closed { margin: 28px 0; padding: 24px; text-align: left; }
+.ct-registration-closed strong { font-size: clamp(20px, 3vw, 28px); }
+.ct-registration-closed a { color: var(--ct-accent2); text-decoration: underline; }
