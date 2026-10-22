@@ -153,3 +153,12 @@ O credenciamento é do evento e não registra presença específica no minicurso
 Aplique a migration `0024_registration_checked_in` antes de iniciar esta versão
 do web e worker. Todas as inscrições existentes começam com **Credenciado?**
 desmarcado; a organização deve marcar quem realizou o credenciamento.
+
+### Dia selecionado na programação
+
+A programação da página inicial e da página **Programação** abre no dia atual,
+considerando o horário de Brasília. O dia atual recebe o selo **Hoje** e dias
+anteriores recebem **Já passou**, mantendo a consulta disponível. Antes do
+evento, abre no primeiro dia publicado; após o evento, no último. Se não houver
+programação publicada para a data atual, seleciona o próximo dia publicado.
+Não é necessário alterar configurações diariamente nem aplicar migrations.

@@ -407,7 +407,8 @@ class ScheduleTests(TestCase):
             self.assertIn('<div class="ct-tag pausa">Abertura</div>', html, url)
             self.assertIn('<div class="time">14:00–15:00</div>', html, url)
 
-    def test_unpublished_day_is_hidden_and_first_day_is_active(self):
+    @patch("core.views.timezone.now", return_value=datetime.datetime(2026, 10, 20, 12, tzinfo=datetime.UTC))
+    def test_unpublished_day_is_hidden_and_first_day_is_active(self, _now):
         self.day2.published = False
         self.day2.save()
 
