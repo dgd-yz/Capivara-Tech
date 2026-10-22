@@ -133,3 +133,23 @@ inicial, no menu e na página de inscrição, e bloqueia novos cadastros mesmo
 quando alguém envia um formulário aberto antes do encerramento. Cadastros
 existentes e ações administrativas são preservados. O padrão é aberto.
 Não há migration nova; implante o código antes de alterar a configuração.
+
+### Credenciamento e certificados
+
+Em **Inscrições**, marque ou desmarque **Credenciado?** diretamente na listagem
+e clique em **Salvar** no fim da tabela. Também é possível editar o participante
+ou usar as ações **Marcar como credenciado** e **Desfazer credenciamento**.
+O filtro **Credenciado?** permite separar presentes e não credenciados.
+Credenciar não confirma a inscrição automaticamente e não envia emails.
+
+As ações de gerar certificados pelas inscrições exigem inscrição **confirmada
+e credenciada**. Para minicursos, também é necessário ter um minicurso vinculado.
+O resultado informa quantos participantes elegíveis foram processados e quantas
+inscrições foram ignoradas. A criação manual em **Certificados** continua
+disponível para exceções administrativas, sem exigir inscrição ou credenciamento.
+Certificados existentes não são revogados ao desfazer o credenciamento.
+O credenciamento é do evento e não registra presença específica no minicurso.
+
+Aplique a migration `0024_registration_checked_in` antes de iniciar esta versão
+do web e worker. Todas as inscrições existentes começam com **Credenciado?**
+desmarcado; a organização deve marcar quem realizou o credenciamento.

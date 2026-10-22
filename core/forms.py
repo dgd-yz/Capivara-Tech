@@ -27,17 +27,18 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = Registration
         fields = "__all__"
-        exclude = ("confirmated", "organization")
+        exclude = ("confirmated", "organization", "checked_in")
 
 
 class RegistrationAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["workshop"] = forms.ChoiceField(
-            label=self.fields["workshop"].label,
-            choices=get_all_workshops_choices(),
-            initial=Workshops.NONE,
-        )
+        if "workshop" in self.fields:
+            self.fields["workshop"] = forms.ChoiceField(
+                label=self.fields["workshop"].label,
+                choices=get_all_workshops_choices(),
+                initial=Workshops.NONE,
+            )
 
     class Meta:
         model = Registration

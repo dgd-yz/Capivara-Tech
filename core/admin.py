@@ -63,10 +63,14 @@ class RegistrationAdmin(admin.ModelAdmin):
         "full_name",
         "created_at",
         "confirmated",
+        "checked_in",
     )
+
+    list_editable = ("checked_in",)
 
     list_filter = (
         "confirmated",
+        "checked_in",
         "activity",
         WorkshopFilter,
         "organization",
@@ -79,6 +83,8 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     actions = [
         "confirm_registration",
+        "mark_checked_in",
+        "undo_check_in",
         "resend_registration_email",
         "create_certificate",
         "create_certificate_workshop",
@@ -177,11 +183,53 @@ class RegistrationAdmin(admin.ModelAdmin):
                 count += 1
         self.message_user(request, f"{count} email(s) colocado(s) na fila de envio.", messages.SUCCESS)
 
-    @admin.action(description="Gerar Certificado de Particicação do Evento (Geral)")
+    @admin.action(description="Marcar como credenciado", permissions=["change"])
+    def mark_checked_in(self, request, queryset):
+        updated = queryset.filter(checked_in=False).update(checked_in=True)
+        self.message_user(
+            request,
+            ngettext("%d inscrição marcada como credenciada.", "%d inscrições marcadas como credenciadas.", updated) % updated,
+            messages.SUCCESS,
+        )
+
+    @admin.action(description="Desfazer credenciamento", permissions=["change"])
+    def undo_check_in(self, request, queryset):
+        updated = queryset.filter(checked_in=True).update(checked_in=False)
+        self.message_user(
+            request,
+            ngettext("Credenciamento desfeito para %d inscrição.", "Credenciamento desfeito para %d inscrições.", updated) % updated,
+            messages.SUCCESS,
+        )
+
+    def certificate_result_message(self, request, processed, ineligible, without_workshop=0):
+        message = ngettext(
+            "%d participante elegível processado.",
+            "%d participantes elegíveis processados.",
+            processed,
+        ) % processed
+        if ineligible:
+            message += " " + ngettext(
+                "%d inscrição ignorada por falta de confirmação ou credenciamento.",
+                "%d inscrições ignoradas por falta de confirmação ou credenciamento.",
+                ineligible,
+            ) % ineligible
+        if without_workshop:
+            message += " " + ngettext(
+                "%d inscrição ignorada por não ter minicurso.",
+                "%d inscrições ignoradas por não terem minicurso.",
+                without_workshop,
+            ) % without_workshop
+        self.message_user(
+            request, message,
+            messages.WARNING if ineligible or without_workshop or not processed else messages.SUCCESS,
+        )
+
+    @admin.action(description="Gerar Certificado de Participação do Evento (Geral)", permissions=["change"])
     def create_certificate(self, request, queryset):
         event = get_event_config()
-        qs = queryset.filter(confirmated=True)
+        qs = queryset.filter(confirmated=True, checked_in=True)
         participants_size = len(qs)
+        ineligible = queryset.count() - participants_size
         participants = qs.all()
         for participant in participants:
             participant_name = participant.full_name
@@ -190,22 +238,17 @@ class RegistrationAdmin(admin.ModelAdmin):
             workload = event["workload"]
             certificate_create(participant_name, participant_email, activity, workload)
 
-        self.message_user(
-            request,
-            ngettext(
-                "%d Certificado Gerado com Sucesso",
-                "%d Certificados Gerados com Sucesso",
-                participants_size,
-            )
-            % participants_size,
-            messages.SUCCESS,
-        )
+        self.certificate_result_message(request, participants_size, ineligible)
 
     @admin.action(
-        description="Gerar Certificado de Particicação nos Minicursos do Evento"
+        description="Gerar Certificado de Participação nos Minicursos do Evento",
+        permissions=["change"],
     )
     def create_certificate_workshop(self, request, queryset):
-        qs = queryset.filter(~Q(workshop=Workshops.NONE), confirmated=True)
+        eligible = queryset.filter(confirmated=True, checked_in=True)
+        ineligible = queryset.count() - eligible.count()
+        without_workshop = eligible.filter(workshop=Workshops.NONE).count()
+        qs = eligible.filter(~Q(workshop=Workshops.NONE))
         participants_size = len(qs)
         participants = qs.all()
         for participant in participants:
@@ -215,16 +258,7 @@ class RegistrationAdmin(admin.ModelAdmin):
             workload = Workshop.objects.get(code=participant.workshop).workload
             certificate_create(participant_name, participant_email, activity, workload)
 
-        self.message_user(
-            request,
-            ngettext(
-                "%d Certificado Gerado com Sucesso",
-                "%d Certificados Gerados com Sucesso",
-                participants_size,
-            )
-            % participants_size,
-            messages.SUCCESS,
-        )
+        self.certificate_result_message(request, participants_size, ineligible, without_workshop)
 
 
 @admin.register(Image)
