@@ -258,6 +258,12 @@ class Registration(BaseModel):
 
     confirmated = models.BooleanField("Inscrição Confirmada?", default=False)
 
+    checked_in = models.BooleanField(
+        "Credenciado?",
+        default=False,
+        help_text="Marque após realizar o credenciamento no evento. Necessário para gerar certificados pelas inscrições.",
+    )
+
     organization = models.CharField(
         "Organização",
         max_length=150,

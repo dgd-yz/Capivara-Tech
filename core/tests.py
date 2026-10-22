@@ -710,8 +710,8 @@ class EmailAndCertificatesWithDatabaseWorkshopsTests(TestCase):
         from certification.models import Certificate, CertificationSettings
 
         CertificationSettings.get_solo()
-        Registration.objects.create(full_name="Geral", email="g@example.com", workshop="0", confirmated=True)
-        Registration.objects.create(full_name="Mini", email="m@example.com", workshop="2", confirmated=True)
+        Registration.objects.create(full_name="Geral", email="g@example.com", workshop="0", confirmated=True, checked_in=True)
+        Registration.objects.create(full_name="Mini", email="m@example.com", workshop="2", confirmated=True, checked_in=True)
         Registration.objects.create(full_name="Pendente", email="p@example.com", workshop="1")
         with patch.object(self.model_admin, "message_user"):
             self.model_admin.create_certificate(None, Registration.objects.all())
