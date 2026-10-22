@@ -1,4 +1,5 @@
 from functools import wraps
+from zoneinfo import ZoneInfo
 
 from django.contrib import messages
 from django.contrib.auth import login
@@ -7,6 +8,7 @@ from django.http import HttpResponse
 from django.db.models import Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
 
 from certification.models import Certificate
 from core.models import EventDay, Image, ScheduleItem, Speaker, Workshop
@@ -36,11 +38,21 @@ def health(request):
 
 def schedule_days():
     items = ScheduleItem.objects.filter(published=True)
-    return list(
+    days = list(
         EventDay.objects.filter(published=True).prefetch_related(
             Prefetch("items", queryset=items, to_attr="public_items")
         )
     )
+    if not days:
+        return days
+
+    today = timezone.localdate(timezone=ZoneInfo("America/Sao_Paulo"))
+    active_day = next((day for day in days if day.date >= today), days[-1])
+    for day in days:
+        day.is_active = day == active_day
+        day.is_today = day.date == today
+        day.is_past = day.date < today
+    return days
 
 
 @with_template

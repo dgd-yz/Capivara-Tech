@@ -1,13 +1,17 @@
 {% if schedule_days %}
 <div class="ct-tabs" data-reveal>
   {% for day in schedule_days %}
-  <button class="ct-tab{% if forloop.first %} is-active{% endif %}" data-day="{{ forloop.counter }}"><span class="d">Dia {{ forloop.counter }} · {{ day.date|date:"d/m" }}</span><span class="s">{{ day.subtitle }}</span></button>
+  <button type="button" class="ct-tab{% if day.is_active %} is-active{% endif %}{% if day.is_past %} is-past{% endif %}{% if day.is_today %} is-today{% endif %}" data-day="{{ forloop.counter }}" aria-pressed="{{ day.is_active|yesno:'true,false' }}">
+    <span class="d">Dia {{ forloop.counter }} · {{ day.date|date:"d/m" }}</span>
+    <span class="s">{{ day.subtitle }}</span>
+    {% if day.is_today %}<span class="ct-tab__status">Hoje</span>{% elif day.is_past %}<span class="ct-tab__status">Já passou</span>{% endif %}
+  </button>
   {% endfor %}
 </div>
 
 <div class="ct-sched" data-reveal>
   {% for day in schedule_days %}
-  <div class="ct-day{% if forloop.first %} is-active{% endif %}" data-day="{{ forloop.counter }}">
+  <div class="ct-day{% if day.is_active %} is-active{% endif %}" data-day="{{ forloop.counter }}">
     {% for item in day.public_items %}
     <div class="ct-row"><div class="time">{{ item.time_label }}</div><div><div class="title">{{ item.title }}</div>{% if item.subtitle %}<div class="who">{{ item.subtitle }}</div>{% endif %}</div><div class="ct-tag {{ item.tag_class }}">{{ item.tag_text }}</div></div>
     {% endfor %}

@@ -161,7 +161,10 @@
       tab.dataset.init = "1";
       tab.addEventListener("click", function () {
         var day = tab.getAttribute("data-day");
-        tabs.forEach(function (t) { t.classList.toggle("is-active", t === tab); });
+        tabs.forEach(function (t) {
+          t.classList.toggle("is-active", t === tab);
+          t.setAttribute("aria-pressed", t === tab ? "true" : "false");
+        });
         document.querySelectorAll(".ct-day").forEach(function (panel) {
           panel.classList.toggle("is-active", panel.getAttribute("data-day") === day);
         });
