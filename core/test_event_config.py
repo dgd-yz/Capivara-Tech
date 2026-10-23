@@ -5,7 +5,8 @@ from django.urls import reverse
 from extra_settings.models import Setting
 
 from core.event_config import get_event_config
-from core.models import EventDay, ScheduleItem, Workshop
+from core.forms import RegistrationForm
+from core.models import EventDay, ScheduleItem, Workshop, get_workshops_choices
 
 
 @override_settings(STORAGES={
@@ -41,7 +42,7 @@ class EventConfigTests(TestCase):
         self.set_value("EVENT_START_DATE", date(2028, 1, 1))
         self.assertEqual(get_event_config()["date_label"], "1 de janeiro de 2028")
 
-    def test_home_counts_only_published_content(self):
+    def test_home_displays_published_content_but_counts_all_workshops(self):
         ScheduleItem.objects.all().delete()
         Workshop.objects.all().delete()
         day = EventDay.objects.create(date=date(2030, 1, 1))
@@ -52,6 +53,32 @@ class EventConfigTests(TestCase):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.context["talks_count"], 1)
         self.assertEqual(len(response.context["workshops"]), 1)
+        self.assertEqual(response.context["workshops_count"], 2)
+        self.assertContains(response, '<div class="num" data-count="2">2</div><div class="lab">minicursos práticos</div>')
+
+    def test_hidden_workshops_remain_in_total_without_becoming_available_for_registration(self):
+        Workshop.objects.all().delete()
+        for code in ["7", "8", "9"]:
+            Workshop.objects.create(code=code, name=f"Curso oculto {code}", published=False)
+        response = self.client.get(reverse("home"))
+        self.assertEqual(response.context["workshops_count"], 3)
+        self.assertContains(response, '<div class="num" data-count="3">3</div><div class="lab">minicursos práticos</div>')
+        self.assertNotContains(response, 'id="minicursos"')
+        self.assertNotContains(response, "Curso oculto")
+        self.assertEqual([code for code, _ in get_workshops_choices()], ["0"])
+        form = RegistrationForm({
+            "full_name": "Participante", "email": "teste@example.com",
+            "activity": "ORIGIN", "workshop": "7",
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn("workshop", form.errors)
+
+    def test_home_shows_zero_when_no_workshops_exist(self):
+        Workshop.objects.all().delete()
+        self.assertContains(
+            self.client.get(reverse("home")),
+            '<div class="num" data-count="0">0</div><div class="lab">minicursos práticos</div>',
+        )
 
     def test_closed_registrations_hide_form_and_calls_to_action(self):
         self.set_value("EVENT_REGISTRATIONS_CLOSED", True)
