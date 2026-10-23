@@ -61,6 +61,8 @@ def home(request):
         "template": "core/home.html",
         "speakers": list(Speaker.objects.filter(published=True)),
         "talks_count": ScheduleItem.objects.filter(published=True, day__published=True, tag__in=["palestra", "keynote"]).count(),
+        # O total do evento permanece mesmo quando os cursos são ocultados para encerrar inscrições.
+        "workshops_count": Workshop.objects.count(),
         "workshops": list(
             Workshop.objects.filter(published=True).prefetch_related(
                 Prefetch(

@@ -162,3 +162,10 @@ anteriores recebem **Já passou**, mantendo a consulta disponível. Antes do
 evento, abre no primeiro dia publicado; após o evento, no último. Se não houver
 programação publicada para a data atual, seleciona o próximo dia publicado.
 Não é necessário alterar configurações diariamente nem aplicar migrations.
+
+### Contador de minicursos
+
+O indicador **minicursos práticos** mostra o total de minicursos cadastrados no
+evento, inclusive os ocultos. Desmarcar **Exibir no site e na inscrição** mantém
+o minicurso fora dos cards e do formulário público, sem reduzir esse indicador.
+O contador não representa vagas disponíveis nem reabre inscrições.
