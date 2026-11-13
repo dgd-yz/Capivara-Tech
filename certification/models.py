@@ -7,7 +7,9 @@ from django.utils.timezone import now
 from django_ckeditor_5.fields import CKEditor5Field
 from solo.models import SingletonModel
 
-CerticateTemplate = """
+# Texto padrão antigo (que já trazia nome, data e assinatura). Mantido para a migração
+# que o substitui pelo novo, já que agora o layout posiciona esses elementos.
+LegacyCertificateTemplate = """
 <p style="text-align:justify;">
     Declaro que <strong>{{Nome_Participante}}</strong> participou do <strong>{{Atividade}}</strong> com carga horaria de <strong>{{Carga_Horaria}}</strong> horas.
 </p>
@@ -23,8 +25,13 @@ CerticateTemplate = """
 </p>
 """
 
-CertificateHelpText = f"""<h3>Variáveis Disponíveis:</h3><br />
+# Só o corpo: o layout já mostra "Certificamos que", o nome, a data e a assinatura.
+CerticateTemplate = """<p>participou {{Tipo_Atividade}} <strong>{{Atividade}}</strong>, com carga horária de <strong>{{Carga_Horaria}}&nbsp;horas</strong>.</p>"""
+
+CertificateHelpText = f"""<p>O layout do certificado já mostra "Certificamos que", o nome do participante, o local e a data de emissão e a assinatura. Escreva aqui só o texto que vem depois do nome.</p>
+<h3>Variáveis Disponíveis:</h3><br />
 <b>{{{{Nome_Participante}}}}</b> Nome Completo do Participante.<br />
+<b>{{{{Tipo_Atividade}}}}</b> "do evento", "do minicurso" ou "da atividade", conforme a atividade.<br />
 <b>{{{{Atividade}}}}</b> Nome da Atividade.<br />
 <b>{{{{Carga_Horaria}}}}</b> Carga Horária da Atividade.<br />
 <b>{{{{Local_de_Emissão}}}}</b> Localização do Evento.<br />
