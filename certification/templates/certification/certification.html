@@ -7,59 +7,186 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Certificado - {{ participant_name }}</title>
     <style>
-      * {
-        padding: 0;
-        margin: 0;
-        border: 0;
-      }
-      
+      @font-face { font-family: "Sora"; font-weight: 600; src: url("{% static 'certification/fonts/Sora-SemiBold.ttf' %}"); }
+      @font-face { font-family: "Sora"; font-weight: 700; src: url("{% static 'certification/fonts/Sora-Bold.ttf' %}"); }
+      @font-face { font-family: "Sora"; font-weight: 800; src: url("{% static 'certification/fonts/Sora-ExtraBold.ttf' %}"); }
+      @font-face { font-family: "DM Sans"; font-weight: 400; src: url("{% static 'certification/fonts/DMSans-Regular.ttf' %}"); }
+      @font-face { font-family: "DM Sans"; font-weight: 400; font-style: italic; src: url("{% static 'certification/fonts/DMSans-Italic.ttf' %}"); }
+      @font-face { font-family: "DM Sans"; font-weight: 600; src: url("{% static 'certification/fonts/DMSans-SemiBold.ttf' %}"); }
+      @font-face { font-family: "DM Sans"; font-weight: 700; src: url("{% static 'certification/fonts/DMSans-Bold.ttf' %}"); }
+      @font-face { font-family: "Space Mono"; font-weight: 400; src: url("{% static 'certification/fonts/SpaceMono-Regular.ttf' %}"); }
+
+      * { padding: 0; margin: 0; border: 0; box-sizing: border-box; }
+
       @page {
         size: A4 landscape;
         margin: 0;
-        {% if background_url %}background: url('{{ background_url }}') center / 297mm 210mm no-repeat;{% endif %}
+        {% if background_url %}background: url('{{ background_url }}') center / 297mm 210mm no-repeat;{% else %}background: #15110d;{% endif %}
       }
-      
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      
-      .text-tiny { font-size: 0.7em; }
-      .text-small { font-size: 0.85em; }
-      .text-big { font-size: 1.4em; }
-      .text-huge { font-size: 1.8em; }
-      .certificate-text {
-        margin: {{ layout.margin_top }}mm {{ layout.margin_right }}mm {{ layout.margin_bottom }}mm {{ layout.margin_left }}mm;
-        font-size: 16pt;
-        line-height: 1.5;
-      }
-      .certificate-text p { margin: 0 0 4mm; }
+
+      html, body { width: 297mm; height: 210mm; }
+      body { font-family: "DM Sans", "DejaVu Sans", sans-serif; }
+
       .certificate-text img { max-width: 100%; height: auto; }
       .certificate-text figure.image { margin: 3mm auto; }
       .certificate-text figure.image img { width: 100%; }
       .certificate-text .image-style-align-left { float: left; margin-right: 5mm; }
       .certificate-text .image-style-align-right { float: right; margin-left: 5mm; }
-      .validation { position: fixed; bottom: 8mm; left: 15mm; font-size: 8pt; text-align: left; }
-      .validation svg { width: 20mm; height: 20mm; }
+      .text-tiny { font-size: 0.7em; }
+      .text-small { font-size: 0.85em; }
+      .text-big { font-size: 1.4em; }
+      .text-huge { font-size: 1.8em; }
+
+      /* ---------- Layout próprio (sem imagem de fundo) ---------- */
+      .deco { position: absolute; left: 0; top: 0; width: 297mm; height: 210mm; }
+
+      .logo { position: absolute; left: 0; width: 297mm; top: 16mm; text-align: center; }
+      .logo img { width: 47mm; height: auto; }
+
+      .main { position: absolute; left: 30mm; width: 237mm; top: 66mm; text-align: center; color: #f2ece3; }
+      .title {
+        font-family: "Sora", sans-serif; font-weight: 800; font-size: 40pt; line-height: 1;
+        letter-spacing: .06em; text-transform: uppercase; color: #f2ece3;
+      }
+      .subtitle {
+        margin-top: 3mm; font-family: "Space Mono", monospace; font-size: 10pt; letter-spacing: .4em;
+        text-transform: uppercase; color: #d9893f;
+      }
+      .lead { margin-top: 11mm; font-size: 14.5pt; color: #cbbfae; }
+      .participant {
+        margin-top: 1.5mm; font-family: "Sora", sans-serif; font-weight: 700; line-height: 1.12;
+        letter-spacing: -.01em; color: #eaa05a;
+      }
+      .bar {
+        margin: 4.5mm auto 0; width: 40mm; height: 1.3mm; border-radius: 1mm;
+        background: linear-gradient(90deg, #c0533b, #d9893f 55%, #eaa05a);
+      }
+      .main .certificate-text { margin: 6mm auto 0; width: 215mm; font-size: 16pt; line-height: 1.5; color: #cbbfae; }
+      .main .certificate-text p { margin: 0 0 2mm; }
+      .main .certificate-text strong { color: #f2ece3; font-weight: 700; }
+      .event-line { margin-top: 4mm; font-size: 11pt; color: #a89b8a; }
+      .event-line strong { color: #cbbfae; font-weight: 600; }
+
+      .footer { position: absolute; left: 24mm; width: 249mm; bottom: 17mm; height: 36mm; color: #f2ece3; }
+      .validation { position: absolute; left: 0; bottom: 0; width: 62mm; }
+      .validation .qr {
+        position: absolute; left: 0; bottom: 0; background: #fff; border-radius: 2.5mm; padding: 1.5mm;
+        width: 25mm; height: 25mm;
+      }
+      .validation .qr svg { width: 22mm; height: 22mm; display: block; }
+      .validation .info { position: absolute; left: 29mm; bottom: 1mm; width: 36mm; }
+      .validation .label {
+        font-family: "Space Mono", monospace; font-size: 6.5pt; letter-spacing: .12em;
+        text-transform: uppercase; color: #a89b8a;
+      }
+      .validation .url { margin-top: 1mm; font-size: 6pt; line-height: 1.35; word-break: break-all; }
+      .validation .url a { color: #cbbfae; text-decoration: none; }
+
+      .signature { position: absolute; left: 82mm; width: 85mm; bottom: 0; text-align: center; }
+      .signature .line { height: .3mm; background: #6f6557; margin-bottom: 2.5mm; }
+      .signature .name { font-family: "Sora", sans-serif; font-weight: 600; font-size: 11.5pt; }
+      .signature .role { margin-top: .8mm; font-size: 8.5pt; line-height: 1.35; color: #a89b8a; }
+
+      .issued { position: absolute; right: 0; bottom: 0; width: 80mm; text-align: right; }
+      .issued .ifpi {
+        display: inline-block; margin-bottom: 3mm; background: #fff; border-radius: 2.5mm;
+        padding: 1mm; width: 19mm; height: 19mm;
+      }
+      .issued .ifpi img { width: 17mm; height: 17mm; display: block; }
+      .issued .label {
+        font-family: "Space Mono", monospace; font-size: 6.5pt; letter-spacing: .14em;
+        text-transform: uppercase; color: #a89b8a;
+      }
+      .issued .value { margin-top: 1mm; font-size: 9.5pt; color: #f2ece3; }
+
+      /* ---------- Modo com imagem de fundo enviada no admin ---------- */
+      .classic { margin: {{ layout.margin_top }}mm {{ layout.margin_right }}mm {{ layout.margin_bottom }}mm {{ layout.margin_left }}mm; font-size: 16pt; line-height: 1.5; color: #1d1813; text-align: center; }
+      .classic .certificate-text { text-align: justify; }
+      .classic p { margin: 0 0 4mm; }
+      .classic .classic-name { font-family: "Sora", sans-serif; font-weight: 700; font-size: 22pt; }
+      .classic .classic-issued { text-align: right; margin-top: 6mm; font-weight: 700; }
+      .classic .classic-signature { margin-top: 8mm; font-weight: 700; }
+      .classic-validation { position: fixed; bottom: 8mm; left: 15mm; font-size: 8pt; text-align: left; color: #1d1813; }
+      .classic-validation svg { width: 20mm; height: 20mm; }
     </style>
   </head>
   <body>
-    <div class="certificate-text">
-      {{ text }}
-    </div>
-      <div class="validation">
+    {% if background_url %}
+      <div class="classic">
+        <p>Certificamos que</p>
+        <p class="classic-name">{{ participant_name }}</p>
+        <div class="certificate-text">{{ text }}</div>
+        <p class="classic-issued">{{ certificate.location }}, {{ issued_on }}</p>
+        <p class="classic-signature">{{ certificate.certifier_name }}<br />{{ certificate.certifier_position }}</p>
+      </div>
+      <div class="classic-validation">
         {% qr_from_text uri size='T' %}
         <br />
         Para validar esse certificado acesse:
         <br />
         <a href="{{ uri }}">{{ uri }}</a>
       </div>
+    {% else %}
+      <svg class="deco" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="warm" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#eaa05a" />
+            <stop offset="1" stop-color="#c0533b" />
+          </linearGradient>
+        </defs>
+        <!-- cantos em diagonal, como no banner -->
+        <polygon points="0,0 64,0 0,31" fill="url(#warm)" />
+        <polygon points="0,0 36,0 0,17.5" fill="#f9bc32" opacity="0.9" />
+        <polygon points="297,210 233,210 297,179" fill="url(#warm)" />
+        <polygon points="297,210 261,210 297,192.5" fill="#f9bc32" opacity="0.9" />
+        <!-- linhas de circuito -->
+        <g fill="none" stroke="#d9893f" stroke-width="0.35" opacity="0.32">
+          <path d="M205 16 H244 L251 23 H280" />
+          <path d="M222 10 H238 L244 16" />
+          <path d="M258 30 H280" />
+          <path d="M17 120 V150 L23 156 V178" />
+          <path d="M280 48 V86 L274 92 V112" />
+        </g>
+        <g fill="#d9893f" opacity="0.5">
+          <circle cx="205" cy="16" r="1" /><circle cx="280" cy="23" r="1" /><circle cx="258" cy="30" r="0.8" />
+          <circle cx="17" cy="120" r="1" /><circle cx="23" cy="178" r="1" /><circle cx="280" cy="48" r="1" /><circle cx="274" cy="112" r="1" />
+        </g>
+        <!-- moldura dupla -->
+        <rect x="9" y="9" width="279" height="192" rx="3" fill="none" stroke="#d9893f" stroke-width="0.4" opacity="0.45" />
+        <rect x="11.5" y="11.5" width="274" height="187" rx="2" fill="none" stroke="#f2ece3" stroke-width="0.2" opacity="0.12" />
+      </svg>
+
+      <div class="logo"><img src="{% static 'images/capivara-logo.svg' %}" alt="Capivara Tech" /></div>
+
+      <div class="main">
+        <div class="title">Certificado</div>
+        <div class="subtitle">de participação</div>
+        <div class="lead">Certificamos que</div>
+        <div class="participant" style="font-size: {{ name_size }}pt;">{{ participant_name }}</div>
+        <div class="bar"></div>
+        <div class="certificate-text">{{ text }}</div>
+        <div class="event-line"><strong>{{ event.name }}</strong> · {{ event.edition }} · {{ event.date_label }} · {{ event.venue }}</div>
+      </div>
+
+      <div class="footer">
+        <div class="validation">
+          <div class="qr">{% qr_from_text uri size='S' border=0 %}</div>
+          <div class="info">
+            <div class="label">Valide este certificado</div>
+            <div class="url"><a href="{{ uri }}">{{ uri }}</a></div>
+          </div>
+        </div>
+        <div class="signature">
+          <div class="line"></div>
+          <div class="name">{{ certificate.certifier_name }}</div>
+          <div class="role">{{ certificate.certifier_position }}</div>
+        </div>
+        <div class="issued">
+          <div class="ifpi"><img src="{% static 'images/logo-ifpi-vertical.png' %}" alt="IFPI" /></div>
+          <div class="label">Emitido em</div>
+          <div class="value">{{ certificate.location }}, {{ issued_on }}</div>
+        </div>
+      </div>
+    {% endif %}
   </body>
 </html>

@@ -90,3 +90,68 @@ class CertificateTests(TestCase):
         fetch = certificate_url_fetcher("http://testserver/")
         result = fetch("http://testserver" + response.json()["url"])
         self.assertEqual(result["string"], png_bytes())
+
+
+@override_settings(STORAGES={
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+})
+class CertificateLayoutTests(TestCase):
+    """Layout com a identidade do site (sem imagem de fundo configurada)."""
+
+    def render_html(self, certificate):
+        with patch("certification.views.HTML") as html:
+            html.return_value.write_pdf.return_value = b"%PDF-fake"
+            response = self.client.get(certificate.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        return html.call_args.kwargs["string"]
+
+    def test_default_text_says_event_or_workshop(self):
+        from core.event_config import get_event_config
+        from core.models import Workshop
+
+        event = get_event_config()
+        workshop = Workshop.objects.get_or_create(code="1", defaults={"name": "Teste", "workload": 8})[0]
+        cases = [
+            (event["name"], "participou do evento"),
+            (workshop.name, "participou do minicurso"),
+            ("Organização Geral", "participou da atividade"),
+        ]
+        for activity, expected in cases:
+            with self.subTest(activity=activity):
+                certificate = certificate_create("Ana Maria da Silva", "ana@example.com", activity, 8)
+                html = self.render_html(certificate)
+                self.assertIn(expected, html)
+                self.assertIn("Ana Maria da Silva", html)
+                self.assertIn("carga horária de <strong>8&nbsp;horas</strong>", html)
+
+    def test_layout_shows_signature_issue_date_and_brand_fonts(self):
+        import datetime
+
+        configuration = CertificationSettings.get_solo()
+        configuration.default_certifier_name = "Paul Symon Ribeiro"
+        configuration.default_certifier_position = "Coordenador do Curso de Sistemas para Internet"
+        configuration.default_date = datetime.date(2026, 11, 13)
+        configuration.save()
+        html = self.render_html(certificate_create("Ana", "ana@example.com", "Evento", 24))
+        self.assertIn("Paul Symon Ribeiro", html)
+        self.assertIn("Coordenador do Curso de Sistemas para Internet", html)
+        self.assertIn("13 de novembro de 2026", html)
+        self.assertIn("certification/fonts/Sora-ExtraBold.ttf", html)
+        self.assertIn("images/capivara-logo.svg", html)
+
+    def test_real_pdf_renders_with_brand_fonts_without_errors(self):
+        certificate = certificate_create("Giovanna Milena de Sousa Carvalho Santos", "g@example.com", "Evento", 24)
+        with self.assertNoLogs("weasyprint", level="ERROR"):
+            response = self.client.get(certificate.get_absolute_url())
+        self.assertTrue(response.content.startswith(b"%PDF"))
+
+    def test_migration_recognizes_the_legacy_default_text(self):
+        from importlib import import_module
+
+        from .models import LegacyCertificateTemplate
+
+        migration = import_module("certification.migrations.0004_certificate_layout_text")
+        self.assertEqual(migration.normalized(LegacyCertificateTemplate), migration.LEGACY)
+        edited_by_editor = LegacyCertificateTemplate.replace("\n    ", "").replace("\n", "")
+        self.assertEqual(migration.normalized(edited_by_editor), migration.LEGACY)
