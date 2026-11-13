@@ -177,3 +177,45 @@ class CertificateLayoutTests(TestCase):
         self.assertEqual(migration.normalized(LegacyCertificateTemplate), migration.LEGACY)
         edited_by_editor = LegacyCertificateTemplate.replace("\n    ", "").replace("\n", "")
         self.assertEqual(migration.normalized(edited_by_editor), migration.LEGACY)
+
+
+class PersonNameTests(TestCase):
+    def test_formats_names_with_portuguese_rules(self):
+        from .names import format_person_name
+
+        cases = {
+            "ADRIANO DA LUZ PEREIRA": "Adriano da Luz Pereira",
+            "lucas negreiros da silva": "Lucas Negreiros da Silva",
+            "Kamel De Santana Silva": "Kamel de Santana Silva",
+            "thayla negreiros da rocha mata": "Thayla Negreiros da Rocha Mata",
+            "Nara Letícia Gomes E Silva": "Nara Letícia Gomes e Silva",
+            "Ulisses g. Lima": "Ulisses G. Lima",
+            "Vitor Emanuel Paes De C. Miranda": "Vitor Emanuel Paes de C. Miranda",
+            "pedro ii de alcântara": "Pedro II de Alcântara",
+            "ANA-MARIA SOUSA": "Ana-Maria Sousa",
+            "Ronald McDonald": "Ronald McDonald",
+            "  JOSÉ   FRANCISCO  DE ARAÚJO ": "José Francisco de Araújo",
+            "De Souza Lima": "De Souza Lima",
+            "Allex": "Allex",
+        }
+        for raw, expected in cases.items():
+            with self.subTest(raw=raw):
+                self.assertEqual(format_person_name(raw), expected)
+
+    def test_certificate_stores_formatted_name_and_reuses_it(self):
+        first = certificate_create("ADRIANO DA LUZ PEREIRA", "a@example.com", "Evento", 24)
+        again = certificate_create("adriano da luz pereira", "a@example.com", "Evento", 24)
+        self.assertEqual(first.participant_name, "Adriano da Luz Pereira")
+        self.assertEqual(first.pk, again.pk)
+        self.assertEqual(Certificate.objects.count(), 1)
+
+    def test_migration_formats_existing_certificates(self):
+        from importlib import import_module
+
+        from django.apps import apps
+
+        certificate = certificate_create("Ana", "ana@example.com", "Evento", 24)
+        Certificate.objects.filter(pk=certificate.pk).update(participant_name="MARIA DE LOURDES")
+        import_module("certification.migrations.0006_format_participant_names").format_existing_names(apps, None)
+        certificate.refresh_from_db()
+        self.assertEqual(certificate.participant_name, "Maria de Lourdes")

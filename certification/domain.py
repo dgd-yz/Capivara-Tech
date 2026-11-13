@@ -1,7 +1,9 @@
 from .models import Certificate, CertificationSettings
+from .names import format_person_name
 
 
 def certificate_create(participant_name, participant_email, activity, workload):
+    participant_name = format_person_name(participant_name)
     cs = CertificationSettings.get_solo()
     location = cs.default_location
     certifier_name = cs.default_certifier_name
