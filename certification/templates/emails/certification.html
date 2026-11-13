@@ -1,13 +1,63 @@
-{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{ event.name }}: seu certificado</title></head>
+<body style="margin:0;padding:0;background:#efe8de;font-family:Arial,Helvetica,sans-serif;">
+<div style="display:none;max-height:0;overflow:hidden;">Seu certificado {{ kind }} {{ certificate.activity }} já está disponível. Baixe o PDF pelo link.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;background:#efe8de;"><tr><td align="center" style="padding:28px 12px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;margin:0 auto;border-spacing:0;background:#ffffff;border-radius:14px;overflow:hidden;">
 
-<img src="{{ proto }}://{{ domain }}{{ logo_path }}" alt="Logomarca de {{ event_name }}" />
+<tr><td style="height:6px;background:#d9893f;background-image:linear-gradient(90deg,#c0533b,#d9893f 55%,#f9bc32);font-size:0;line-height:0;">&nbsp;</td></tr>
+<tr><td align="center" style="background:#15110d;padding:26px 24px 22px;text-align:center;">
+<img src="cid:{{ logo_cid }}" width="132" alt="{{ event.name }}" style="display:block;margin:0 auto;width:132px;height:auto;border:0;">
+<p style="margin:12px 0 0;font-family:'Courier New',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#eaa05a;">{{ event.edition }} · {{ event.date_label }}</p>
+</td></tr>
 
-<h1>Certificados</h1>
+<tr><td style="padding:34px 40px 8px;">
+<p style="margin:0;font-family:'Courier New',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c0533b;">Certificado disponível</p>
+<h1 style="margin:8px 0 0;font-size:26px;line-height:1.25;color:#15110d;">Parabéns, {{ first_name }}!</h1>
+<p style="margin:14px 0 0;font-size:16px;line-height:1.6;color:#4a4036;">Seu certificado {{ kind }} <strong style="color:#15110d;">{{ certificate.activity }}</strong>{% if kind != "do evento" %} no {{ event.name }}{% endif %} já está pronto.</p>
+</td></tr>
 
-<p>Parabéns {{ participant_name }}! Seu certificado de participação no {{ event_name }} já está disponível no link abaixo.</p>
+<tr><td style="padding:20px 40px 4px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#faf6ef;border:1px solid #efe4d3;border-left:4px solid #d9893f;border-radius:10px;"><tr><td style="padding:16px 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;font-size:14px;line-height:1.5;color:#4a4036;">
+<tr><td style="padding:4px 0;color:#8a7d6d;width:120px;vertical-align:top;">Participante</td><td style="padding:4px 0;color:#15110d;font-weight:bold;">{{ certificate.participant_name }}</td></tr>
+<tr><td style="padding:4px 0;color:#8a7d6d;vertical-align:top;">Atividade</td><td style="padding:4px 0;color:#15110d;">{{ activity_label }}</td></tr>
+<tr><td style="padding:4px 0;color:#8a7d6d;vertical-align:top;">Carga horária</td><td style="padding:4px 0;color:#15110d;">{{ certificate.workload }} hora{{ certificate.workload|pluralize }}</td></tr>
+<tr><td style="padding:4px 0;color:#8a7d6d;vertical-align:top;">Emitido em</td><td style="padding:4px 0;color:#15110d;">{{ issued_on }}</td></tr>
+<tr><td style="padding:4px 0;color:#8a7d6d;vertical-align:top;">Local</td><td style="padding:4px 0;color:#15110d;">{{ event.venue }}</td></tr>
+</table>
+</td></tr></table>
+</td></tr>
 
-<p>
-  <a href="{{ proto }}://{{ domain }}{% url 'certificate_detail' uuid=uuid %}">Certificado</a>
-</p>
+<tr><td align="center" style="padding:28px 40px 6px;text-align:center;">
+<a href="{{ certificate_url }}" style="display:inline-block;background:#d9893f;color:#15110d;font-size:16px;font-weight:bold;text-decoration:none;padding:15px 34px;border-radius:999px;">Baixar meu certificado (PDF)</a>
+</td></tr>
+<tr><td align="center" style="padding:10px 40px 0;font-size:12px;line-height:1.5;color:#8a7d6d;text-align:center;">
+Se o botão não funcionar, copie e cole este endereço no navegador:<br>
+<a href="{{ certificate_url }}" style="color:#c0533b;word-break:break-all;">{{ certificate_url }}</a>
+</td></tr>
 
-<p>Obrigado por participar! Nos vemos na próxima edição do Capivara Tech.</p>
+<tr><td style="padding:26px 40px 8px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#fff8ec;border-radius:10px;"><tr><td style="padding:14px 18px;font-size:13px;line-height:1.55;color:#6b5a45;">
+<strong style="color:#15110d;">Guarde este e-mail.</strong> O link é permanente e o QR code impresso no certificado permite que qualquer pessoa confirme que ele é autêntico.
+</td></tr></table>
+</td></tr>
+
+<tr><td style="padding:18px 40px 34px;font-size:15px;line-height:1.6;color:#4a4036;">
+Obrigado por fazer parte do {{ event.name }}. Nos vemos na próxima edição!<br>
+<span style="color:#8a7d6d;font-size:14px;">Equipe Capivara Tech</span>
+</td></tr>
+
+<tr><td style="background:#15110d;padding:22px 32px;text-align:center;font-size:12px;line-height:1.6;color:#a89b8a;">
+<strong style="color:#f2ece3;">{{ event.name }}</strong> · {{ event.date_label }}<br>
+{{ event.venue }} · {{ event.city }}<br>
+{% if event.instagram_url %}<a href="{{ event.instagram_url }}" style="color:#eaa05a;text-decoration:none;">Instagram</a> &nbsp;·&nbsp; {% endif %}<a href="{{ site_url }}" style="color:#eaa05a;text-decoration:none;">Site do evento</a>
+<p style="margin:10px 0 0;font-size:11px;color:#6f6557;">Você recebeu este e-mail porque participou do {{ event.name }}.{% if event.contact_email %} Dúvidas: <a href="mailto:{{ event.contact_email }}" style="color:#a89b8a;">{{ event.contact_email }}</a>{% endif %}</p>
+</td></tr>
+<tr><td style="height:6px;background:#d9893f;background-image:linear-gradient(90deg,#f9bc32,#d9893f 45%,#c0533b);font-size:0;line-height:0;">&nbsp;</td></tr>
+
+</table>
+</td></tr></table>
+</body>
+</html>

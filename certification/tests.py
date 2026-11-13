@@ -219,3 +219,74 @@ class PersonNameTests(TestCase):
         import_module("certification.migrations.0006_format_participant_names").format_existing_names(apps, None)
         certificate.refresh_from_db()
         self.assertEqual(certificate.participant_name, "Maria de Lourdes")
+
+
+@override_settings(STORAGES={
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}, EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+class CertificateEmailTests(TestCase):
+    site = "https://capivaratech.example"
+
+    def test_event_certificate_email_has_summary_button_and_embedded_logo(self):
+        from .email import build_certificate_mail
+
+        certificate = certificate_create("ADRIANO DA LUZ PEREIRA", "adriano@example.com", "Capivara Tech II", 24)
+        message = build_certificate_mail(certificate, self.site)
+        html = message.alternatives[0][0]
+        url = f"{self.site}/certificado/{certificate.uuid}"
+        self.assertEqual(message.to, ["adriano@example.com"])
+        self.assertEqual(message.subject, "Capivara Tech II: seu certificado está disponível")
+        self.assertIn("Parabéns, Adriano!", html)
+        self.assertIn("Seu certificado do evento <strong", html)
+        self.assertIn("Adriano da Luz Pereira", html)
+        self.assertIn("24 horas", html)
+        self.assertIn(f'href="{url}"', html)
+        self.assertIn("Baixar meu certificado (PDF)", html)
+        self.assertIn('src="cid:certificate-logo"', html)
+        self.assertIn(url, message.body)
+        self.assertIn("Content-ID: <certificate-logo>", message.message().as_string())
+
+    def test_workshop_certificate_email_names_the_workshop(self):
+        from core.models import Workshop
+
+        from .email import build_certificate_mail
+
+        workshop = Workshop.objects.create(code="97", name="Django Girls", capacity=10, workload=8)
+        certificate = certificate_create("Ana Clara", "ana@example.com", workshop.name, workshop.workload)
+        message = build_certificate_mail(certificate, self.site)
+        html = message.alternatives[0][0]
+        self.assertIn("minicurso Django Girls", message.subject)
+        self.assertIn("Seu certificado do minicurso <strong", html)
+        self.assertIn("Minicurso Django Girls", html)
+        self.assertIn("8 horas", html)
+        self.assertNotIn("&lt;", message.body)
+
+    def test_task_sends_and_records_delivery(self):
+        from django.core import mail
+
+        from core.models import EmailDelivery
+
+        from .email import send_certificate_mail
+
+        certificate = certificate_create("Ana D'Ávila", "ana@example.com", "Capivara Tech II", 24)
+        send_certificate_mail.call(certificate.pk, self.site)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Ana D'Ávila", mail.outbox[0].body)
+        self.assertEqual(EmailDelivery.objects.get().kind, "Certificado")
+        self.assertIsNone(send_certificate_mail.call(999999, self.site))
+
+    def test_admin_action_queues_one_email_per_certificate(self):
+        from django_tasks.backends.database.models import DBTaskResult
+
+        admin_user = get_user_model().objects.create_superuser("cert-admin", "a@example.com", None)
+        self.client.force_login(admin_user)
+        first = certificate_create("Ana", "ana@example.com", "Capivara Tech II", 24)
+        second = certificate_create("Bia", "bia@example.com", "Capivara Tech II", 24)
+        response = self.client.post(reverse("admin:certification_certificate_changelist"), {
+            "action": "send_certificate_email", "_selected_action": [first.pk, second.pk],
+        }, follow=True)
+        self.assertContains(response, "2 e-mails de certificado colocados na fila de envio.")
+        self.assertEqual(DBTaskResult.objects.count(), 2)
+        args = sorted(row.args_kwargs["args"][0] for row in DBTaskResult.objects.all())
+        self.assertEqual(args, sorted([first.pk, second.pk]))

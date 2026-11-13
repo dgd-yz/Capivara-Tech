@@ -1,7 +1,20 @@
-Certificados
+{% autoescape off %}Parabéns, {{ first_name }}!
 
-Parabéns {{ participant_name }}! Seu certificado de participação no {{ event_name }} já está disponível no link abaixo.
+Seu certificado {{ kind }} {{ certificate.activity }}{% if kind != "do evento" %} no {{ event.name }}{% endif %} já está pronto.
 
-{{ proto }}://{{ domain }}{% url 'certificate_detail' uuid=uuid %}
+Participante: {{ certificate.participant_name }}
+Atividade: {{ activity_label }}
+Carga horária: {{ certificate.workload }} hora{{ certificate.workload|pluralize }}
+Emitido em: {{ issued_on }}
+Local: {{ event.venue }}
 
-Obrigado por participar! Nos vemos na próxima edição do Capivara Tech.
+Baixe o seu certificado (PDF):
+{{ certificate_url }}
+
+Guarde este e-mail: o link é permanente e o QR code impresso no certificado permite que qualquer pessoa confirme que ele é autêntico.
+
+Obrigado por fazer parte do {{ event.name }}. Nos vemos na próxima edição!
+Equipe Capivara Tech
+
+{{ event.name }} · {{ event.date_label }} · {{ event.venue }}
+{% endautoescape %}
