@@ -5,11 +5,10 @@ from django.contrib import admin, messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.forms.models import ModelForm
 from django.http import HttpRequest
-from django.templatetags.static import static
 from django.utils.html import mark_safe
 from solo.admin import SingletonModelAdmin
 
-from certification.email import send_template_mail
+from certification.email import send_certificate_mail
 from core.event_config import get_event_config
 
 from .models import Certificate, CertificationSettings
@@ -44,36 +43,20 @@ class CertificateAdmin(admin.ModelAdmin):
 
     @admin.action(description="Enviar E-mail para acessar o Certificado")
     def send_certificate_email(self, request, queryset):
-        proto = request.scheme
-        current_site = get_current_site(request)
-        logo_path = static("images/capivara-logo.svg")
-
-        certificates_size = len(queryset)
-        certificates = queryset.all()
+        site_url = f"{request.scheme}://{get_current_site(request).domain}"
+        certificates = list(queryset)
         for certificate in certificates:
-            send_template_mail.enqueue(
-                "certification",
-                subject=f"{get_event_config()['name']} - Certificados Disponíveis",
-                to=str(certificate.participant_email),
-                from_email=None,
-                context={
-                    "event_name": get_event_config()["name"],
-                    "participant_name": certificate.participant_name,
-                    "uuid": str(certificate.uuid),
-                    "logo_path": logo_path,
-                    "domain": current_site.domain,
-                    "proto": proto,
-                },
-            )
+            send_certificate_mail.enqueue(certificate.pk, site_url)
 
+        total = len(certificates)
         self.message_user(
             request,
             ngettext(
-                "%d Certificado Gerado com Sucesso",
-                "%d Certificados Gerados com Sucesso",
-                certificates_size,
+                "%d e-mail de certificado colocado na fila de envio.",
+                "%d e-mails de certificado colocados na fila de envio.",
+                total,
             )
-            % certificates_size,
+            % total,
             messages.SUCCESS,
         )
 
