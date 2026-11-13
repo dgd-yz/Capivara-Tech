@@ -35,6 +35,8 @@ class CertificateAdmin(admin.ModelAdmin):
 
     actions = ("send_certificate_email",)
 
+    readonly_fields = ("date",)
+
     @admin.display(description="Ver Certificado")
     def view_button(self, obj):
         url = obj.get_absolute_url()
@@ -89,7 +91,6 @@ class CertificateAdmin(admin.ModelAdmin):
         bf = form.base_fields
         bf["workload"].initial = get_event_config()["workload"]
         bf["location"].initial = certification_settings.default_location
-        bf["date"].initial = certification_settings.default_date
         bf["certifier_name"].initial = certification_settings.default_certifier_name
         bf[
             "certifier_position"

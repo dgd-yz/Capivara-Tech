@@ -131,14 +131,36 @@ class CertificateLayoutTests(TestCase):
         configuration = CertificationSettings.get_solo()
         configuration.default_certifier_name = "Paul Symon Ribeiro"
         configuration.default_certifier_position = "Coordenador do Curso de Sistemas para Internet"
-        configuration.default_date = datetime.date(2026, 11, 13)
         configuration.save()
-        html = self.render_html(certificate_create("Ana", "ana@example.com", "Evento", 24))
+        certificate = certificate_create("Ana", "ana@example.com", "Evento", 24)
+        Certificate.objects.filter(pk=certificate.pk).update(date=datetime.date(2026, 11, 13))
+        html = self.render_html(certificate)
         self.assertIn("Paul Symon Ribeiro", html)
         self.assertIn("Coordenador do Curso de Sistemas para Internet", html)
         self.assertIn("13 de novembro de 2026", html)
         self.assertIn("certification/fonts/Sora-ExtraBold.ttf", html)
         self.assertIn("images/capivara-logo.svg", html)
+
+    def test_issue_date_is_the_day_the_certificate_was_generated(self):
+        from django.utils.timezone import localdate
+
+        certificate = certificate_create("Ana", "ana@example.com", "Evento", 24)
+        self.assertEqual(certificate.date, localdate())
+        self.assertFalse(hasattr(CertificationSettings.get_solo(), "default_date"))
+
+    def test_migration_moves_existing_certificates_to_their_generation_day(self):
+        import datetime
+        from importlib import import_module
+
+        from django.apps import apps
+        from django.utils import timezone
+
+        certificate = certificate_create("Ana", "ana@example.com", "Evento", 24)
+        generated = timezone.make_aware(datetime.datetime(2026, 11, 13, 22, 30))  # noite, horário local
+        Certificate.objects.filter(pk=certificate.pk).update(created_at=generated, date=datetime.date(2026, 7, 10))
+        import_module("certification.migrations.0005_issue_date_from_generation").use_generation_date(apps, None)
+        certificate.refresh_from_db()
+        self.assertEqual(certificate.date, datetime.date(2026, 11, 13))
 
     def test_real_pdf_renders_with_brand_fonts_without_errors(self):
         certificate = certificate_create("Giovanna Milena de Sousa Carvalho Santos", "g@example.com", "Evento", 24)
