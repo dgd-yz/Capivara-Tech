@@ -14,6 +14,7 @@ from solo.admin import SingletonModelAdmin
 
 from certification.domain import certificate_create
 from core.attendance import build_attendance_pdf, workshop_activity
+from core.check_in_import import AMBIGUOUS, EXACT, MISSING, SIMILAR, CheckInImportForm, match_names
 from core.forms import RegistrationAdminForm
 from core.event_config import get_event_config
 from core.labels import LabelPrintForm, build_labels_pdf
@@ -100,8 +101,66 @@ class RegistrationAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.attendance_list_view),
                 name="core_registration_attendance",
             ),
+            path(
+                "importar-credenciamento/",
+                self.admin_site.admin_view(self.check_in_import_view),
+                name="core_registration_check_in_import",
+            ),
         ]
         return custom_urls + super().get_urls()
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {**(extra_context or {}), "can_import_check_in": self.has_change_permission(request)}
+        return super().changelist_view(request, extra_context=extra_context)
+
+    def check_in_import_view(self, request):
+        """Marca como credenciados, de uma vez, os nomes de quem assinou a folha de frequência.
+
+        1º passo: compara os nomes com as inscrições e mostra a prévia (nada é gravado).
+        2º passo: credencia só as inscrições marcadas na prévia.
+        """
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+        context = {
+            **self.admin_site.each_context(request), "opts": self.model._meta,
+            "title": "Importar credenciamento",
+        }
+        form = CheckInImportForm(request.POST or None)
+        if request.method != "POST" or not form.is_valid():
+            return TemplateResponse(request, "admin/core/registration/check_in_import.html", {**context, "form": form})
+
+        rows = match_names(form.cleaned_data["names"], form.registrations())
+        if request.POST.get("step") != "apply":
+            groups = [
+                (EXACT, "Encontrados", "Nome igual ao da inscrição. Já vêm marcados."),
+                (AMBIGUOUS, "Mais de uma inscrição com o mesmo nome", "Marque a inscrição certa."),
+                (SIMILAR, "Parecidos", "Nome escrito de outro jeito. Confira e marque se for a mesma pessoa."),
+                (MISSING, "Não encontrados", "Sem inscrição parecida nesta lista."),
+            ]
+            return TemplateResponse(request, "admin/core/registration/check_in_import.html", {
+                **context, "form": form, "preview": True,
+                "groups": [(key, label, hint, [r for r in rows if r.status == key]) for key, label, hint in groups],
+            })
+
+        allowed = {r.pk for row in rows for r, _ in row.candidates}
+        selected = {int(pk) for pk in request.POST.getlist("registration") if pk.isdigit()} & allowed
+        with transaction.atomic():
+            chosen = Registration.objects.filter(pk__in=selected)
+            already = chosen.filter(checked_in=True).count()
+            updated = chosen.filter(checked_in=False).update(checked_in=True)
+        unmarked = [row.name for row in rows if not any(r.pk in selected for r, _ in row.candidates)]
+        message = ngettext(
+            "%d inscrição marcada como credenciada.", "%d inscrições marcadas como credenciadas.", updated,
+        ) % updated
+        if already:
+            message += " " + ngettext(
+                "%d já estava credenciada.", "%d já estavam credenciadas.", already,
+            ) % already
+        self.message_user(request, message, messages.SUCCESS)
+        return TemplateResponse(request, "admin/core/registration/check_in_import.html", {
+            **context, "form": CheckInImportForm(initial={"scope": form.cleaned_data["scope"]}),
+            "done": True, "updated": updated, "already": already, "unmarked": unmarked,
+        })
 
     def labels_view(self, request):
         if not self.has_view_permission(request):
@@ -209,8 +268,8 @@ class RegistrationAdmin(admin.ModelAdmin):
         ) % processed
         if ineligible:
             message += " " + ngettext(
-                "%d inscrição ignorada por falta de confirmação ou credenciamento.",
-                "%d inscrições ignoradas por falta de confirmação ou credenciamento.",
+                "%d inscrição ignorada por falta de credenciamento.",
+                "%d inscrições ignoradas por falta de credenciamento.",
                 ineligible,
             ) % ineligible
         if without_workshop:
@@ -227,7 +286,9 @@ class RegistrationAdmin(admin.ModelAdmin):
     @admin.action(description="Gerar Certificado de Participação do Evento (Geral)", permissions=["change"])
     def create_certificate(self, request, queryset):
         event = get_event_config()
-        qs = queryset.filter(confirmated=True, checked_in=True)
+        # Quem foi credenciado esteve no evento, mesmo que tenha se inscrito na hora
+        # e a inscrição nunca tenha sido confirmada.
+        qs = queryset.filter(checked_in=True)
         participants_size = len(qs)
         ineligible = queryset.count() - participants_size
         participants = qs.all()
@@ -245,7 +306,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         permissions=["change"],
     )
     def create_certificate_workshop(self, request, queryset):
-        eligible = queryset.filter(confirmated=True, checked_in=True)
+        eligible = queryset.filter(checked_in=True)
         ineligible = queryset.count() - eligible.count()
         without_workshop = eligible.filter(workshop=Workshops.NONE).count()
         qs = eligible.filter(~Q(workshop=Workshops.NONE))

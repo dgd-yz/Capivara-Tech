@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from django.core.validators import MaxValueValidator
 from django.urls import reverse
-from django.utils.timezone import now
+from django.utils.timezone import localdate
 from django_ckeditor_5.fields import CKEditor5Field
 from solo.models import SingletonModel
 
@@ -49,11 +49,6 @@ class CertificationSettings(SingletonModel):
         "Local de Emissão",
         max_length=255,
         default="São Raimundo Nonato",
-    )
-
-    default_date = models.DateField(
-        "Data de Emissão",
-        default=now,
     )
 
     default_certifier_name = models.CharField(
@@ -144,8 +139,9 @@ class Certificate(models.Model):
 
     date = models.DateField(
         "Data de Emissão",
-        auto_now=False,
-        auto_now_add=False,
+        default=localdate,
+        editable=False,
+        help_text="Preenchida automaticamente com o dia em que o certificado foi gerado.",
     )
 
     certifier_name = models.CharField(

@@ -4,7 +4,6 @@ from .models import Certificate, CertificationSettings
 def certificate_create(participant_name, participant_email, activity, workload):
     cs = CertificationSettings.get_solo()
     location = cs.default_location
-    date = cs.default_date
     certifier_name = cs.default_certifier_name
     certifier_position = cs.default_certifier_position
     text = cs.default_text
@@ -22,7 +21,6 @@ def certificate_create(participant_name, participant_email, activity, workload):
             activity=activity,
             workload=workload,
             location=location,
-            date=date,
             certifier_name=certifier_name,
             certifier_position=certifier_position,
             text=text,

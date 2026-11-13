@@ -180,25 +180,28 @@ class CheckInTests(TestCase):
                         confirmated=confirmed, checked_in=checked_in, workshop=workshop,
                     )
 
-    def test_general_certificate_requires_confirmation_and_check_in(self):
+    def test_general_certificate_requires_check_in_even_without_confirmation(self):
+        # Quem se inscreveu no dia e foi credenciado também recebe, mesmo sem confirmação.
         self.make_eligibility_matrix()
         _, message, level = self.run_generation("create_certificate")
         self.assertCountEqual(
-            Certificate.objects.values_list("participant_name", flat=True), ["P110", "P1199"],
+            Certificate.objects.values_list("participant_name", flat=True), ["P010", "P0199", "P110", "P1199"],
         )
-        self.assertIn("2 participantes elegíveis processados", message)
-        self.assertIn("6 inscrições ignoradas por falta de confirmação ou credenciamento", message)
+        self.assertIn("4 participantes elegíveis processados", message)
+        self.assertIn("4 inscrições ignoradas por falta de credenciamento", message)
         self.assertEqual(level, messages.WARNING)
 
     def test_workshop_certificate_also_requires_a_workshop(self):
         self.make_eligibility_matrix()
         _, message, _ = self.run_generation("create_certificate_workshop")
-        certificate = Certificate.objects.get()
-        self.assertEqual(certificate.participant_name, "P1199")
+        self.assertCountEqual(
+            Certificate.objects.values_list("participant_name", flat=True), ["P0199", "P1199"],
+        )
+        certificate = Certificate.objects.get(participant_name="P1199")
         self.assertEqual(certificate.activity, self.workshop.name)
         self.assertEqual(certificate.workload, self.workshop.workload)
-        self.assertIn("6 inscrições ignoradas por falta de confirmação ou credenciamento", message)
-        self.assertIn("1 inscrição ignorada por não ter minicurso", message)
+        self.assertIn("4 inscrições ignoradas por falta de credenciamento", message)
+        self.assertIn("2 inscrições ignoradas por não terem minicurso", message)
 
     def test_all_ineligible_produces_warning_without_certificates(self):
         self.participant(confirmated=True)

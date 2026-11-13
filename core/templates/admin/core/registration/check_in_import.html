@@ -1,0 +1,116 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .ci-intro { max-width: 760px; }
+  .ci-group { margin: 22px 0 8px; }
+  .ci-group h2 { margin-bottom: 2px; }
+  .ci-group .ci-hint { color: var(--body-quiet-color); margin: 0 0 8px; }
+  .ci-table { width: 100%; max-width: 1100px; }
+  .ci-table td { vertical-align: top; }
+  .ci-table td.ci-name { width: 34%; font-weight: 600; }
+  .ci-option { display: block; padding: 2px 0; }
+  .ci-tag { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 9px; margin-left: 6px;
+            background: var(--darkened-bg); color: var(--body-quiet-color); }
+  .ci-tag.ci-ok { background: #dcefdc; color: #24572a; }
+  .ci-tag.ci-warn { background: #fdf0d5; color: #7a5300; }
+  .ci-count { font-weight: 400; color: var(--body-quiet-color); }
+  .ci-actions { margin: 18px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+  .ci-unmarked { columns: 2; max-width: 760px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+  &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+  &rsaquo; Importar credenciamento
+</div>
+{% endblock %}
+
+{% block content %}
+{% if done %}
+  <p class="ci-intro">
+    <strong>{{ updated }}</strong> inscrição(ões) marcada(s) como credenciada(s){% if already %} e
+    <strong>{{ already }}</strong> já estava(m) credenciada(s){% endif %}.
+  </p>
+  {% if unmarked %}
+    <h2>Nomes que não foram credenciados ({{ unmarked|length }})</h2>
+    <p class="ci-intro">Não havia inscrição correspondente ou nenhuma foi marcada. Se a pessoa esteve no evento,
+    cadastre a inscrição (com o e-mail, para receber o certificado) e marque <em>Credenciado</em>.</p>
+    <ol class="ci-unmarked">{% for name in unmarked %}<li>{{ name }}</li>{% endfor %}</ol>
+  {% endif %}
+  <div class="ci-actions">
+    <a class="button" href="{% url 'admin:core_registration_check_in_import' %}">Importar outra lista</a>
+    <a class="button" href="{% url opts|admin_urlname:'changelist' %}?checked_in__exact=1">Ver inscrições credenciadas</a>
+    <a class="button" href="{% url opts|admin_urlname:'add' %}">Adicionar inscrição</a>
+  </div>
+
+{% elif preview %}
+  <p class="ci-intro">Confira a prévia. <strong>Nada foi gravado ainda.</strong> Só as inscrições marcadas serão
+  credenciadas quando você clicar em <em>Credenciar marcados</em>.</p>
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="step" value="apply">
+    <input type="hidden" name="scope" value="{{ form.data.scope }}">
+    <textarea name="names" hidden>{{ form.data.names }}</textarea>
+    {% for key, label, hint, rows in groups %}{% if rows %}
+      <div class="ci-group">
+        <h2>{{ label }} <span class="ci-count">({{ rows|length }})</span></h2>
+        <p class="ci-hint">{{ hint }}</p>
+        <table class="ci-table">
+          <thead><tr><th>Nome na folha</th><th>Inscrição no sistema</th></tr></thead>
+          <tbody>
+          {% for row in rows %}
+            <tr>
+              <td class="ci-name">{{ row.name }}</td>
+              <td>
+                {% for registration, score in row.candidates %}
+                  <label class="ci-option">
+                    <input type="checkbox" name="registration" value="{{ registration.pk }}"{% if row.preselected == registration.pk %} checked{% endif %}>
+                    {{ registration.full_name }}
+                    <span class="ci-tag">{{ registration.get_workshop_display }}</span>
+                    {% if key == "similar" %}<span class="ci-tag">{% widthratio score 1 100 %}% parecido</span>{% endif %}
+                    {% if registration.checked_in %}<span class="ci-tag ci-ok">já credenciado</span>{% endif %}
+                    {% if not registration.confirmated %}<span class="ci-tag ci-warn">inscrição não confirmada</span>{% endif %}
+                    <span class="ci-tag">{{ registration.email }}</span>
+                    <span class="ci-tag">inscrição de {{ registration.created_at|date:"d/m/Y H:i" }}</span>
+                  </label>
+                {% empty %}
+                  <span class="ci-hint">Nenhuma inscrição parecida.</span>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}{% endfor %}
+    <div class="ci-actions">
+      <input type="submit" class="default" value="Credenciar marcados">
+      <a class="button" href="{% url 'admin:core_registration_check_in_import' %}">Cancelar</a>
+    </div>
+  </form>
+
+{% else %}
+  <div class="ci-intro">
+    <p>Cole os nomes de quem assinou a folha de frequência, um por linha. O sistema compara com as inscrições,
+    ignorando maiúsculas e acentos, e mostra uma prévia antes de gravar qualquer coisa.</p>
+    <p>Só quem está <strong>credenciado</strong> recebe certificado, mesmo que a inscrição não tenha sido confirmada
+    (por exemplo, quem se inscreveu no dia). Nenhum e-mail é enviado por esta tela.</p>
+  </div>
+  <form method="post">{% csrf_token %}
+    <fieldset class="module aligned">
+      {% for field in form %}
+        <div class="form-row">
+          {{ field.errors }}
+          <div class="flex-container">{{ field.label_tag }} {{ field }}</div>
+          {% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}
+        </div>
+      {% endfor %}
+    </fieldset>
+    <div class="submit-row"><input type="submit" class="default" value="Ver prévia"></div>
+  </form>
+{% endif %}
+{% endblock %}
