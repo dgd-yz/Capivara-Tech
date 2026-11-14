@@ -1,10 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Sistemas para Internet">
-  <circle cx="60" cy="60" r="58" fill="#f9bc32"/>
-  <path d="M18 52 Q22 30 40 20" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="3 6" opacity=".85"/>
-  <path d="M102 68 Q98 90 80 100" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="3 6" opacity=".85"/>
-  <path d="M68 38 H45 Q37 38 37 46 V52 Q37 60 45 60 H59 Q67 60 67 68 V74 Q67 82 59 82 H33" fill="none" stroke="#111" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-  <rect x="75" y="30.5" width="15" height="59" rx="5" fill="#111"/>
-  <circle cx="80" cy="37" r="1.6" fill="#f9bc32"/>
-  <circle cx="85" cy="37" r="1.6" fill="#f9bc32"/>
-  <path d="M86 76 L86 92 L90.5 87.5 L94 95 L97 93.6 L93.6 86.4 L99.5 86.4 Z" fill="#ff5fa2" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Sistemas para Internet">
+  <defs>
+    <clipPath id="si-circle"><circle cx="540" cy="540" r="540"/></clipPath>
+    <pattern id="si-hex-dark" width="48" height="83.1" patternUnits="userSpaceOnUse">
+      <path d="M24 0 L48 13.85 L48 41.55 L24 55.4 L0 41.55 L0 13.85 Z M24 55.4 V83.1" fill="none" stroke="#3a3a3a" stroke-width="3"/>
+    </pattern>
+    <pattern id="si-hex-light" width="48" height="83.1" patternUnits="userSpaceOnUse">
+      <path d="M24 0 L48 13.85 L48 41.55 L24 55.4 L0 41.55 L0 13.85 Z M24 55.4 V83.1" fill="none" stroke="#fff" stroke-width="3"/>
+    </pattern>
+  </defs>
+  <g clip-path="url(#si-circle)">
+    <rect width="1080" height="1080" fill="#f9bc32"/>
+    <g fill="none" stroke-linecap="butt">
+      <path d="M40 330 A200 200 0 0 1 225 640" stroke="#fff" stroke-width="16" stroke-dasharray="36 26" opacity=".95"/>
+      <circle cx="70" cy="575" r="62" stroke="#fff" stroke-width="16" stroke-dasharray="30 22" opacity=".95"/>
+      <path d="M300 850 Q370 900 445 850" stroke="#fff" stroke-width="16" stroke-dasharray="32 22"/>
+      <path d="M925 520 Q965 560 1000 520 T1080 400" stroke="#fff" stroke-width="7" stroke-dasharray="14 10"/>
+    </g>
+    <rect x="970" y="20" width="140" height="200" fill="url(#si-hex-dark)" opacity=".55"/>
+    <rect x="990" y="590" width="140" height="380" fill="url(#si-hex-light)" opacity=".75"/>
+    <rect x="-20" y="800" width="160" height="190" fill="url(#si-hex-dark)" opacity=".55"/>
+  </g>
+  <path fill="#0a0a0a" d="M310 255 H680 Q710 255 710 285 V375 Q710 405 680 405 H378 A32.5 32.5 0 0 0 378 470 H560 A150 150 0 0 1 710 620 V685 A150 150 0 0 1 560 835 H190 Q160 835 160 805 V715 Q160 685 190 685 H488 A32.5 32.5 0 0 0 488 620 H310 A150 150 0 0 1 160 470 V405 A150 150 0 0 1 310 255 Z"/>
+  <rect x="735" y="255" width="185" height="580" rx="36" fill="#0a0a0a"/>
+  <g fill="none" stroke-width="2.6">
+    <circle cx="853" cy="289" r="8" stroke="#ff6fb1"/>
+    <circle cx="886" cy="289" r="8" stroke="#fff"/>
+    <circle cx="853" cy="323" r="8" stroke="#fff"/>
+    <circle cx="886" cy="323" r="8" stroke="#ff6fb1"/>
+  </g>
+  <g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+    <path d="M372 314 q10.4 -8 20.8 0 t20.8 0 t20.8 0 t20.8 0"/>
+    <path d="M372 330 q10.4 -8 20.8 0 t20.8 0 t20.8 0 t20.8 0"/>
+  </g>
+  <path d="M872 786 V860 L891 842 L907 878 L921 871 L905 836 L930 836 Z" fill="#ff6fb1" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
 </svg>
