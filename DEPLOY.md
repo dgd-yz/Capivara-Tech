@@ -97,38 +97,58 @@ Todo `git push` na `main`:
 
 ---
 
-## Site do curso + Capivara Tech no mesmo container
+## Produção atual: Dokku
+
+Desde a migração de servidor, produção roda no **Dokku** (app `capivara-tech`), não mais no
+docker compose descrito acima. O Dokku usa o `Procfile` (web, worker e `release` com as
+migrations) e guarda os uploads em `/var/lib/dokku/data/storage/capivara-tech`.
+
+Publicar o `main` do GitHub (na VPS):
+
+```sh
+dokku git:sync --build capivara-tech https://github.com/dgd-yz/Capivara-Tech.git main
+```
+
+Variáveis de ambiente ficam no Dokku, não em `.env`:
+
+```sh
+dokku config:get capivara-tech ALLOWED_HOSTS
+dokku config:set capivara-tech NOME=valor   # reinicia o app
+```
+
+## Site do curso + Capivara Tech no mesmo app
 
 O Django escolhe o site pelo domínio da requisição:
 
 | Domínio | Mostra |
 |---------|--------|
 | `sistemasparainternet.com` e `www.` | página do curso de Sistemas para Internet (app `curso`) |
-| `capivaratech.sistemasparainternet.com` | Capivara Tech (como sempre) |
-| `capivaratech.dgdlabs.com.br` | Capivara Tech (mantido por causa dos QR codes dos certificados antigos) |
+| `capivaratech.sistemasparainternet.com` | Capivara Tech (endereço fixo do evento) |
+| `capivaratech2026.sistemasparainternet.com` | Capivara Tech (apelido) |
 
 No domínio do curso, qualquer endereço que exista no Capivara Tech (`/certificado/<uuid>`,
-`/certificados`, `/admin/`...) é redirecionado para `EVENT_ORIGIN`, então links antigos
-e e-mails já enviados continuam funcionando. O admin é um só e gerencia os dois sites
-(seção **Curso de Sistemas para Internet**).
+`/certificados`, `/admin/`...) redireciona para `EVENT_ORIGIN`, então links antigos e e-mails
+já enviados continuam funcionando. O admin é um só e gerencia os dois sites.
 
-Para ligar:
+O DNS de `sistemasparainternet.com` tem registro curinga (`*`) na Cloudflare, que também cuida
+do HTTPS. Um subdomínio novo só precisa ser liberado no app:
 
-1. **DNS**: registro A (ou CNAME) `capivaratech` → IP da VPS. `@` e `www` já apontam para ela.
-2. **nginx**: `server_name` com os quatro domínios (veja `docker/nginx-capivaratech.conf.example`)
-   e `sudo certbot --nginx -d ...` incluindo os novos.
-3. **`.env`** na VPS:
-   ```sh
-   ALLOWED_HOSTS=sistemasparainternet.com,www.sistemasparainternet.com,capivaratech.sistemasparainternet.com,capivaratech.dgdlabs.com.br,127.0.0.1,localhost
-   CSRF_TRUSTED_ORIGINS=https://sistemasparainternet.com,https://www.sistemasparainternet.com,https://capivaratech.sistemasparainternet.com,https://capivaratech.dgdlabs.com.br
-   COURSE_HOSTS=sistemasparainternet.com,www.sistemasparainternet.com
-   EVENT_ORIGIN=https://capivaratech.sistemasparainternet.com
-   ```
-   e `docker compose -f docker-compose.prod.yml up -d` para recarregar.
-4. No admin, em **Configurações** (extra settings), troque `EVENT_SITE_URL` para
-   `https://capivaratech.sistemasparainternet.com/` (link dos e-mails de inscrição).
+```sh
+dokku domains:add capivara-tech novo.sistemasparainternet.com
+dokku config:set capivara-tech ALLOWED_HOSTS=...,novo.sistemasparainternet.com   CSRF_TRUSTED_ORIGINS=...,https://novo.sistemasparainternet.com
+```
 
-Sem `COURSE_HOSTS` nada muda: todos os domínios continuam mostrando o Capivara Tech.
+Configuração atual:
+
+```sh
+COURSE_HOSTS=sistemasparainternet.com,www.sistemasparainternet.com
+EVENT_ORIGIN=https://capivaratech.sistemasparainternet.com
+```
+
+E no admin, `EVENT_SITE_URL` (link dos e-mails de inscrição) aponta para
+`https://capivaratech.sistemasparainternet.com/`.
+
+Sem `COURSE_HOSTS` todos os domínios mostram o Capivara Tech.
 
 Local: com `COURSE_HOSTS=curso.localhost` e `EVENT_ORIGIN=http://localhost:8000` no `.env`,
 a página do curso abre em http://curso.localhost:8000.
