@@ -39,10 +39,21 @@ ALLOWED_HOSTS = config(
 )
 
 
+# Domínios que mostram a página do curso de Sistemas para Internet (separados por vírgula).
+# Os demais domínios continuam mostrando o Capivara Tech. Vazio = só Capivara Tech.
+COURSE_HOSTS = config(
+    "COURSE_HOSTS",
+    default="",
+    cast=lambda v: [h.strip().lower() for h in v.split(",") if h.strip()],
+)
+# Endereço do Capivara Tech, para onde vão os links antigos do evento que chegam no domínio do curso.
+EVENT_ORIGIN = config("EVENT_ORIGIN", default="")
+
 # Application definition
 
 INSTALLED_APPS = [
     "core",
+    "curso",
     "extra_settings",
     "certification",
     "pictures",
@@ -65,6 +76,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "curso.middleware.CourseHostMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
