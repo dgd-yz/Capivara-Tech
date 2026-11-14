@@ -94,3 +94,41 @@ Todo `git push` na `main`:
   Docker `capivara_uploads`. O Django serve `/uploads/`. Não precisa de S3.
 - **Rollback**: `git checkout <sha_anterior>` em `~/capivara-tech` e
   `docker compose -f docker-compose.prod.yml up -d --build`. Backups do banco ficam em `backups/`.
+
+---
+
+## Site do curso + Capivara Tech no mesmo container
+
+O Django escolhe o site pelo domínio da requisição:
+
+| Domínio | Mostra |
+|---------|--------|
+| `sistemasparainternet.com` e `www.` | página do curso de Sistemas para Internet (app `curso`) |
+| `capivaratech.sistemasparainternet.com` | Capivara Tech (como sempre) |
+| `capivaratech.dgdlabs.com.br` | Capivara Tech (mantido por causa dos QR codes dos certificados antigos) |
+
+No domínio do curso, qualquer endereço que exista no Capivara Tech (`/certificado/<uuid>`,
+`/certificados`, `/admin/`...) é redirecionado para `EVENT_ORIGIN`, então links antigos
+e e-mails já enviados continuam funcionando. O admin é um só e gerencia os dois sites
+(seção **Curso de Sistemas para Internet**).
+
+Para ligar:
+
+1. **DNS**: registro A (ou CNAME) `capivaratech` → IP da VPS. `@` e `www` já apontam para ela.
+2. **nginx**: `server_name` com os quatro domínios (veja `docker/nginx-capivaratech.conf.example`)
+   e `sudo certbot --nginx -d ...` incluindo os novos.
+3. **`.env`** na VPS:
+   ```sh
+   ALLOWED_HOSTS=sistemasparainternet.com,www.sistemasparainternet.com,capivaratech.sistemasparainternet.com,capivaratech.dgdlabs.com.br,127.0.0.1,localhost
+   CSRF_TRUSTED_ORIGINS=https://sistemasparainternet.com,https://www.sistemasparainternet.com,https://capivaratech.sistemasparainternet.com,https://capivaratech.dgdlabs.com.br
+   COURSE_HOSTS=sistemasparainternet.com,www.sistemasparainternet.com
+   EVENT_ORIGIN=https://capivaratech.sistemasparainternet.com
+   ```
+   e `docker compose -f docker-compose.prod.yml up -d` para recarregar.
+4. No admin, em **Configurações** (extra settings), troque `EVENT_SITE_URL` para
+   `https://capivaratech.sistemasparainternet.com/` (link dos e-mails de inscrição).
+
+Sem `COURSE_HOSTS` nada muda: todos os domínios continuam mostrando o Capivara Tech.
+
+Local: com `COURSE_HOSTS=curso.localhost` e `EVENT_ORIGIN=http://localhost:8000` no `.env`,
+a página do curso abre em http://curso.localhost:8000.

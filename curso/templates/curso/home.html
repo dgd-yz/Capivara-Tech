@@ -1,0 +1,214 @@
+{% extends "curso/base.html" %}
+{% load static %}
+
+{% block content %}
+{% with logo=course.logo %}
+<header class="si-nav">
+  <div class="si-nav__in">
+    <a class="si-brand" href="#topo">
+      <img src="{% if logo %}{{ logo.url }}{% else %}{% static 'curso/images/si-selo.svg' %}{% endif %}" alt="" width="40" height="40" />
+      <span>{{ course.short_name }}<small>{{ course.institution }}</small></span>
+    </a>
+    <button class="si-nav__toggle" type="button" aria-expanded="false" aria-controls="si-links" aria-label="Abrir menu">
+      <span></span><span></span>
+    </button>
+    <nav id="si-links" class="si-nav__links">
+      <a href="#curso">O curso</a>
+      {% if modules %}<a href="#matriz">Matriz</a>{% endif %}
+      {% if event_url %}<a href="#capivara-tech">Capivara Tech</a>{% endif %}
+      <a href="#contato">Contato</a>
+      <a class="si-btn si-btn--sm" href="#ingresso">Como ingressar</a>
+    </nav>
+  </div>
+</header>
+
+<main id="topo">
+  <section class="si-hero">
+    <div class="si-hero__in">
+      <div class="si-hero__text">
+        <p class="si-kicker">{{ course.degree }} · {{ course.institution }}</p>
+        <h1>Tecnologia em <span class="si-mark">{{ course.short_name }}</span></h1>
+        <p class="si-hero__tagline">{{ course.tagline }}.</p>
+        <p class="si-hero__lead">{{ course.intro }}</p>
+        <div class="si-hero__cta">
+          <a class="si-btn" href="#ingresso">Como ingressar</a>
+          <a class="si-btn si-btn--ghost" href="#curso">Conheça o curso</a>
+        </div>
+      </div>
+      <div class="si-hero__art" aria-hidden="true">
+        <div class="si-orbit si-orbit--1"></div>
+        <div class="si-orbit si-orbit--2"></div>
+        <img src="{% if logo %}{{ logo.url }}{% else %}{% static 'curso/images/si-selo.svg' %}{% endif %}" alt="" />
+        <code class="si-chip si-chip--a">&lt;html&gt;</code>
+        <code class="si-chip si-chip--b">git push</code>
+        <code class="si-chip si-chip--c">{ api }</code>
+      </div>
+    </div>
+
+    <dl class="si-facts">
+      {% if course.duration %}<div><dt>Duração</dt><dd>{{ course.duration }}</dd></div>{% endif %}
+      {% if course.workload %}<div><dt>Carga horária</dt><dd>{{ course.workload }}</dd></div>{% endif %}
+      {% if course.seats %}<div><dt>Vagas</dt><dd>{{ course.seats }}</dd></div>{% endif %}
+      {% if course.shift %}<div><dt>Turno</dt><dd>{{ course.shift }}</dd></div>{% endif %}
+      <div><dt>Diploma</dt><dd>{{ course.diploma }}</dd></div>
+    </dl>
+  </section>
+
+  <section id="curso" class="si-section">
+    <div class="si-split">
+      <div>
+        <p class="si-label">// o curso</p>
+        <h2>Aprenda a construir a internet</h2>
+        <div class="si-prose">{{ course.about|linebreaks }}</div>
+      </div>
+      {% if course.graduate_profile or course.career_list %}
+        <aside class="si-card si-card--accent">
+          {% if course.graduate_profile %}
+            <h3>Perfil do egresso</h3>
+            <p>{{ course.graduate_profile }}</p>
+          {% endif %}
+          {% if course.career_list %}
+            <h3>Onde atuar</h3>
+            <ul class="si-ticks">
+              {% for item in course.career_list %}<li>{{ item }}</li>{% endfor %}
+            </ul>
+          {% endif %}
+        </aside>
+      {% endif %}
+    </div>
+  </section>
+
+  {% if topics %}
+  <section id="aprender" class="si-section si-section--alt">
+    <div class="si-section__head">
+      <p class="si-label">// o que você vai aprender</p>
+      <h2>Do primeiro algoritmo ao app publicado</h2>
+    </div>
+    <div class="si-grid">
+      {% for topic in topics %}
+        <article class="si-card si-topic">
+          <span class="si-topic__n">{{ forloop.counter|stringformat:"02d" }}</span>
+          <h3>{{ topic.title }}</h3>
+          <p>{{ topic.description }}</p>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if modules %}
+  <section id="matriz" class="si-section">
+    <div class="si-section__head si-section__head--row">
+      <div>
+        <p class="si-label">// matriz curricular</p>
+        <h2>{{ modules|length }} módulos, um por semestre</h2>
+      </div>
+      {% if course.ppc %}
+        <a class="si-btn si-btn--ghost" href="{{ course.ppc.url }}" target="_blank" rel="noopener">Baixar o PPC (PDF)</a>
+      {% endif %}
+    </div>
+    <div class="si-modules">
+      {% for module in modules %}
+        <article class="si-module">
+          <header>
+            <span class="si-module__n">{{ module.number }}º</span>
+            <span>módulo</span>
+            {% if module.workload %}<span class="si-module__h">{{ module.workload }} h</span>{% endif %}
+          </header>
+          <ul>
+            {% for subject in module.subjects %}
+              <li><span>{{ subject.name }}</span>{% if subject.workload %}<small>{{ subject.workload }} h</small>{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </article>
+      {% endfor %}
+    </div>
+    {% if course.elective_list %}
+      <div class="si-electives">
+        <p><strong>Tópicos especiais e optativas.</strong> Você escolhe parte da formação. Alguns exemplos:</p>
+        <ul>{% for item in course.elective_list %}<li>{{ item }}</li>{% endfor %}</ul>
+      </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if event_url %}
+  <section id="capivara-tech" class="si-section">
+    <div class="si-event">
+      <img src="{% static 'images/capivara-logo.svg' %}" alt="Capivara Tech" />
+      <div>
+        <p class="si-label si-label--warm">// evento no campus</p>
+        <h2>{{ event.name }}</h2>
+        <p>O maior evento de tecnologia do Território Serra da Capivara acontece aqui no campus: palestras, minicursos e networking com o mercado.{% if event.date_label %}{% if event_past %} A {{ event.edition }} foi de {{ event.date_label }}.{% else %} {{ event.edition }}: {{ event.date_label }}.{% endif %}{% endif %}</p>
+        <a class="si-btn si-btn--warm" href="{{ event_url }}">Conheça o {{ event.name }}</a>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if highlights %}
+  <section id="destaques" class="si-section si-section--alt">
+    <div class="si-section__head">
+      <p class="si-label">// destaques</p>
+      <h2>O que está acontecendo</h2>
+    </div>
+    <div class="si-grid">
+      {% for item in highlights %}
+        <article class="si-card si-news">
+          {% if item.image %}<img src="{{ item.image.url }}" alt="" loading="lazy" />{% endif %}
+          <time datetime="{{ item.date|date:'Y-m-d' }}">{{ item.date|date:"j \d\e F \d\e Y" }}</time>
+          <h3>{% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}</h3>
+          {% if item.summary %}<p>{{ item.summary }}</p>{% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if course.admission %}
+  <section id="ingresso" class="si-section">
+    <div class="si-cta">
+      <div>
+        <p class="si-label si-label--ink">// como ingressar</p>
+        <h2>{{ course.tagline }}</h2>
+        <div class="si-prose">{{ course.admission|linebreaks }}</div>
+      </div>
+      <div class="si-cta__actions">
+        {% if course.admission_url %}<a class="si-btn si-btn--ink" href="{{ course.admission_url }}" target="_blank" rel="noopener">Ver editais do IFPI</a>{% endif %}
+        {% if course.instagram_url %}<a class="si-btn si-btn--outline-ink" href="{{ course.instagram_url }}" target="_blank" rel="noopener">Acompanhar no Instagram</a>{% endif %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <section id="contato" class="si-section si-section--alt">
+    <div class="si-split">
+      <div>
+        <p class="si-label">// contato</p>
+        <h2>Fale com a coordenação</h2>
+        <ul class="si-contact">
+          {% if course.coordinator %}<li><span>Coordenação</span>{{ course.coordinator }}</li>{% endif %}
+          {% if course.contact_email %}<li><span>E-mail</span><a href="mailto:{{ course.contact_email }}">{{ course.contact_email }}</a></li>{% endif %}
+          {% if course.instagram_url %}<li><span>Instagram</span><a href="{{ course.instagram_url }}" target="_blank" rel="noopener">@{{ course.instagram_url|cut:"https://"|cut:"http://"|cut:"www."|cut:"instagram.com/"|cut:"/" }}</a></li>{% endif %}
+          <li><span>Endereço</span>{{ course.institution }}<br>{{ course.address }}</li>
+        </ul>
+      </div>
+      {% if course.map_url %}
+        <iframe class="si-map" src="{{ course.map_url }}" title="Mapa do {{ course.institution }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      {% endif %}
+    </div>
+  </section>
+</main>
+
+<footer class="si-footer">
+  <div class="si-footer__in">
+    <a class="si-brand" href="#topo">
+      <img src="{% if logo %}{{ logo.url }}{% else %}{% static 'curso/images/si-selo.svg' %}{% endif %}" alt="" width="36" height="36" />
+      <span>{{ course.short_name }}<small>{{ course.institution }}</small></span>
+    </a>
+    <p>© {% now "Y" %} {{ course.degree }} em {{ course.short_name }} · {{ course.institution }}</p>
+    <img class="si-footer__ifpi" src="{% static 'images/logo-ifpi-vertical.png' %}" alt="Instituto Federal do Piauí" />
+  </div>
+</footer>
+{% endwith %}
+{% endblock %}

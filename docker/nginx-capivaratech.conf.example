@@ -1,13 +1,17 @@
 # nginx do HOST (fora do Docker) — proxy reverso para o container web.
 # Copie para /etc/nginx/sites-available/capivaratech.dgdlabs.com.br,
 # ative com symlink em sites-enabled e rode:
-#   sudo certbot --nginx -d capivaratech.dgdlabs.com.br
+#   sudo certbot --nginx -d capivaratech.dgdlabs.com.br #     -d sistemasparainternet.com -d www.sistemasparainternet.com #     -d capivaratech.sistemasparainternet.com
 # (o certbot adiciona o bloco 443/SSL automaticamente)
 
 server {
     listen 80;
     listen [::]:80;
-    server_name capivaratech.dgdlabs.com.br;
+    # O mesmo container atende o site do curso e o Capivara Tech: o Django escolhe pelo domínio
+    # (COURSE_HOSTS no .env). capivaratech.dgdlabs.com.br fica no ar por causa dos certificados antigos.
+    server_name capivaratech.dgdlabs.com.br
+                sistemasparainternet.com www.sistemasparainternet.com
+                capivaratech.sistemasparainternet.com;
 
     client_max_body_size 25M;
 
