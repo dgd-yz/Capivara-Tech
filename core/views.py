@@ -159,13 +159,20 @@ def certificates(request):
     if request.POST:
         cf = CertificatesForm(request.POST)
         if cf.is_valid():
-            email = cf.cleaned_data["email"]
-            certificates = Certificate.objects.filter(participant_email=email)
+            email = cf.cleaned_data["email"].strip()
+            # Sem diferenciar maiúsculas: muita gente se inscreveu com "Maria@Gmail.com".
+            event_name = get_event_config()["name"]
+            certificates = sorted(
+                Certificate.objects.filter(participant_email__iexact=email),
+                key=lambda c: (c.activity != event_name, c.activity.lower()),
+            )
             return {
                 "template": "core/certificates.html",
                 "cf": cf,
+                "searched_email": email,
                 "certificates": certificates,
             }
+        return {"template": "core/certificates.html", "cf": cf}
     cf = CertificatesForm()
     return {"template": "core/certificates.html", "cf": cf}
 
