@@ -31,6 +31,7 @@
     <br />
 
     <h4 class="title is-3">Certificados Encontrados</h4>
+    <p>{{ certificates|length }} certificado{{ certificates|length|pluralize }} para {{ searched_email }}. Clique para abrir o PDF.</p>
 
     <br />
 
@@ -38,11 +39,19 @@
       <ul class="list">
         {% for certificate in certificates %}
           <li class="block">
-            <a class="button is-info is-fullwidth is-large" target="_blank" href="{% url 'certificate_detail' certificate.uuid %}">Certificado {{ certificate.activity|truncatechars:20 }}</a>
+            <a class="button is-info is-fullwidth is-large" style="white-space:normal;height:auto;" target="_blank" rel="noopener" href="{% url 'certificate_detail' certificate.uuid %}">Certificado: {{ certificate.activity }} ({{ certificate.workload }} hora{{ certificate.workload|pluralize }})</a>
           </li>
         {% endfor %}
       </ul>
     </div>
+  {% elif searched_email %}
+    <br />
+    <article class="message is-warning" role="status">
+      <div class="message-body">
+        Nenhum certificado encontrado para <strong>{{ searched_email }}</strong>. Confira se é o mesmo e-mail usado na inscrição.
+        Se o problema continuar, escreva para <a href="mailto:{{ event.contact_email }}">{{ event.contact_email }}</a> informando seu nome completo.
+      </div>
+    </article>
   {% endif %}
   </section>
 {% endblock %}
