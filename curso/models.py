@@ -1,9 +1,17 @@
+import os
+
+from django.contrib.staticfiles import finders
 from django.db import models
+from django.templatetags.static import static
 from solo.models import SingletonModel
 
 DEFAULT_INTRO = (
-    "Graduação tecnológica gratuita para quem quer criar sites, sistemas e aplicativos, "
-    "do código à publicação, aqui no Território Serra da Capivara."
+    "Aprenda a desenvolver sistemas, aplicações web e aplicativos móveis em uma graduação "
+    "pública e gratuita do IFPI. Desenvolva competências em programação, inteligência "
+    "artificial e outras áreas da tecnologia, preparando-se para criar soluções inovadoras "
+    "e acompanhar as transformações do mundo digital.\n\n"
+    "Com uma formação em Tecnologia em Sistemas para Internet, você poderá construir uma "
+    "carreira e atuar em empresas de tecnologia em qualquer lugar do mundo."
 )
 
 DEFAULT_ABOUT = (
@@ -66,6 +74,9 @@ DEFAULT_ELECTIVES = "\n".join([
 ])
 
 
+BUNDLED_PPC = "curso/docs/ppc-sistemas-para-internet.pdf"
+
+
 def lines(text):
     return [line.strip() for line in (text or "").splitlines() if line.strip()]
 
@@ -83,7 +94,7 @@ class CourseSettings(SingletonModel):
         help_text="PNG ou SVG com fundo transparente. Sem logo, o site mostra o selo \"SI\" desenhado.",
     )
 
-    intro = models.TextField("Texto de abertura", default=DEFAULT_INTRO)
+    intro = models.TextField("Texto de abertura", default=DEFAULT_INTRO, help_text="Deixe uma linha em branco para separar parágrafos.")
     about = models.TextField("Sobre o curso", default=DEFAULT_ABOUT, help_text="Deixe uma linha em branco para separar parágrafos.")
     graduate_profile = models.TextField("Perfil do egresso", blank=True, default=DEFAULT_PROFILE)
     careers = models.TextField("Onde atuar", blank=True, default=DEFAULT_CAREERS, help_text="Um item por linha.")
@@ -99,7 +110,12 @@ class CourseSettings(SingletonModel):
         "Tópicos especiais e optativas", blank=True, default=DEFAULT_ELECTIVES,
         help_text="Um por linha. Aparecem como exemplos abaixo da matriz.",
     )
-    ppc = models.FileField("PPC (PDF)", upload_to="curso", blank=True)
+    ppc = models.FileField(
+        "PPC (PDF)", upload_to="curso", blank=True,
+        help_text="Vazio usa o PPC que já vem com o site (versão 03, revisada em 31/03/2025). "
+        "Ao trocar o arquivo, atualize a versão abaixo.",
+    )
+    ppc_version = models.CharField("Versão do PPC", max_length=120, blank=True, default="Versão 03 · revisada em 31/03/2025")
 
     coordinator = models.CharField(
         "Coordenação", max_length=150, blank=True, default="Paul Symon Ribeiro Rocha",
@@ -125,6 +141,20 @@ class CourseSettings(SingletonModel):
     @property
     def elective_list(self):
         return lines(self.electives)
+
+    @property
+    def ppc_url(self):
+        return self.ppc.url if self.ppc else static(BUNDLED_PPC)
+
+    @property
+    def ppc_size(self):
+        """Tamanho em bytes, ou None se não der para saber (arquivo sumiu do storage)."""
+        try:
+            if self.ppc:
+                return self.ppc.size
+            return os.path.getsize(finders.find(BUNDLED_PPC))
+        except (OSError, TypeError, ValueError):
+            return None
 
 
 class Topic(models.Model):

@@ -15,6 +15,7 @@
     <nav id="si-links" class="si-nav__links">
       <a href="#curso">O curso</a>
       {% if modules %}<a href="#matriz">Matriz</a>{% endif %}
+      <a href="#ppc">PPC</a>
       {% if event_url %}<a href="#capivara-tech">Capivara Tech</a>{% endif %}
       <a href="#contato">Contato</a>
       <a class="si-btn si-btn--sm" href="#ingresso">Como ingressar</a>
@@ -29,7 +30,7 @@
         <p class="si-kicker">{{ course.degree }} · {{ course.institution }}</p>
         <h1>Tecnologia em <span class="si-mark">{{ course.short_name }}</span></h1>
         <p class="si-hero__tagline">{{ course.tagline }}.</p>
-        <p class="si-hero__lead">{{ course.intro }}</p>
+        <div class="si-hero__lead">{{ course.intro|linebreaks }}</div>
         <div class="si-hero__cta">
           <a class="si-btn" href="#ingresso">Como ingressar</a>
           <a class="si-btn si-btn--ghost" href="#curso">Conheça o curso</a>
@@ -103,9 +104,7 @@
         <p class="si-label">// matriz curricular</p>
         <h2>{{ modules|length }} módulos, um por semestre</h2>
       </div>
-      {% if course.ppc %}
-        <a class="si-btn si-btn--ghost" href="{{ course.ppc.url }}" target="_blank" rel="noopener">Baixar o PPC (PDF)</a>
-      {% endif %}
+      <a class="si-btn si-btn--ghost" href="#ppc">Ementas no PPC ↓</a>
     </div>
     <div class="si-modules">
       {% for module in modules %}
@@ -131,6 +130,36 @@
     {% endif %}
   </section>
   {% endif %}
+
+  {% with ppc_url=course.ppc_url ppc_size=course.ppc_size %}
+  <section id="ppc" class="si-section si-section--alt">
+    <div class="si-ppc">
+      <a class="si-ppc__doc" href="{{ ppc_url }}" download="PPC-Sistemas-para-Internet-IFPI.pdf" aria-label="Baixar o PPC em PDF">
+        <span class="si-ppc__sheet si-ppc__sheet--back" aria-hidden="true"></span>
+        <span class="si-ppc__sheet" aria-hidden="true">
+          <img src="{% if logo %}{{ logo.url }}{% else %}{% static 'curso/images/si-selo.svg' %}{% endif %}" alt="" />
+          <span class="si-ppc__org">{{ course.institution }}</span>
+          <strong>Projeto Pedagógico do Curso</strong>
+          <span class="si-ppc__course">{{ course.degree }} em {{ course.short_name }}</span>
+          <span class="si-ppc__lines"><i></i><i></i><i></i><i></i></span>
+          <span class="si-ppc__tag">PDF</span>
+        </span>
+      </a>
+      <div class="si-ppc__text">
+        <p class="si-label">// projeto pedagógico do curso</p>
+        <h2>O curso inteiro, no documento oficial</h2>
+        <p>O PPC é o documento que define o curso: perfil do egresso, matriz e pré-requisitos, ementa e bibliografia de cada disciplina, estágio, TCC, atividades complementares e as regras de avaliação.</p>
+        <p class="si-ppc__meta">
+          {% if course.ppc_version %}<span>{{ course.ppc_version }}</span>{% endif %}
+          <span>PDF{% if ppc_size %} · {{ ppc_size|filesizeformat }}{% endif %}</span>
+        </p>
+        <div class="si-ppc__actions">
+          <a class="si-btn" href="{{ ppc_url }}" download="PPC-Sistemas-para-Internet-IFPI.pdf">Baixar o PPC (PDF)</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endwith %}
 
   {% if event_url %}
   <section id="capivara-tech" class="si-section">
