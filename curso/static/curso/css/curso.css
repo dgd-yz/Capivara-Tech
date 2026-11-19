@@ -137,6 +137,8 @@ p { margin: 0 0 1em; }
 }
 .si-hero__tagline { margin: 22px 0 8px; font: 600 clamp(19px, 2.2vw, 23px)/1.4 var(--si-head); color: var(--si-text); }
 .si-hero__lead { max-width: 560px; font-size: 18px; }
+.si-hero__lead p { margin: 0; }
+.si-hero__lead p + p { margin-top: 12px; }
 .si-hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 
 .si-hero__art { position: relative; aspect-ratio: 1; max-width: 420px; width: 100%; justify-self: center; }
@@ -229,6 +231,50 @@ p { margin: 0 0 1em; }
 .si-electives strong { color: var(--si-text); }
 .si-electives ul { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .si-electives li { padding: 6px 12px; border-radius: 999px; background: rgba(249, 188, 50, .1); color: var(--si-yellow-2); font-size: 14px; }
+
+/* ---- PPC ------------------------------------------------------------- */
+.si-ppc { display: grid; grid-template-columns: minmax(220px, 340px) 1fr; gap: clamp(36px, 6vw, 80px); align-items: center; }
+.si-ppc__doc { position: relative; display: block; width: min(100%, 280px); margin: 12px auto; aspect-ratio: 210 / 297; }
+.si-ppc__sheet {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 14% 12% 10%; border-radius: 6px 26px 6px 6px;
+  background: #f7f5ef; color: var(--si-ink);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .45), 0 0 0 1px rgba(0, 0, 0, .08);
+  transform: rotate(-4deg); transition: transform .25s ease;
+}
+.si-ppc__sheet::before {
+  content: ""; position: absolute; top: 0; right: 0; width: 26px; height: 26px;
+  background: linear-gradient(225deg, var(--si-bg-alt) 50%, #dcd8cc 50%); border-radius: 0 0 0 6px;
+}
+.si-ppc__sheet--back { background: var(--si-yellow); box-shadow: 0 20px 40px rgba(0, 0, 0, .35); transform: rotate(6deg) translate(14px, 6px); }
+.si-ppc__sheet--back::before { display: none; }
+.si-ppc__doc:hover .si-ppc__sheet:not(.si-ppc__sheet--back) { transform: rotate(-1deg) translateY(-6px); }
+.si-ppc__doc:hover .si-ppc__sheet--back { transform: rotate(9deg) translate(22px, 8px); }
+.si-ppc__sheet img { width: 34%; margin-bottom: 9%; }
+.si-ppc__org { font: 400 9.5px/1.4 var(--si-mono); letter-spacing: .04em; text-transform: uppercase; color: rgba(17, 17, 17, .55); }
+.si-ppc__sheet strong { margin-top: 10%; font: 800 clamp(17px, 2vw, 21px)/1.15 var(--si-head); letter-spacing: -.02em; }
+.si-ppc__course { margin-top: 8px; font-size: 12px; line-height: 1.35; color: rgba(17, 17, 17, .7); }
+.si-ppc__lines { margin-top: auto; width: 100%; display: grid; gap: 7px; }
+.si-ppc__lines i { height: 5px; border-radius: 3px; background: rgba(17, 17, 17, .1); }
+.si-ppc__lines i:nth-child(2) { width: 86%; } .si-ppc__lines i:nth-child(4) { width: 62%; }
+.si-ppc__tag {
+  position: absolute; left: -10px; bottom: 7%; padding: 5px 12px; border-radius: 6px;
+  background: var(--si-pink); color: #fff; font: 700 12px/1 var(--si-mono); letter-spacing: .08em;
+  box-shadow: 0 8px 18px rgba(255, 95, 162, .35);
+}
+.si-ppc__text > p:not(.si-label) { max-width: 620px; }
+.si-ppc__text h2 + p { margin-top: 18px; }
+.si-ppc__meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.si-ppc__meta span {
+  padding: 5px 12px; border-radius: 999px; border: 1px solid var(--si-border-2);
+  font: 400 12.5px/1.4 var(--si-mono); color: var(--si-text);
+}
+.si-ppc__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+@media (max-width: 860px) {
+  .si-ppc { grid-template-columns: 1fr; }
+  .si-ppc__doc { width: min(62%, 230px); }
+}
+@media (prefers-reduced-motion: reduce) { .si-ppc__sheet { transition: none; } }
 
 /* ---- Capivara Tech --------------------------------------------------- */
 .si-event {

@@ -24,6 +24,19 @@ class CourseSiteTests(TestCase):
         self.assertContains(response, "Sistemas para Internet")
         self.assertContains(response, "Sua graduação começa aqui")
 
+    def test_intro_shows_each_paragraph(self):
+        response = self.client.get("/", HTTP_HOST=COURSE)
+        self.assertContains(response, "<p>Aprenda a desenvolver sistemas")
+        self.assertContains(response, "<p>Com uma formação em Tecnologia em Sistemas para Internet")
+
+    def test_bundled_ppc_download(self):
+        response = self.client.get("/", HTTP_HOST=COURSE)
+        self.assertContains(response, 'id="ppc"')
+        self.assertContains(response, "ppc-sistemas-para-internet.pdf\" download=\"PPC-Sistemas-para-Internet-IFPI.pdf\"", count=2)
+        self.assertNotContains(response, "Ler o PPC")
+        self.assertContains(response, "Versão 03")
+        self.assertContains(response, "MB</span>")
+
     def test_www_is_course_too(self):
         response = self.client.get("/", HTTP_HOST="www." + COURSE)
         self.assertTemplateUsed(response, "curso/home.html")

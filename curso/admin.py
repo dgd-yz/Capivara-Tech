@@ -14,7 +14,8 @@ class CourseSettingsAdmin(SingletonModelAdmin):
             "fields": ("duration", "shift", "seats", "workload"),
         }),
         ("Ingresso", {"fields": ("admission", "admission_url")}),
-        ("Matriz", {"fields": ("electives", "ppc")}),
+        ("Matriz", {"fields": ("electives",)}),
+        ("PPC", {"fields": ("ppc", "ppc_version")}),
         ("Contato", {"fields": ("coordinator", "contact_email", "instagram_url", "address", "map_url")}),
     )
 
