@@ -38,6 +38,16 @@ class CourseSiteTests(TestCase):
         self.assertContains(response, "Versão 03")
         self.assertContains(response, "MB</span>")
 
+    def test_instagram_in_navbar(self):
+        response = self.client.get("/", HTTP_HOST=COURSE)
+        self.assertContains(response, 'class="si-nav__insta" href="https://instagram.com/sistemasparainternetifpi"')
+
+        settings = CourseSettings.get_solo()
+        settings.instagram_url = ""
+        settings.save()
+        response = self.client.get("/", HTTP_HOST=COURSE)
+        self.assertNotContains(response, "si-nav__insta")
+
     def test_www_is_course_too(self):
         response = self.client.get("/", HTTP_HOST="www." + COURSE)
         self.assertTemplateUsed(response, "curso/home.html")
