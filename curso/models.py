@@ -9,7 +9,7 @@ DEFAULT_INTRO = (
     "Aprenda a desenvolver sistemas, aplicações web e aplicativos móveis em uma graduação "
     "pública e gratuita do IFPI. Desenvolva competências em programação, inteligência "
     "artificial e outras áreas da tecnologia, preparando-se para criar soluções inovadoras "
-    "e acompanhar as transformações do mundo digital.\n\n"
+    "e acompanhar as transformações do mundo digital. "
     "Com uma formação em Tecnologia em Sistemas para Internet, você poderá construir uma "
     "carreira e atuar em empresas de tecnologia em qualquer lugar do mundo."
 )

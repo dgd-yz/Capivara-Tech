@@ -24,10 +24,11 @@ class CourseSiteTests(TestCase):
         self.assertContains(response, "Sistemas para Internet")
         self.assertContains(response, "Sua graduação começa aqui")
 
-    def test_intro_shows_each_paragraph(self):
+    def test_intro_is_a_single_paragraph(self):
         response = self.client.get("/", HTTP_HOST=COURSE)
         self.assertContains(response, "<p>Aprenda a desenvolver sistemas")
-        self.assertContains(response, "<p>Com uma formação em Tecnologia em Sistemas para Internet")
+        self.assertContains(response, "mundo digital. Com uma formação em Tecnologia em Sistemas para Internet")
+        self.assertNotContains(response, "<p>Com uma formação")
 
     def test_bundled_ppc_download(self):
         response = self.client.get("/", HTTP_HOST=COURSE)
