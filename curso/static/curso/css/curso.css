@@ -84,11 +84,22 @@ p { margin: 0 0 1em; }
 .si-brand span { display: flex; flex-direction: column; font: 700 16px/1.15 var(--si-head); }
 .si-brand small { font: 400 11px/1.3 var(--si-mono); color: var(--si-faint); letter-spacing: .02em; }
 .si-nav__links { display: flex; align-items: center; gap: 26px; }
-.si-nav__links a:not(.si-btn) { color: var(--si-muted); font-size: 15px; font-weight: 500; }
+.si-nav__links a:not(.si-btn) { color: var(--si-muted); font-size: 15px; font-weight: 500; white-space: nowrap; }
 .si-nav__links a:not(.si-btn):hover { color: var(--si-text); }
 .si-nav__toggle { display: none; }
+/* Instagram: fica sempre visível na barra, inclusive no celular (fora do menu) */
+.si-brand { margin-right: auto; }
+.si-nav__links { order: 1; }
+.si-nav__insta {
+  order: 2; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 12px;
+  color: var(--si-text); border: 1px solid var(--si-border-2);
+  transition: color .2s ease, border-color .2s ease, background .2s ease;
+}
+.si-nav__insta:hover { color: var(--si-pink); border-color: var(--si-pink); background: rgba(255, 95, 162, .08); }
+.si-nav__toggle { order: 3; }
 
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
   .si-nav__toggle {
     display: inline-flex; flex-direction: column; justify-content: center; gap: 6px;
     width: 44px; height: 44px; padding: 0 11px; border-radius: 12px;
@@ -105,6 +116,17 @@ p { margin: 0 0 1em; }
   .si-nav.is-open .si-nav__links { display: flex; }
   .si-nav__links a:not(.si-btn) { padding: 12px 4px; border-bottom: 1px solid var(--si-border); font-size: 16px; }
   .si-nav__links .si-btn { margin-top: 10px; }
+  .si-nav__in { gap: 10px; }
+  .si-nav__insta { width: 44px; height: 44px; }
+}
+@media (max-width: 420px) {
+  /* celular: logo, nome, Instagram e menu numa linha só */
+  .si-brand { gap: 10px; min-width: 0; }
+  .si-brand img { width: 36px; height: 36px; }
+  .si-brand span { font-size: 15px; }
+  .si-brand small { font-size: 10px; letter-spacing: 0; }
+  .si-nav__insta, .si-nav__toggle { width: 40px; height: 40px; }
+  .si-nav__toggle { padding: 0 10px; }
 }
 
 /* ---- hero ------------------------------------------------------------ */
