@@ -90,6 +90,20 @@ class CertificationSettings(SingletonModel):
 
 
 class Certificate(models.Model):
+    CAPIVARA = "capivara"
+    KACTUZ = "kactuz"
+    LAYOUT_CHOICES = [
+        (CAPIVARA, "Capivara Tech"),
+        (KACTUZ, "Projeto Kactuz"),
+    ]
+
+    layout = models.CharField(
+        "Modelo",
+        max_length=20,
+        choices=LAYOUT_CHOICES,
+        default=CAPIVARA,
+        help_text="Define o visual do PDF e do e-mail. O Projeto Kactuz usa o próprio layout.",
+    )
     background_image = models.ImageField(
         "Imagem de fundo", upload_to="certificates", blank=True,
         help_text="Copiada das configurações ao gerar. Se vazia, usa o fundo atual das configurações.",
@@ -168,3 +182,19 @@ class Certificate(models.Model):
 
     def get_absolute_url(self):
         return reverse("certificate_detail", kwargs={"uuid": self.uuid})
+
+
+class KactuzCertificateManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(layout=Certificate.KACTUZ)
+
+
+class KactuzCertificate(Certificate):
+    """Mesma tabela dos certificados, mas com lista própria no admin só para o Projeto Kactuz."""
+
+    objects = KactuzCertificateManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "Certificado do Projeto Kactuz"
+        verbose_name_plural = "Certificados do Projeto Kactuz"

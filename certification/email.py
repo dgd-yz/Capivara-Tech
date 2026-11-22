@@ -1,4 +1,5 @@
 from email import policy
+from email.utils import parseaddr
 
 from django.conf import settings
 from django.contrib.staticfiles import finders
@@ -10,6 +11,7 @@ from core.email_tracking import send_tracked_email
 
 LOGO_CID = "certificate-logo"
 LOGO_STATIC = "images/capivara-logo-email.png"
+KACTUZ_LOGO_STATIC = "certification/kactuz/kactuz-email.png"
 
 
 @task
@@ -42,6 +44,7 @@ class CertificateEmail(EmailMultiAlternatives):
     """E-mail com o logo embutido (cid), que aparece mesmo quando o leitor bloqueia imagens externas."""
 
     logo_content = None
+    logo_filename = "capivara-tech.png"
 
     def message(self, *, policy=policy.default):
         message = super().message(policy=policy)
@@ -49,7 +52,7 @@ class CertificateEmail(EmailMultiAlternatives):
             html_part = message.get_body(preferencelist=("html",))
             html_part.add_related(
                 self.logo_content, maintype="image", subtype="png", cid=f"<{LOGO_CID}>",
-                disposition="inline", filename="capivara-tech.png",
+                disposition="inline", filename=self.logo_filename,
             )
         return message
 
@@ -78,7 +81,45 @@ def certificate_email_context(certificate, site_url):
     }
 
 
+def kactuz_email_context(certificate, site_url):
+    from core.event_config import get_event_config
+
+    from . import kactuz
+    from .views import issue_date
+
+    return {
+        "kactuz": kactuz.context(),
+        "certificate": certificate,
+        "first_name": certificate.participant_name.split()[0] if certificate.participant_name else "",
+        "issued_on": issue_date(certificate.date),
+        "certificate_url": site_url.rstrip("/") + reverse("certificate_detail", kwargs={"uuid": certificate.uuid}),
+        "contact_email": get_event_config().get("contact_email"),
+        "logo_cid": LOGO_CID,
+    }
+
+
+def build_kactuz_mail(certificate, site_url):
+    context = kactuz_email_context(certificate, site_url)
+    contact_email = context["contact_email"]
+    # Mesmo endereço de envio (o autorizado no Brevo), mas com o nome do curso.
+    sender = f"Projeto Kactuz · IFPI <{parseaddr(settings.DEFAULT_FROM_EMAIL)[1]}>"
+    message = CertificateEmail(
+        "Projeto Kactuz: seu certificado de conclusão está disponível",
+        render_to_string("emails/certification_kactuz.txt", context),
+        sender,
+        [certificate.participant_email],
+        reply_to=[contact_email] if contact_email else None,
+    )
+    message.attach_alternative(render_to_string("emails/certification_kactuz.html", context), "text/html")
+    with open(finders.find(KACTUZ_LOGO_STATIC), "rb") as logo:
+        message.logo_content = logo.read()
+    message.logo_filename = "projeto-kactuz.png"
+    return message
+
+
 def build_certificate_mail(certificate, site_url):
+    if certificate.layout == certificate.KACTUZ:
+        return build_kactuz_mail(certificate, site_url)
     context = certificate_email_context(certificate, site_url)
     event = context["event"]
     subject = f"{event['name']}: seu certificado está disponível"
@@ -104,4 +145,5 @@ def send_certificate_mail(certificate_pk, site_url):
     certificate = Certificate.objects.filter(pk=certificate_pk).first()
     if certificate is None:  # apagado depois de entrar na fila
         return None
-    return send_tracked_email(build_certificate_mail(certificate, site_url), "Certificado")
+    kind = "Certificado Projeto Kactuz" if certificate.layout == certificate.KACTUZ else "Certificado"
+    return send_tracked_email(build_certificate_mail(certificate, site_url), kind)

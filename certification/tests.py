@@ -290,3 +290,134 @@ class CertificateEmailTests(TestCase):
         self.assertEqual(DBTaskResult.objects.count(), 2)
         args = sorted(row.args_kwargs["args"][0] for row in DBTaskResult.objects.all())
         self.assertEqual(args, sorted([first.pk, second.pk]))
+
+
+@override_settings(DEFAULT_FROM_EMAIL="Capivara Tech <certificados@example.com>")
+class KactuzCertificateTests(TestCase):
+    site = "https://capivaratech.example"
+
+    def render_html(self, certificate):
+        with patch("certification.views.HTML") as html:
+            html.return_value.write_pdf.return_value = b"%PDF-fake"
+            response = self.client.get(certificate.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        return html.call_args.kwargs["string"]
+
+    def test_creates_course_certificate_once(self):
+        from . import kactuz
+
+        certificate, created = kactuz.certificate_create("AYLA MONIZE DIAS DOS REIS", " Ayla@Example.com ")
+        self.assertTrue(created)
+        self.assertEqual(certificate.layout, Certificate.KACTUZ)
+        self.assertEqual(certificate.participant_name, "Ayla Monize Dias dos Reis")
+        self.assertEqual(certificate.participant_email, "ayla@example.com")
+        self.assertEqual(certificate.workload, 60)
+        self.assertEqual(certificate.certifier_name, "Dann Luciano de Menezes")
+        self.assertEqual(certificate.activity, "Projeto Kactuz: Formação em Lógica de Programação")
+        again, created = kactuz.certificate_create("Ayla Monize Dias dos Reis", "ayla@example.com")
+        self.assertFalse(created)
+        self.assertEqual(again.pk, certificate.pk)
+
+    def test_event_certificates_keep_the_capivara_layout(self):
+        certificate = certificate_create("Ana", "ana@example.com", "Evento", 24)
+        self.assertEqual(certificate.layout, Certificate.CAPIVARA)
+        self.assertIn("capivara-logo", self.render_html(certificate))
+
+    def test_layout_has_course_text(self):
+        from . import kactuz
+
+        certificate, _ = kactuz.certificate_create("Kayo César Assis Pereira da Mata", "kayo@example.com")
+        html = self.render_html(certificate)
+        self.assertIn("Kayo César Assis Pereira da Mata", html)
+        self.assertIn("Certificado de conclusão", html)
+        self.assertIn("carga horária de <strong>60&nbsp;horas</strong>", html)
+        self.assertIn("de 3 de maio a 22 de agosto de 2026", html)
+        self.assertNotIn("Conteúdo programático", html)
+        self.assertIn("Coordenador do Projeto Kactuz", html)
+        self.assertNotIn("capivara-logo", html)
+        self.assertNotRegex(html, r"left: \d+,\d+mm")  # decimais com vírgula quebram o CSS
+
+    def test_real_pdf_has_a_single_page(self):
+        from . import kactuz
+
+        certificate, _ = kactuz.certificate_create("Apollo Neri Siqueira Rubem de Macedo", "apollo@example.com")
+        with self.assertNoLogs("weasyprint", level="ERROR"):
+            response = self.client.get(certificate.get_absolute_url())
+        self.assertTrue(response.content.startswith(b"%PDF"))
+
+        from weasyprint import HTML
+
+        base_url = "http://testserver/"
+        html = self.render_html(certificate)
+        document = HTML(string=html, base_url=base_url, url_fetcher=certificate_url_fetcher(base_url)).render()
+        self.assertEqual(len(document.pages), 1)
+
+    def test_email_uses_course_identity(self):
+        from . import kactuz
+        from .email import build_certificate_mail
+
+        certificate, _ = kactuz.certificate_create("Wemerson Ferreira Fernandes", "wemerson@example.com")
+        message = build_certificate_mail(certificate, self.site)
+        html = message.alternatives[0][0]
+        url = f"{self.site}/certificado/{certificate.uuid}"
+        self.assertEqual(message.subject, "Projeto Kactuz: seu certificado de conclusão está disponível")
+        self.assertEqual(message.from_email, "Projeto Kactuz · IFPI <certificados@example.com>")
+        self.assertEqual(message.to, ["wemerson@example.com"])
+        self.assertIn("Parabéns, Wemerson!", html)
+        self.assertIn("60 horas", html)
+        self.assertIn(f'href="{url}"', html)
+        self.assertNotIn("Capivara", html)
+        self.assertIn(url, message.body)
+        self.assertIn('filename="projeto-kactuz.png"', message.message().as_string())
+
+    def test_command_issues_from_list_and_queues_emails(self):
+        from django.core.management import CommandError, call_command
+        from django_tasks.backends.database.models import DBTaskResult
+
+        path = os.path.join(tempfile.mkdtemp(), "alunos.csv")
+        with open(path, "w", encoding="utf-8") as handle:
+            handle.write("# nome;email\nAna Vitória;ana@example.com\nPedro Vitor\tpedro@example.com\n")
+        call_command("emitir_certificados_kactuz", path, stdout=open(os.devnull, "w"))
+        call_command("emitir_certificados_kactuz", path, "--enviar", self.site, stdout=open(os.devnull, "w"))
+        self.assertEqual(Certificate.objects.filter(layout=Certificate.KACTUZ).count(), 2)
+        self.assertEqual(DBTaskResult.objects.count(), 2)
+
+        with open(path, "w", encoding="utf-8") as handle:
+            handle.write("Sem email\n")
+        with self.assertRaises(CommandError):
+            call_command("emitir_certificados_kactuz", path, stdout=open(os.devnull, "w"))
+
+    def test_admin_keeps_kactuz_in_its_own_list(self):
+        from . import kactuz
+
+        admin_user = get_user_model().objects.create_superuser("kactuz-admin", "a@example.com", None)
+        self.client.force_login(admin_user)
+        kactuz.certificate_create("Luccas Wender dos Santos", "luccas@example.com")
+        certificate_create("Ana do Evento", "ana@example.com", "Capivara Tech II", 24)
+
+        event_list = self.client.get(reverse("admin:certification_certificate_changelist"))
+        self.assertContains(event_list, "Ana do Evento")
+        self.assertNotContains(event_list, "Luccas Wender dos Santos")
+
+        kactuz_list = self.client.get(reverse("admin:certification_kactuzcertificate_changelist"))
+        self.assertContains(kactuz_list, "Luccas Wender dos Santos")
+        self.assertNotContains(kactuz_list, "Ana do Evento")
+
+        response = self.client.post(reverse("admin:certification_kactuzcertificate_add"), {
+            "participant_name": "PABLO HENRIQUE ARAÚJO NEGREIROS", "participant_email": "Pablo@Example.com", "_save": "Salvar",
+        })
+        self.assertEqual(response.status_code, 302)
+        pablo = Certificate.objects.get(participant_email="pablo@example.com")
+        self.assertEqual(pablo.participant_name, "Pablo Henrique Araújo Negreiros")
+        self.assertEqual((pablo.layout, pablo.workload, pablo.certifier_name), (Certificate.KACTUZ, 60, "Dann Luciano de Menezes"))
+        self.assertEqual(pablo.activity, kactuz.ACTIVITY)
+
+    def test_email_history_tells_kactuz_apart(self):
+        from core.models import EmailDelivery
+
+        from . import kactuz
+        from .email import send_certificate_mail
+
+        certificate, _ = kactuz.certificate_create("Anna Vitória Miranda Coelho", "anna@example.com")
+        send_certificate_mail.call(certificate.pk, self.site)
+        self.assertEqual(EmailDelivery.objects.get().kind, "Certificado Projeto Kactuz")

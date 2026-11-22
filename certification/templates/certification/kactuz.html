@@ -1,0 +1,133 @@
+{% load static %}
+{% load qr_code %}
+{% load l10n %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Certificado - {{ participant_name }}</title>
+    <style>
+      @font-face { font-family: "Sora"; font-weight: 600; src: url("{% static 'certification/fonts/Sora-SemiBold.ttf' %}"); }
+      @font-face { font-family: "Sora"; font-weight: 700; src: url("{% static 'certification/fonts/Sora-Bold.ttf' %}"); }
+      @font-face { font-family: "Sora"; font-weight: 800; src: url("{% static 'certification/fonts/Sora-ExtraBold.ttf' %}"); }
+      @font-face { font-family: "DM Sans"; font-weight: 400; src: url("{% static 'certification/fonts/DMSans-Regular.ttf' %}"); }
+      @font-face { font-family: "DM Sans"; font-weight: 600; src: url("{% static 'certification/fonts/DMSans-SemiBold.ttf' %}"); }
+      @font-face { font-family: "DM Sans"; font-weight: 700; src: url("{% static 'certification/fonts/DMSans-Bold.ttf' %}"); }
+      @font-face { font-family: "Space Mono"; font-weight: 400; src: url("{% static 'certification/fonts/SpaceMono-Regular.ttf' %}"); }
+
+      * { padding: 0; margin: 0; border: 0; box-sizing: border-box; }
+      @page { size: A4 landscape; margin: 0; background: #050b06; }
+      html, body { width: 297mm; }
+      body { font-family: "DM Sans", "DejaVu Sans", sans-serif; color: #e8f2e8; }
+
+      .page { position: relative; width: 297mm; height: 210mm; overflow: hidden; }
+      .deco { position: absolute; left: 0; top: 0; width: 297mm; height: 210mm; }
+      .digits { position: absolute; left: 0; top: 0; width: 297mm; height: 80mm; }
+      .digits span { position: absolute; font-family: "Space Mono", monospace; font-size: 10pt; line-height: 1; color: #35f04f; }
+
+      .green { color: #35f04f; }
+      .mono { font-family: "Space Mono", monospace; }
+      .brace { color: #35f04f; font-family: "Space Mono", monospace; }
+
+      /* ---------- cabeçalho ---------- */
+      .head { position: absolute; left: 24mm; top: 19mm; width: 249mm; height: 16mm; }
+      .institution { position: absolute; left: 0; top: 0; }
+      .institution .if-mark { position: absolute; left: 0; top: 0; width: 11.5mm; height: 15.5mm; }
+      .institution .label { position: absolute; left: 15mm; top: 1.2mm; width: 90mm; }
+      .institution .label strong { display: block; font-family: "Sora", sans-serif; font-weight: 800; font-size: 9.5pt; letter-spacing: .04em; text-transform: uppercase; line-height: 1.15; }
+      .institution .label span { display: block; margin-top: 1mm; font-size: 8.5pt; color: #9db59d; }
+      .tagline { position: absolute; right: 0; top: 4.5mm; font-family: "Space Mono", monospace; font-size: 9pt; letter-spacing: .18em; text-transform: uppercase; color: #cfe3cf; }
+      .tagline .brace { font-size: 12pt; }
+
+      /* ---------- frente ---------- */
+      .main { position: absolute; left: 24mm; top: 47mm; width: 178mm; }
+      .kicker { font-family: "Space Mono", monospace; font-size: 9.5pt; letter-spacing: .38em; text-transform: uppercase; color: #35f04f; }
+      .title { margin-top: 2.5mm; font-family: "Sora", sans-serif; font-weight: 800; font-size: 40pt; line-height: 1; letter-spacing: .01em; text-transform: uppercase; color: #ffffff; }
+      .title .green { text-shadow: 0 0 6mm rgba(53, 240, 79, .45); }
+      .course { margin-top: 3.5mm; font-size: 10.5pt; letter-spacing: .22em; text-transform: uppercase; color: #e8f2e8; }
+      .course .brace { font-size: 14pt; letter-spacing: 0; }
+      .lead { margin-top: 9mm; font-size: 13pt; color: #9db59d; }
+      .participant { margin-top: 1mm; font-family: "Sora", sans-serif; font-weight: 700; line-height: 1.12; letter-spacing: -.01em; color: #ffffff; }
+      .bar { margin-top: 3.5mm; width: 34mm; height: 1.2mm; border-radius: 1mm; background: #35f04f; }
+      .text { margin-top: 5mm; font-size: 13pt; line-height: 1.55; color: #c3d6c3; }
+      .text p { margin: 0; }
+      .text strong { color: #ffffff; font-weight: 700; }
+
+      .cactus { position: absolute; right: 6mm; bottom: 9mm; width: 80mm; height: 92mm; }
+
+      .footer { position: absolute; left: 24mm; width: 176mm; bottom: 17mm; height: 27mm; }
+      .validation { position: absolute; left: 0; bottom: 0; width: 64mm; }
+      .validation .qr { position: absolute; left: 0; bottom: 0; background: #fff; border-radius: 2.5mm; padding: 1.5mm; width: 25mm; height: 25mm; }
+      .validation .qr svg { width: 22mm; height: 22mm; display: block; }
+      .validation .info { position: absolute; left: 29mm; bottom: 1mm; width: 36mm; }
+      .label-small { font-family: "Space Mono", monospace; font-size: 6.5pt; letter-spacing: .12em; text-transform: uppercase; color: #8aa58a; }
+      .validation .url { margin-top: 1mm; font-size: 6pt; line-height: 1.35; word-break: break-all; }
+      .validation .url a { color: #c3d6c3; text-decoration: none; }
+
+      .signature { position: absolute; left: 72mm; width: 66mm; bottom: 0; text-align: center; }
+      .signature .line { height: .3mm; background: #35f04f; opacity: .6; margin-bottom: 2.5mm; }
+      .signature .name { font-family: "Sora", sans-serif; font-weight: 600; font-size: 11pt; color: #ffffff; }
+      .signature .role { margin-top: .8mm; font-size: 8.5pt; line-height: 1.35; color: #9db59d; }
+
+      .issued { position: absolute; right: 0; bottom: 0; width: 40mm; text-align: right; }
+      .issued .value { margin-top: 1mm; font-size: 9pt; line-height: 1.35; color: #e8f2e8; }
+
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <svg class="deco" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#35f04f" stop-opacity="0.16" />
+            <stop offset="1" stop-color="#35f04f" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <ellipse cx="250" cy="160" rx="80" ry="70" fill="url(#glow)" />
+        <rect x="9" y="9" width="279" height="192" rx="3" fill="none" stroke="#35f04f" stroke-width="0.4" opacity="0.4" />
+        <rect x="11.5" y="11.5" width="274" height="187" rx="2" fill="none" stroke="#ffffff" stroke-width="0.2" opacity="0.08" />
+      </svg>
+      <div class="digits">{% localize off %}{% for digit in kactuz.digits %}<span style="left: {{ digit.x }}mm; top: {{ digit.y }}mm; opacity: {{ digit.o }};">{{ digit.d }}</span>{% endfor %}{% endlocalize %}</div>
+
+      <div class="head">
+        <div class="institution">
+          {% include "certification/kactuz/marca-if.svg" with class_name="if-mark" %}
+          <div class="label"><strong>Instituto Federal</strong><span>Piauí · {{ kactuz.campus }}</span></div>
+        </div>
+        <div class="tagline"><span class="brace">{</span> {{ kactuz.tagline }} <span class="brace">}</span></div>
+      </div>
+
+      <div class="main">
+        <div class="kicker">Certificado de conclusão</div>
+        <div class="title">Projeto <span class="green">Kactuz</span></div>
+        <div class="course"><span class="brace">{</span> {{ kactuz.course }} <span class="brace">}</span></div>
+        <div class="lead">Certificamos que</div>
+        <div class="participant" style="font-size: {{ name_size }}pt;">{{ participant_name }}</div>
+        <div class="bar"></div>
+        <div class="text">{{ text }}</div>
+      </div>
+
+      {% include "certification/kactuz/cacto.svg" with class_name="cactus" %}
+
+      <div class="footer">
+        <div class="validation">
+          <div class="qr">{% qr_from_text uri size='S' border=0 %}</div>
+          <div class="info">
+            <div class="label-small">Valide este certificado</div>
+            <div class="url"><a href="{{ uri }}">{{ uri }}</a></div>
+          </div>
+        </div>
+        <div class="signature">
+          <div class="line"></div>
+          <div class="name">{{ certificate.certifier_name }}</div>
+          <div class="role">{{ certificate.certifier_position }}</div>
+        </div>
+        <div class="issued">
+          <div class="label-small">Emitido em</div>
+          <div class="value">{{ certificate.location }},<br />{{ issued_on }}</div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
