@@ -311,7 +311,7 @@ class KactuzCertificateTests(TestCase):
         self.assertEqual(certificate.layout, Certificate.KACTUZ)
         self.assertEqual(certificate.participant_name, "Ayla Monize Dias dos Reis")
         self.assertEqual(certificate.participant_email, "ayla@example.com")
-        self.assertEqual(certificate.workload, 60)
+        self.assertEqual(certificate.workload, 30)
         self.assertEqual(certificate.certifier_name, "Dann Luciano de Menezes")
         self.assertEqual(certificate.activity, "Projeto Kactuz: Formação em Lógica de Programação")
         again, created = kactuz.certificate_create("Ayla Monize Dias dos Reis", "ayla@example.com")
@@ -330,7 +330,7 @@ class KactuzCertificateTests(TestCase):
         html = self.render_html(certificate)
         self.assertIn("Kayo César Assis Pereira da Mata", html)
         self.assertIn("Certificado de conclusão", html)
-        self.assertIn("carga horária de <strong>60&nbsp;horas</strong>", html)
+        self.assertIn("carga horária de <strong>30&nbsp;horas</strong>", html)
         self.assertIn("de 3 de maio a 22 de agosto de 2026", html)
         self.assertNotIn("Conteúdo programático", html)
         self.assertIn("Coordenador do Projeto Kactuz", html)
@@ -364,7 +364,7 @@ class KactuzCertificateTests(TestCase):
         self.assertEqual(message.from_email, "Projeto Kactuz · IFPI <certificados@example.com>")
         self.assertEqual(message.to, ["wemerson@example.com"])
         self.assertIn("Parabéns, Wemerson!", html)
-        self.assertIn("60 horas", html)
+        self.assertIn("30 horas", html)
         self.assertIn(f'href="{url}"', html)
         self.assertNotIn("Capivara", html)
         self.assertIn(url, message.body)
@@ -409,7 +409,7 @@ class KactuzCertificateTests(TestCase):
         self.assertEqual(response.status_code, 302)
         pablo = Certificate.objects.get(participant_email="pablo@example.com")
         self.assertEqual(pablo.participant_name, "Pablo Henrique Araújo Negreiros")
-        self.assertEqual((pablo.layout, pablo.workload, pablo.certifier_name), (Certificate.KACTUZ, 60, "Dann Luciano de Menezes"))
+        self.assertEqual((pablo.layout, pablo.workload, pablo.certifier_name), (Certificate.KACTUZ, 30, "Dann Luciano de Menezes"))
         self.assertEqual(pablo.activity, kactuz.ACTIVITY)
 
     def test_email_history_tells_kactuz_apart(self):
@@ -421,3 +421,19 @@ class KactuzCertificateTests(TestCase):
         certificate, _ = kactuz.certificate_create("Anna Vitória Miranda Coelho", "anna@example.com")
         send_certificate_mail.call(certificate.pk, self.site)
         self.assertEqual(EmailDelivery.objects.get().kind, "Certificado Projeto Kactuz")
+
+    def test_migration_fixes_workload_of_existing_kactuz_certificates(self):
+        from importlib import import_module
+
+        from django.apps import apps
+
+        from . import kactuz
+
+        certificate, _ = kactuz.certificate_create("Ayla Monize Dias dos Reis", "ayla@example.com")
+        event = certificate_create("Ana do Evento", "ana@example.com", "Capivara Tech II", 60)
+        Certificate.objects.filter(pk=certificate.pk).update(workload=60)
+        import_module("certification.migrations.0008_kactuz_30_horas").corrigir(apps, None)
+        certificate.refresh_from_db()
+        event.refresh_from_db()
+        self.assertEqual(certificate.workload, 30)
+        self.assertEqual(event.workload, 60)

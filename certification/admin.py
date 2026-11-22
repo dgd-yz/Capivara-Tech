@@ -94,7 +94,7 @@ class CertificateAdmin(admin.ModelAdmin):
 
 @admin.register(KactuzCertificate)
 class KactuzCertificateAdmin(admin.ModelAdmin):
-    """Alunos do Projeto Kactuz: basta nome e e-mail; o resto (texto, 60 h, assinatura) é fixo do curso."""
+    """Alunos do Projeto Kactuz: basta nome e e-mail; o resto (texto, 30 h, assinatura) é fixo do curso."""
 
     list_display = ("participant_name", "participant_email", "date", "view_button")
     search_fields = ("participant_name", "participant_email")

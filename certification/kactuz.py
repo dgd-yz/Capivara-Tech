@@ -12,7 +12,7 @@ from .names import format_person_name
 NAME = "Projeto Kactuz"
 COURSE = "Formação em Lógica de Programação"
 ACTIVITY = f"{NAME}: {COURSE}"
-WORKLOAD = 60
+WORKLOAD = 30
 CERTIFIER_NAME = "Dann Luciano de Menezes"
 CERTIFIER_POSITION = "Coordenador do Projeto Kactuz"
 INSTITUTION = "Instituto Federal do Piauí"
