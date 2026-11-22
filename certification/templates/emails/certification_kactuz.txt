@@ -1,0 +1,20 @@
+{% autoescape off %}Parabéns, {{ first_name }}!
+
+Você concluiu a {{ kactuz.course }} do Projeto Kactuz, e o seu certificado já está pronto.
+
+Aluno(a): {{ certificate.participant_name }}
+Curso: {{ kactuz.course }}
+Carga horária: {{ certificate.workload }} horas
+Período: {{ kactuz.period_label }}
+Emitido em: {{ issued_on }}
+
+Baixe o seu certificado (PDF):
+{{ certificate_url }}
+
+Guarde este e-mail: o link é permanente, e o QR code impresso no certificado permite que qualquer pessoa confirme que ele é autêntico.
+
+Obrigado por fazer parte do Projeto Kactuz. Continue praticando!
+Equipe Projeto Kactuz · IFPI
+
+{{ kactuz.institution }} · {{ kactuz.campus }}
+{% endautoescape %}

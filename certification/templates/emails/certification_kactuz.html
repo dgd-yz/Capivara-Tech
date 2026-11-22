@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Projeto Kactuz: seu certificado</title></head>
+<body style="margin:0;padding:0;background:#e9efe9;font-family:Arial,Helvetica,sans-serif;">
+<div style="display:none;max-height:0;overflow:hidden;">Seu certificado de conclusão da {{ kactuz.course }} já está disponível. Baixe o PDF pelo link.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;background:#e9efe9;"><tr><td align="center" style="padding:28px 12px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;margin:0 auto;border-spacing:0;background:#ffffff;border-radius:14px;overflow:hidden;">
+
+<tr><td style="height:6px;background:#35f04f;font-size:0;line-height:0;">&nbsp;</td></tr>
+<tr><td align="center" style="background:#050b06;padding:24px 24px 20px;text-align:center;">
+<img src="cid:{{ logo_cid }}" width="224" alt="Projeto Kactuz" style="display:block;margin:0 auto;width:224px;height:auto;border:0;">
+<p style="margin:10px 0 0;font-family:'Courier New',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#35f04f;">{ {{ kactuz.course }} }</p>
+</td></tr>
+
+<tr><td style="padding:34px 40px 8px;">
+<p style="margin:0;font-family:'Courier New',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#1a9e2e;">Certificado de conclusão</p>
+<h1 style="margin:8px 0 0;font-size:26px;line-height:1.25;color:#050b06;">Parabéns, {{ first_name }}!</h1>
+<p style="margin:14px 0 0;font-size:16px;line-height:1.6;color:#3d4a3d;">Você concluiu a <strong style="color:#050b06;">{{ kactuz.course }}</strong> do Projeto Kactuz, e o seu certificado já está pronto.</p>
+</td></tr>
+
+<tr><td style="padding:20px 40px 4px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#f3f8f3;border:1px solid #dcebdc;border-left:4px solid #35f04f;border-radius:10px;"><tr><td style="padding:16px 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;font-size:14px;line-height:1.5;color:#3d4a3d;">
+<tr><td style="padding:4px 0;color:#6f806f;width:120px;vertical-align:top;">Aluno(a)</td><td style="padding:4px 0;color:#050b06;font-weight:bold;">{{ certificate.participant_name }}</td></tr>
+<tr><td style="padding:4px 0;color:#6f806f;vertical-align:top;">Curso</td><td style="padding:4px 0;color:#050b06;">{{ kactuz.course }}</td></tr>
+<tr><td style="padding:4px 0;color:#6f806f;vertical-align:top;">Carga horária</td><td style="padding:4px 0;color:#050b06;">{{ certificate.workload }} horas</td></tr>
+<tr><td style="padding:4px 0;color:#6f806f;vertical-align:top;">Período</td><td style="padding:4px 0;color:#050b06;">{{ kactuz.period_label }}</td></tr>
+<tr><td style="padding:4px 0;color:#6f806f;vertical-align:top;">Emitido em</td><td style="padding:4px 0;color:#050b06;">{{ issued_on }}</td></tr>
+</table>
+</td></tr></table>
+</td></tr>
+
+<tr><td align="center" style="padding:28px 40px 6px;text-align:center;">
+<a href="{{ certificate_url }}" style="display:inline-block;background:#35f04f;color:#050b06;font-size:16px;font-weight:bold;text-decoration:none;padding:15px 34px;border-radius:999px;">Baixar meu certificado (PDF)</a>
+</td></tr>
+<tr><td align="center" style="padding:10px 40px 0;font-size:12px;line-height:1.5;color:#6f806f;text-align:center;">
+Se o botão não funcionar, copie e cole este endereço no navegador:<br>
+<a href="{{ certificate_url }}" style="color:#1a9e2e;word-break:break-all;">{{ certificate_url }}</a>
+</td></tr>
+
+<tr><td style="padding:26px 40px 8px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#f3f8f3;border-radius:10px;"><tr><td style="padding:14px 18px;font-size:13px;line-height:1.55;color:#4d5e4d;">
+<strong style="color:#050b06;">Guarde este e-mail.</strong> O link é permanente, e o QR code impresso no certificado permite que qualquer pessoa confirme que ele é autêntico.
+</td></tr></table>
+</td></tr>
+
+<tr><td style="padding:18px 40px 34px;font-size:15px;line-height:1.6;color:#3d4a3d;">
+Obrigado por fazer parte do Projeto Kactuz. Continue praticando!<br>
+<span style="color:#6f806f;font-size:14px;">Equipe Projeto Kactuz · IFPI</span>
+</td></tr>
+
+<tr><td style="background:#050b06;padding:22px 32px;text-align:center;font-size:12px;line-height:1.6;color:#8aa58a;">
+<strong style="color:#ffffff;">Projeto Kactuz</strong> · <span style="color:#35f04f;">{ {{ kactuz.tagline }} }</span><br>
+{{ kactuz.institution }} · {{ kactuz.campus }}
+<p style="margin:10px 0 0;font-size:11px;color:#5f735f;">Você recebeu este e-mail porque concluiu a {{ kactuz.course }} do Projeto Kactuz.{% if contact_email %} Dúvidas: <a href="mailto:{{ contact_email }}" style="color:#8aa58a;">{{ contact_email }}</a>{% endif %}</p>
+</td></tr>
+<tr><td style="height:6px;background:#35f04f;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+</table>
+</td></tr></table>
+</body>
+</html>

@@ -39,6 +39,18 @@ def name_size(name):
     return 22
 
 
+def kactuz_name_size(name):
+    """No Kactuz o nome divide a largura com o cacto: um pouco menor que no Capivara Tech."""
+    length = len(name)
+    if length <= 24:
+        return 32
+    if length <= 32:
+        return 27
+    if length <= 42:
+        return 22
+    return 19
+
+
 def certificate_detail(request, uuid):
     certificate = get_object_or_404(Certificate, uuid=uuid)
     event = get_event_config()
@@ -63,8 +75,17 @@ def certificate_detail(request, uuid):
 
     certification_settings = CertificationSettings.get_solo()
 
+    if certificate.layout == Certificate.KACTUZ:
+        from . import kactuz
+
+        template_name = "certification/kactuz.html"
+        extra = {"kactuz": kactuz.context(), "name_size": kactuz_name_size(certificate.participant_name)}
+    else:
+        template_name = "certification/certification.html"
+        extra = {}
+
     html_string = render_to_string(
-        "certification/certification.html",
+        template_name,
         {
             "background_url": image_data_uri(certificate.background_image or certification_settings.default_background_image),
             "layout": certification_settings,
@@ -75,6 +96,7 @@ def certificate_detail(request, uuid):
             "name_size": name_size(certificate.participant_name),
             "text": text_rendered,
             "uri": request.build_absolute_uri(),
+            **extra,
         },
     )
 

@@ -11,7 +11,9 @@ from solo.admin import SingletonModelAdmin
 from certification.email import send_certificate_mail
 from core.event_config import get_event_config
 
-from .models import Certificate, CertificationSettings
+from . import kactuz
+from .models import Certificate, CertificationSettings, KactuzCertificate
+from .names import format_person_name
 
 admin.site.register(CertificationSettings, SingletonModelAdmin)
 
@@ -29,12 +31,19 @@ class CertificateAdmin(admin.ModelAdmin):
 
     search_fields = (
         "participant_name",
+        "participant_email",
         "activity",
     )
 
     actions = ("send_certificate_email",)
 
     readonly_fields = ("date",)
+
+    # Os certificados do Projeto Kactuz têm lista própria (KactuzCertificateAdmin).
+    exclude = ("layout",)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).exclude(layout=Certificate.KACTUZ)
 
     @admin.display(description="Ver Certificado")
     def view_button(self, obj):
@@ -81,3 +90,25 @@ class CertificateAdmin(admin.ModelAdmin):
         bf["text"].initial = certification_settings.default_text
         bf["background_image"].initial = certification_settings.default_background_image
         return form
+
+
+@admin.register(KactuzCertificate)
+class KactuzCertificateAdmin(admin.ModelAdmin):
+    """Alunos do Projeto Kactuz: basta nome e e-mail; o resto (texto, 60 h, assinatura) é fixo do curso."""
+
+    list_display = ("participant_name", "participant_email", "date", "view_button")
+    search_fields = ("participant_name", "participant_email")
+    ordering = ("participant_name",)
+    fields = ("participant_name", "participant_email", "date")
+    readonly_fields = ("date",)
+    actions = ("send_certificate_email",)
+
+    view_button = CertificateAdmin.view_button
+    send_certificate_email = CertificateAdmin.send_certificate_email
+
+    def save_model(self, request, obj, form, change):
+        obj.participant_name = format_person_name(obj.participant_name)
+        obj.participant_email = obj.participant_email.strip().lower()
+        if not change:
+            kactuz.apply_course_data(obj)
+        super().save_model(request, obj, form, change)

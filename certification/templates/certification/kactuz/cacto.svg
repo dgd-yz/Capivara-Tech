@@ -1,0 +1,33 @@
+<svg class="{{ class_name }}" viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  {% for pass in "gl" %}
+  <g stroke="#35f04f" {% if pass == "g" %}stroke-width="9" opacity="0.13"{% else %}stroke-width="2.6"{% endif %}>
+    <!-- tronco -->
+    <path d="M78 206 V44 Q78 16 100 16 Q122 16 122 44 V206" />
+    <!-- braço esquerdo -->
+    <path d="M78 150 H56 Q38 150 38 132 V86 Q38 70 50 70 Q62 70 62 86 V128 H78" />
+    <!-- braço direito -->
+    <path d="M122 124 H142 Q160 124 160 106 V64 Q160 49 149 49 Q138 49 138 64 V102 H122" />
+    {% if pass == "l" %}
+    <!-- gomos -->
+    <path d="M92 30 Q89 110 92 200" stroke-width="1.6" />
+    <path d="M108 30 Q111 110 108 200" stroke-width="1.6" />
+    <path d="M50 78 Q47 104 50 140" stroke-width="1.4" />
+    <path d="M149 57 Q152 82 149 114" stroke-width="1.4" />
+    <!-- espinhos -->
+    <path d="M78 60 l-6 -3 M78 92 l-6 -3 M78 176 l-6 -3 M122 74 l6 -3 M122 150 l6 -3 M122 184 l6 -3" stroke-width="1.6" />
+    <path d="M92 52 l-4 -3 M108 86 l4 -3 M92 124 l-4 -3 M108 160 l4 -3" stroke-width="1.4" />
+    <path d="M38 100 l-6 -3 M62 104 l6 -3 M160 84 l6 -3 M138 90 l-6 -3" stroke-width="1.4" />
+    {% endif %}
+    <!-- cacto redondo -->
+    <path d="M140 206 Q130 206 130 190 Q130 170 147 170 Q164 170 164 190 Q164 206 154 206" />
+    {% if pass == "l" %}
+    <path d="M147 174 Q144 190 147 204" stroke-width="1.4" />
+    <path d="M131 186 l-5 -2 M163 184 l5 -2" stroke-width="1.4" />
+    <!-- capim -->
+    <path d="M60 206 Q56 194 46 188 M66 206 Q66 194 72 186 M128 206 Q122 196 112 194 M168 206 Q172 194 182 190 M174 206 Q178 198 188 198" stroke-width="1.8" />
+    {% endif %}
+    <!-- chão -->
+    <path d="M4 207 Q100 203 196 206" />
+  </g>
+  {% endfor %}
+</svg>
